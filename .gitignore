@@ -1,0 +1,66 @@
+# Build directories
+/build/
+/cmake-build-*/
+/out/
+# CMake files
+CMakeFiles/
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+compile_commands.json
+
+# VS Code
+.vscode/
+
+# Visual Studio
+*.sln
+*.vcxproj
+*.vcxproj.user
+*.vcxproj.filters
+*.pdb
+*.idb
+*.opensdf
+*.sdf
+*.ipch
+*.tlog
+*.obj
+*.user
+*.log
+*.db
+*.cache
+*.ilk
+*.exe
+*.ncb
+*.suo
+.vs/
+
+# CMake-generated VS project files (just in case)
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.dir/
+
+
+# Executables and object files
+*.out
+*.o
+*.obj
+*.exe
+*.a
+*.so
+*.dll
+
+# Editor/IDE files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+.DS_Store
+
+# Logs
+*.log
+
+# Test outputs (optional)
+kontra_test
