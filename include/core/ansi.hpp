@@ -1,4 +1,4 @@
-/*****************************************************************//**
+﻿/*****************************************************************//**
  * \file   ansi.hpp
  * \brief  This file contains ANSI escape codes for terminal control. It also contains few functions to manipulate cursor position and screen.
  * 
@@ -9,7 +9,25 @@
 #include <string>
 #include <iostream>
 
+#ifdef _WIN32
+    #include <windows.h>
+#else
+    #include <sys/ioctl.h>
+    #include <unistd.h>
+#endif
+
 namespace ansi {
+
+	// Box drawing characters
+	constexpr bool useAsciiBox = true;
+	const char tl = useAsciiBox ? '+' : '┌';
+	const char tr = useAsciiBox ? '+' : '┐';
+	const char bl = useAsciiBox ? '+' : '└';
+	const char br = useAsciiBox ? '+' : '┘';
+	const char h = useAsciiBox ? '-' : '─';
+	const char v = useAsciiBox ? '|' : '│';
+
+
 
 	// Cursor movement
 	inline constexpr const char* CLEAR_SCREEN = "\033[2J";
@@ -90,5 +108,20 @@ namespace ansi {
 
 	inline void restore_cursor() {
 		std::cout << RESTORE_CURSOR;
+	}
+
+	// Completely yoinked from the internet, who writes dis shit
+	inline std::pair<int, int> get_terminal_size() {
+		#ifdef _WIN32
+			CONSOLE_SCREEN_BUFFER_INFO csbi;
+			GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+			int width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+			int height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+			return { width, height };
+		#else
+			struct winsize w;
+			ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+			return { w.ws_col, w.ws_row }; 
+		#endif
 	}
 }

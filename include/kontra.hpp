@@ -3,3 +3,4 @@
 #include "./core/flex.hpp"
 #include "./core/screen.hpp"
 #include "./core/text.hpp"
+#include "./core/border.hpp"
