@@ -1,3 +1,10 @@
+/*****************************************************************//**
+ * \file   border.hpp
+ * \brief  Simply a border around other components.
+ * 
+ * \author parv141206
+ * \date   June 2025
+ *********************************************************************/
 #pragma once;
 #include <vector>
 #include "component.hpp"

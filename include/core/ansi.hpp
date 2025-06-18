@@ -1,7 +1,7 @@
 ﻿/*****************************************************************//**
  * \file   ansi.hpp
  * \brief  This file contains ANSI escape codes for terminal control. It also contains few functions to manipulate cursor position and screen.
- * 
+ *
  * \author parv141206
  * \date   June 2025
  *********************************************************************/
@@ -10,10 +10,10 @@
 #include <iostream>
 
 #ifdef _WIN32
-    #include <windows.h>
+#include <windows.h>
 #else
-    #include <sys/ioctl.h>
-    #include <unistd.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 #endif
 
 namespace ansi {
@@ -54,16 +54,47 @@ namespace ansi {
 	inline constexpr const char* STRIKETHROUGH = "\033[9m";
 
 	// Foreground colors
+	inline constexpr const char* FG_BLACK = "\033[30m";
 	inline constexpr const char* FG_RED = "\033[31m";
 	inline constexpr const char* FG_GREEN = "\033[32m";
+	inline constexpr const char* FG_YELLOW = "\033[33m";
 	inline constexpr const char* FG_BLUE = "\033[34m";
+	inline constexpr const char* FG_MAGENTA = "\033[35m";
+	inline constexpr const char* FG_CYAN = "\033[36m";
+	inline constexpr const char* FG_WHITE = "\033[37m";
+
+	inline constexpr const char* FG_BRIGHT_BLACK = "\033[90m";
+	inline constexpr const char* FG_BRIGHT_RED = "\033[91m";
+	inline constexpr const char* FG_BRIGHT_GREEN = "\033[92m";
+	inline constexpr const char* FG_BRIGHT_YELLOW = "\033[93m";
+	inline constexpr const char* FG_BRIGHT_BLUE = "\033[94m";
+	inline constexpr const char* FG_BRIGHT_MAGENTA = "\033[95m";
+	inline constexpr const char* FG_BRIGHT_CYAN = "\033[96m";
+	inline constexpr const char* FG_BRIGHT_WHITE = "\033[97m";
+
 	inline constexpr const char* FG_DEFAULT = "\033[39m";
 
 	// Background colors
+	inline constexpr const char* BG_BLACK = "\033[40m";
 	inline constexpr const char* BG_RED = "\033[41m";
 	inline constexpr const char* BG_GREEN = "\033[42m";
+	inline constexpr const char* BG_YELLOW = "\033[43m";
 	inline constexpr const char* BG_BLUE = "\033[44m";
+	inline constexpr const char* BG_MAGENTA = "\033[45m";
+	inline constexpr const char* BG_CYAN = "\033[46m";
+	inline constexpr const char* BG_WHITE = "\033[47m";
+
+	inline constexpr const char* BG_BRIGHT_BLACK = "\033[100m";
+	inline constexpr const char* BG_BRIGHT_RED = "\033[101m";
+	inline constexpr const char* BG_BRIGHT_GREEN = "\033[102m";
+	inline constexpr const char* BG_BRIGHT_YELLOW = "\033[103m";
+	inline constexpr const char* BG_BRIGHT_BLUE = "\033[104m";
+	inline constexpr const char* BG_BRIGHT_MAGENTA = "\033[105m";
+	inline constexpr const char* BG_BRIGHT_CYAN = "\033[106m";
+	inline constexpr const char* BG_BRIGHT_WHITE = "\033[107m";
+
 	inline constexpr const char* BG_DEFAULT = "\033[49m";
+
 
 	// Cursor movement utils
 	inline void move_cursor(int row, int col) {
@@ -112,16 +143,16 @@ namespace ansi {
 
 	// Completely yoinked from the internet, who writes dis shit
 	inline std::pair<int, int> get_terminal_size() {
-		#ifdef _WIN32
-			CONSOLE_SCREEN_BUFFER_INFO csbi;
-			GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-			int width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-			int height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
-			return { width, height };
-		#else
-			struct winsize w;
-			ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-			return { w.ws_col, w.ws_row }; 
-		#endif
+#ifdef _WIN32
+		CONSOLE_SCREEN_BUFFER_INFO csbi;
+		GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+		int width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+		int height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+		return { width, height };
+#else
+		struct winsize w;
+		ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+		return { w.ws_col, w.ws_row };
+#endif
 	}
 }

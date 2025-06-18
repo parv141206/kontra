@@ -17,13 +17,48 @@ enum class FlexDirection {
     Column
 };
 
+/**
+ * 
+ * WARNING
+ * 
+ * The following code is enough to give you brain damage. This is some "modern C++" shit.
+ * 
+ * Before scrolling, be mentally prepared.
+ * 
+ * This was changed alot, and at this moment, if it works, god knows how. This file is heavily vibe coded (brings a shame but well, it is what it is)
+ * 
+ * .
+ */
+
+
+
 class Flex : public Component {
-    std::vector<std::unique_ptr<Component>> children;
-    FlexDirection direction;
+	std::vector<std::unique_ptr<Component>> children;
+	FlexDirection direction;
+
 public:
-    template <typename... T>
-    Flex(FlexDirection dir, T&&... comps) : direction(dir) {
-        (children.emplace_back(std::make_unique<T>(std::forward<T>(comps))), ...);
-    }
-    virtual void render(int x, int y, int w, int h) const override;
+	template <typename... T>
+	Flex(FlexDirection dir, T&&... comps)
+		: direction(dir) {
+		addComponents(std::forward<T>(comps)...);
+	}
+
+	Flex(FlexDirection dir, std::vector<std::unique_ptr<Component>>&& comps)
+		: direction(dir), children(std::move(comps)) {
+	}
+
+	void add(std::unique_ptr<Component> comp) {
+		children.push_back(std::move(comp));
+	}
+
+	virtual void render(int x, int y, int w, int h) const override;
+
+private:
+	template <typename First, typename... Rest>
+	void addComponents(First&& first, Rest&&... rest) {
+		children.emplace_back(std::make_unique<std::decay_t<First>>(std::forward<First>(first)));
+		addComponents(std::forward<Rest>(rest)...);
+	}
+
+	void addComponents() {}  
 };

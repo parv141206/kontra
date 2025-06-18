@@ -20,6 +20,13 @@ void Text::render(int x, int y, int w, int h) const
         return;
     }
 
+    // styles
+    if (!style.color.empty()) std::cout << style.color;
+    if (!style.backgroundColor.empty()) std::cout << style.backgroundColor;
+    if (style.bold) std::cout << ansi::BOLD;
+    if (style.underline) std::cout << ansi::UNDERLINE;
+    if (style.italic) std::cout << ansi::ITALIC;
+
     int current_y = y; 
     int text_pos = 0; 
 
@@ -38,6 +45,9 @@ void Text::render(int x, int y, int w, int h) const
         current_y++;
     }
 
+    std::cout << ansi::RESET;
+
+	// This is just filling up the remaining space with empty lines if needed, couldnt find a better way to do this :/
     while ((current_y - y) < h) {
         ansi::move_cursor(current_y, x);
         std::cout << std::string(w, ' '); 

@@ -6,6 +6,7 @@
 
 void Border::render(int x, int y, int w, int h) const {
     auto [termWidth, termHeight] = ansi::get_terminal_size();
+    // I know following doesnt really make sense, for now it works , so it works :)
     int absWidth = (w * 100) / 100;
     int absHeight = (h * 100) / 100;
 
