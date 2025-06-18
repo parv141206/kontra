@@ -8,6 +8,7 @@
 #pragma once
 #include "component.hpp"
 #include <string>
+#include <functional>
 
 struct TextStyle {
     std::string color;
@@ -59,11 +60,20 @@ struct TextStyleBuilder {
 };
 
 class Text : public Component {
-    std::string text;
+    std::function<std::string()> text;
     TextStyle style;
 public:
-    Text(const std::string& text, const TextStyle& style = TextStyle())
-        : text(text), style(style) {
+
+    // Following is only for static test, simply a literal passed.
+    // I mean something like dis: Text("Hello, world!");
+    Text(const std::string& value, const TextStyle& style = TextStyle())
+        : text([value]() { return value; }), style(style) {
+    }
+
+	// Following is for dynamic text. I guess u can say text passed as a function (a callback function ?)
+    // For example something like this: Text([&]() { return "Hello, " + name; });
+    Text(std::function<std::string()> provider, const TextStyle& style = TextStyle())
+        : text(std::move(provider)), style(style) {
     }
     void render(int x, int y, int w, int h) const override;
 };

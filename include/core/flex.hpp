@@ -31,9 +31,8 @@ enum class FlexDirection {
  */
 
 
-
 class Flex : public Component {
-	std::vector<std::unique_ptr<Component>> children;
+	std::vector<std::shared_ptr<Component>> children;
 	FlexDirection direction;
 
 public:
@@ -43,12 +42,15 @@ public:
 		addComponents(std::forward<T>(comps)...);
 	}
 
-	Flex(FlexDirection dir, std::vector<std::unique_ptr<Component>>&& comps)
+	Flex(FlexDirection dir, std::vector<std::shared_ptr<Component>>&& comps)
 		: direction(dir), children(std::move(comps)) {
 	}
 
-	void add(std::unique_ptr<Component> comp) {
+	void add(std::shared_ptr<Component> comp) {
 		children.push_back(std::move(comp));
+	}
+	void clear() {
+		children.clear();
 	}
 
 	virtual void render(int x, int y, int w, int h) const override;
@@ -56,9 +58,9 @@ public:
 private:
 	template <typename First, typename... Rest>
 	void addComponents(First&& first, Rest&&... rest) {
-		children.emplace_back(std::make_unique<std::decay_t<First>>(std::forward<First>(first)));
+		children.push_back(std::forward<First>(first));
 		addComponents(std::forward<Rest>(rest)...);
 	}
 
-	void addComponents() {}  
+	void addComponents() {}
 };

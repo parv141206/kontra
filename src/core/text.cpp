@@ -16,7 +16,8 @@
 */
 void Text::render(int x, int y, int w, int h) const
 {
-    if (w <= 0 || h <= 0 || text.empty()) {
+    std::string text_value = text();
+    if (w <= 0 || h <= 0 || text_value.empty()) {
         return;
     }
 
@@ -30,11 +31,11 @@ void Text::render(int x, int y, int w, int h) const
     int current_y = y; 
     int text_pos = 0; 
 
-    while (text_pos < text.length() && (current_y - y) < h) { 
+    while (text_pos < text_value.length() && (current_y - y) < h) {
         ansi::move_cursor(current_y, x);
-        int chars_on_line = (w < (int)(text.length() - text_pos)) ? w : (int)(text.length() - text_pos);
+        int chars_on_line = (w < (int)(text_value.length() - text_pos)) ? w : (int)(text_value.length() - text_pos);
 
-        std::cout << text.substr(text_pos, chars_on_line);
+        std::cout << text_value.substr(text_pos, chars_on_line);
 
         if (chars_on_line < w) {
             std::cout << std::string(w - chars_on_line, ' ');

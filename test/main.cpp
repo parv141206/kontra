@@ -1,29 +1,32 @@
 ﻿#include "../include/kontra.hpp"
 #include <iostream>
 #include <vector>
+#include <thread>
+#include <chrono>
 
 int main() {
-	TextStyle titleStyle(ansi::FG_BLACK, ansi::BG_GREEN, true, true); 
+    TextStyle titleStyle(ansi::FG_BLACK, ansi::BG_GREEN, true, true);
 
-	std::vector<std::unique_ptr<Component>> components;
-	for (int i = 0; i < 60; ++i)
-		components.push_back(std::make_unique<Text>("Label " + std::to_string(i)));
+    auto title = std::make_shared<Text>("France", titleStyle);
 
-	auto ui = Screen(
-		Border(
-			Flex(
-				FlexDirection::Row,
-				Text("France"),
-				Border(
-					Flex(
-						FlexDirection::Column,
-						std::move(components)
-					
-					)
-				)
-			)
-		)
-	);
-	ui.render(1, 1, 100, 95);
-	return 0;
+    auto list = std::make_shared<Flex>(FlexDirection::Column);
+    auto borderedList = std::make_shared<Border>(list);
+
+    auto layout = std::make_shared<Flex>(FlexDirection::Row, title, borderedList);
+    auto borderedLayout = std::make_shared<Border>(layout);
+
+    Screen ui(borderedLayout);
+
+    for (int tick = 1; tick <= 5; ++tick) {
+        list->clear();
+
+        for (int i = 0; i < tick; ++i) {
+            list->add(std::make_shared<Text>("idli " + std::to_string(i)));
+        }
+
+        ui.render(1, 1, 100, 95);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+
+    return 0;
 }
