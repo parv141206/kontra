@@ -20,6 +20,7 @@ namespace ansi {
 
 	// Box drawing characters
 	constexpr bool useAsciiBox = true;
+
 	const char tl = useAsciiBox ? '+' : '┌';
 	const char tr = useAsciiBox ? '+' : '┐';
 	const char bl = useAsciiBox ? '+' : '└';

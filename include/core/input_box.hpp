@@ -1,0 +1,57 @@
+/*****************************************************************//**
+ * \file   input_box.hpp
+ * \brief  Basically a simple text box!
+ * 
+ * \author parv141206
+ * \date   June 2025
+ *********************************************************************/
+#pragma once
+
+#include "core/component.hpp"
+#include <string>
+
+class InputBox : public Component {
+private:
+    std::string text;
+    bool active;     
+    bool wrap = false;
+    int cursor = 0;
+
+public:
+
+    InputBox() : active(false) {}
+
+    /**
+     * @brief Sets the active state of the input box.
+     * @param is_active use ur brain my guy
+     */
+    void set_active(bool is_active);
+
+    /**
+     * @brief Sets text wrap.
+     * @param enabled use ur brain my guy
+     */
+    void set_wrap_enabled(bool enabled);
+
+
+    /**
+     * @brief Gets the current text of the input box.
+     * @return The text content of the input box.
+     */
+    std::string get_text() const;
+
+    /**
+     * @brief Handles input for the input box.
+     * @param ch The character input to process (DUDE PASS THIS CAREFULLY, SEE DOCS).
+     */
+    void handle_input(char ch);
+
+    /**
+     * @brief Renders the input box at the specified position and size.
+     * @param x The x-coordinate of the input box's position.
+     * @param y The y-coordinate of the input box's position.
+     * @param w The width of the input box.
+     * @param h The height of the input box.
+     */
+    void render(int x, int y, int w, int h) const override;
+};

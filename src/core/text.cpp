@@ -4,16 +4,28 @@
 #include <string>
 #include <algorithm> 
 
-/*
-* @brief Renders the text at the specified position and size,
-*        handling multi-line wrapping if the text exceeds the width.
-*
-* @param x The x-coordinate where rendering starts.
-* @param y The y-coordinate where rendering starts.
-* @param w The width of the area to render.
-* @param h The height of the area to render.
-*
-*/
+int Text::get_preferred_height(int width) const {
+    if (width <= 0) return 1;
+
+    int lines = 1;
+    int currentLineLength = 0;
+    std::string text_value = text();
+    for (char c : text_value) {
+        if (c == '\n') {
+            lines++;
+            currentLineLength = 0;
+        }
+        else {
+            currentLineLength++;
+            if (currentLineLength >= width) {
+                lines++;
+                currentLineLength = 0;
+            }
+        }
+    }
+    return lines;
+}
+
 void Text::render(int x, int y, int w, int h) const
 {
     std::string text_value = text();

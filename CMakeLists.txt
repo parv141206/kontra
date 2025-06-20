@@ -7,12 +7,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 file(GLOB_RECURSE KONTRA_SOURCES CONFIGURE_DEPENDS src/*.cpp)
 file(GLOB_RECURSE KONTRA_HEADERS CONFIGURE_DEPENDS include/*.hpp)
 
-add_library(kontra ${KONTRA_SOURCES} ${KONTRA_HEADERS} "src/core/border.cpp")
+add_library(kontra ${KONTRA_SOURCES} ${KONTRA_HEADERS})
 
 target_include_directories(kontra PUBLIC include)
 
 # ─────────────────────────────────────────────────────
-# Only for testing
-add_executable(kontra_test test/main.cpp "src/core/border.cpp")
-target_link_libraries(kontra_test PRIVATE kontra)
-target_include_directories(kontra_test PRIVATE include)
+# Test executable
+function(link_kontra_test target)
+    target_link_libraries(${target} PRIVATE kontra)
+    target_include_directories(${target} PRIVATE include)
+endfunction()
+
+add_executable(test_main test/main.cpp)
+add_executable(test_input test/input_box.cpp)
+
+link_kontra_test(test_main)
+link_kontra_test(test_input)
