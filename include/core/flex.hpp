@@ -11,6 +11,7 @@
 #pragma once
 #include "component.hpp"
 #include <vector>
+#include <memory>
 
 enum class FlexDirection {
     Row,

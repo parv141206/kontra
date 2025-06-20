@@ -9,6 +9,7 @@
 
 #include "core/component.hpp"
 #include <string>
+#include <memory>
 
 class InputBox : public Component {
 private:
@@ -21,11 +22,20 @@ public:
 
     InputBox() : active(false) {}
 
+    // See core/component.hpp 
+    int get_preferred_height(int width) const;
+
     /**
      * @brief Sets the active state of the input box.
      * @param is_active use ur brain my guy
      */
     void set_active(bool is_active);
+
+    /**
+     * @brief Lemmi guess...
+     * @return True if the input box is active, false otherwise.
+	 */
+    bool is_active() const;
 
     /**
      * @brief Sets text wrap.

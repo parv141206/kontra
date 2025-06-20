@@ -7,8 +7,44 @@
 #undef min
 #undef max
 #endif
+
+int InputBox::get_preferred_height(int width) const {
+    if (width <= 2) return 3; 
+
+    int innerW = width - 2;
+
+    if (!wrap) {
+        return 3; 
+    }
+
+    // wrapped mode
+    int lines = 1;
+    int currentLineLength = 0;
+
+    for (char c : text) {
+        if (c == '\n') {
+            lines++;
+            currentLineLength = 0;
+        }
+        else {
+            currentLineLength++;
+            if (currentLineLength >= innerW) {
+                lines++;
+                currentLineLength = 0;
+            }
+        }
+    }
+
+    return lines + 2; // Adding 2 for top and bottom borders :3
+}
+
+
 void InputBox::set_active(bool is_active) {
     active = is_active;
+}
+
+bool InputBox::is_active() const {
+    return active;
 }
 
 void InputBox::set_wrap_enabled(bool enabled) {

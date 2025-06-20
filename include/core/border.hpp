@@ -5,8 +5,9 @@
  * \author parv141206
  * \date   June 2025
  *********************************************************************/
-#pragma once;
+#pragma once
 #include <vector>
+#include <memory>
 #include "component.hpp"
 
  /**

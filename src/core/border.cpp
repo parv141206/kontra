@@ -2,7 +2,9 @@
 #include "core/ansi.hpp"  
 #include <iostream>        
 #include <string>          
-#include <algorithm>      
+#include <algorithm>
+#include <memory>
+
 
 void Border::render(int x, int y, int w, int h) const {
     // I know following doesnt really make sense, for now it works , so it works :)

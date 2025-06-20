@@ -21,13 +21,19 @@ namespace ansi {
 	// Box drawing characters
 	constexpr bool useAsciiBox = true;
 
-	const char tl = useAsciiBox ? '+' : '┌';
+	/*const char tl = useAsciiBox ? '+' : '┌';
 	const char tr = useAsciiBox ? '+' : '┐';
 	const char bl = useAsciiBox ? '+' : '└';
 	const char br = useAsciiBox ? '+' : '┘';
 	const char h = useAsciiBox ? '-' : '─';
-	const char v = useAsciiBox ? '|' : '│';
+	const char v = useAsciiBox ? '|' : '│';*/
 
+	const char tl = '+';
+	const char tr = '+';
+	const char bl = '+';
+	const char br = '+';
+	const char h = '-';
+	const char v = '|';
 
 
 	// Cursor movement

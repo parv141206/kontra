@@ -10,6 +10,7 @@
 #pragma once
 #include "screen.hpp"
 #include <functional>
+#include <memory>
 
 namespace kontra {
 	/**
