@@ -1,4 +1,5 @@
 #include "../include/kontra.hpp"
+#include "../include/core/utils.hpp"
 
 int main() {
 
@@ -23,16 +24,12 @@ int main() {
 
 	auto layout = std::make_shared<Flex>(
 		FlexDirection::Row,
-		std::make_shared<List>(
-			title_1,
-			title_2
-		),
-		std::make_shared<List>(
-			input_1,
-			input_2
-		)
+		chain(std::make_shared<List>(title_1, title_2),
+			[](List& l) { l.set_gap(0); }),
+		chain(std::make_shared<List>(input_1, input_2),
+			[](List& l) { l.set_gap(2); })
 	);
-
+	layout->set_gap(5);
 	auto screen = std::make_shared<Screen>(std::make_shared<Border>(layout));
 
 	kontra::run(screen, [&](char ch) {
@@ -46,7 +43,7 @@ int main() {
 		}
 		else {
 			active_input->handle_input(ch);
-			if(active_input == input_1)
+			if (active_input == input_1)
 				title_1_ = active_input->get_text();
 			else
 				title_2_ = active_input->get_text();

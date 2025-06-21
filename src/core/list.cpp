@@ -20,7 +20,7 @@ void List::render(int x, int y, int w, int h) const
 		if (currentY >= h) throw std::runtime_error("List height exceeded available space.");
 		int childHeight = children[i]->get_preferred_height(absWidth);
 		children[i]->render(x, currentY, absWidth, childHeight);
-		currentY += childHeight;
+		currentY += childHeight + gap;
 	}
 
 }

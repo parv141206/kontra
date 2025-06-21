@@ -19,28 +19,35 @@
  * - The cursor is moved to the appropriate position before rendering each child.
  * - If there are no children, the function returns immediately without rendering.
  */
-
 void Flex::render(int x, int y, int w, int h) const {
-    auto [termWidth, termHeight] = ansi::get_terminal_size();
-    int absWidth = (w * 100) / 100;
-    int absHeight = (h * 100) / 100;
+	auto [termWidth, termHeight] = ansi::get_terminal_size();
+	int absWidth = (w * 100) / 100;
+	int absHeight = (h * 100) / 100;
 
-    int count = children.size();
-    if (count == 0) return;
+	int count = children.size();
+	if (count == 0) return;
 
-    if (direction == FlexDirection::Column) {
-        int childHeight = absHeight / count;
-        int currentY = y;
-        for (int i = 0; i < count; ++i) {
-            children[i]->render(x, currentY, absWidth, childHeight);
-            currentY += childHeight;
-        }
-    } else if (direction == FlexDirection::Row) {
-        int childWidth = absWidth / count;
-        int currentX = x;
-        for (int i = 0; i < count; ++i) {
-            children[i]->render(currentX, y, childWidth, absHeight);
-            currentX += childWidth;
-        }
-    }
+	if (direction == FlexDirection::Column) {
+		int totalGap = gap * (count - 1);
+		int availableHeight = absHeight - totalGap;
+		int childHeight = availableHeight / count;
+		int currentY = y;
+
+		for (int i = 0; i < count; ++i) {
+			children[i]->render(x, currentY, absWidth, childHeight);
+			currentY += childHeight + gap;
+		}
+	}
+	else if (direction == FlexDirection::Row) {
+		int totalGap = gap * (count - 1);
+		int availableWidth = absWidth - totalGap;
+		int childWidth = availableWidth / count;
+		int currentX = x;
+
+		for (int i = 0; i < count; ++i) {
+			children[i]->render(currentX, y, childWidth, absHeight);
+			currentX += childWidth + gap;
+		}
+	}
 }
+

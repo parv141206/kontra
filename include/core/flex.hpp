@@ -2,9 +2,9 @@
  * \file   flex.hpp
  * \brief  A Flex component that arranges its children in a row or column.
  * It acts as a container for other components, allowing them to be laid out.
- * 
+ *
  * todo: Obviously adding more features like spacing, alignment, etc. would be useful.
- * 
+ *
  * \author parv141206
  * \date   June 2025
  *********************************************************************/
@@ -14,36 +14,37 @@
 #include <memory>
 
 enum class FlexDirection {
-    Row,
-    Column
+	Row,
+	Column
 };
 
 /**
- * 
+ *
  * WARNING
- * 
+ *
  * The following code is enough to give you brain damage. This is some "modern C++" shit.
- * 
+ *
  * Before scrolling, be mentally prepared.
- * 
+ *
  * This was changed alot, and at this moment, if it works, god knows how. This file is heavily vibe coded (brings a shame but well, it is what it is)
- * 
+ *
  */
 
 
 class Flex : public Component {
 	std::vector<std::shared_ptr<Component>> children;
 	FlexDirection direction;
+	int gap;
 
 public:
 	template <typename... T>
 	Flex(FlexDirection dir, T&&... comps)
-		: direction(dir) {
+		: direction(dir), gap(0) {
 		add_components(std::forward<T>(comps)...);
 	}
 
 	Flex(FlexDirection dir, std::vector<std::shared_ptr<Component>>&& comps)
-		: direction(dir), children(std::move(comps)) {
+		: direction(dir), children(std::move(comps)), gap(0) {
 	}
 
 	/**
@@ -52,6 +53,15 @@ public:
 	 */
 	void add(std::shared_ptr<Component> comp) {
 		children.push_back(std::move(comp));
+	}
+
+	/**
+	 * \brief Sets the gap between children
+	 * \param gap the gap to add
+	 */
+	Flex& set_gap(int g) {
+		gap = g;
+		return *this;
 	}
 
 	/// Clears all children from the layout.

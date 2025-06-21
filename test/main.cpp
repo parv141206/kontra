@@ -1,4 +1,5 @@
 ﻿#include "../include/kontra.hpp"
+#include "../include/core/utils.hpp"
 
 int main() {
 	TextStyle titleStyle(ansi::FG_BLACK, ansi::BG_GREEN, true, true);

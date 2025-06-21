@@ -2,6 +2,7 @@
 #include "./core/component.hpp"
 #include "./core/runtime.hpp"
 #include "./core/ansi.hpp"
+#include "./core/utils.hpp"
 #include "./core/flex.hpp"
 #include "./core/screen.hpp"
 #include "./core/text.hpp"

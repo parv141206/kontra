@@ -9,18 +9,21 @@
 #include "component.hpp"
 #include <vector>
 #include <memory>
+#include <functional>
 
 class List : public Component {
 	std::vector<std::shared_ptr<Component>> children;
+	int gap;
 
 public:
 	template <typename... T>
-	List(T&&... comps) {
+	List(T&&... comps) : gap(0) {
 		addComponents(std::forward<T>(comps)...);
 	}
 
 	List(std::vector<std::shared_ptr<Component>>&& comps)
-		: children(std::move(comps)) {
+		: children(std::move(comps)) , gap(0) {
+
 	}
 
 	/**
@@ -29,6 +32,15 @@ public:
 	 */
 	void add(std::shared_ptr<Component> comp) {
 		children.push_back(std::move(comp));
+	}
+
+	/**
+     * \brief Sets the gap between children
+     * \param gap the gap to add
+     */
+	List& set_gap(int g) {
+		gap = g;
+		return *this;
 	}
 
 	/**

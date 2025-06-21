@@ -113,16 +113,20 @@ void InputBox::render(int x, int y, int w, int h) const {
             }
         }
 
-        // Draws text line with cursor if it lands on this row
+        // Draws text line with cursor if it lands on this row, basically the | block as a cursor
+        std::cout << line << ansi::v;
+
         if (active) {
             int cur_row = wrap ? (cursor / innerW) : 0;
-            int cur_col = wrap ? (cursor % innerW) : (cursor >= innerW ? innerW - 1 : cursor);
+            int cur_col = wrap ? (cursor % innerW) : std::min(cursor, innerW - 1);
             if (row == cur_row && cur_col < innerW) {
-                line[cur_col] = '|';
+                std::cout << "\033[s"; 
+                ansi::move_cursor(y + 1 + cur_row, x + 1 + cur_col);
+                std::cout << "\033[7m" << line[cur_col] << "\033[0m"; 
+                std::cout << "\033[u"; 
             }
         }
 
-        std::cout << line << ansi::v;
     }
 
     // Bottom border
