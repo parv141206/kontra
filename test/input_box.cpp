@@ -25,12 +25,12 @@ int main() {
 	auto layout = std::make_shared<Flex>(
 		FlexDirection::Row,
 		chain(std::make_shared<List>(title_1, title_2),
-			[](List& l) { l.set_gap(0); }),
+			[](List& l) { l.set_gap(3); }),
 		chain(std::make_shared<List>(input_1, input_2),
-			[](List& l) { l.set_gap(2); })
+			[](List& l) { l.set_gap(3); })
 	);
 	layout->set_gap(5);
-	auto screen = std::make_shared<Screen>(std::make_shared<Border>(layout));
+	auto screen = std::make_shared<Screen>(chain(std::make_shared<Border>(layout)  , [](Border& b) { b.set_padding(0); }));
 
 	kontra::run(screen, [&](char ch) {
 		if (ch == 17) exit(0);

@@ -14,15 +14,16 @@
 class List : public Component {
 	std::vector<std::shared_ptr<Component>> children;
 	int gap;
+	int padding;
 
 public:
 	template <typename... T>
-	List(T&&... comps) : gap(0) {
+	List(T&&... comps) : gap(0), padding(0) {
 		addComponents(std::forward<T>(comps)...);
 	}
 
 	List(std::vector<std::shared_ptr<Component>>&& comps)
-		: children(std::move(comps)) , gap(0) {
+		: children(std::move(comps)), gap(0), padding(0) {
 
 	}
 
@@ -30,25 +31,24 @@ public:
 	 * \brief Adds a component dude.
 	 * \param comp The component to add :O
 	 */
-	void add(std::shared_ptr<Component> comp) {
-		children.push_back(std::move(comp));
-	}
+	void add(std::shared_ptr<Component> comp);
 
 	/**
-     * \brief Sets the gap between children
-     * \param gap the gap to add
-     */
-	List& set_gap(int g) {
-		gap = g;
-		return *this;
-	}
+	 * \brief Sets the gap between children
+	 * \param gap the gap to add
+	 */
+	List& set_gap(int g);
+
+	/**
+	 * \brief Sets the padding of the Flex component
+	 * \param p the paddig to add
+	 */
+	List& set_padding(int p);
 
 	/**
 	 * \brief Clears all components from the list.
 	 */
-	void clear() {
-		children.clear();
-	}
+	void clear();
 
 	/**
 	 * \brief Renders the component at the specified position and size.

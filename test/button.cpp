@@ -1,4 +1,4 @@
-﻿#include "../include/kontra.hpp"
+#include "../include/kontra.hpp"
 #include "../include/core/utils.hpp"
 
 int main() {
@@ -50,7 +50,7 @@ int main() {
 	auto screen = std::make_shared<Screen>(std::make_shared<Border>(layout));
 
 	kontra::run(screen, [&](char ch) {
-		if (ch == 17) exit(0); // Ctrl+Q 
+		if (ch == 17) exit(0); // Ctrl+Q
 
 		if (ch == '\t') { // TAB 
 			if (active_button == button_1) {

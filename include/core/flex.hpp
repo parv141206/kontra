@@ -35,40 +35,39 @@ class Flex : public Component {
 	std::vector<std::shared_ptr<Component>> children;
 	FlexDirection direction;
 	int gap;
+	int padding;
 
 public:
 	template <typename... T>
 	Flex(FlexDirection dir, T&&... comps)
-		: direction(dir), gap(0) {
+		: direction(dir), gap(0), padding(0) {
 		add_components(std::forward<T>(comps)...);
 	}
 
 	Flex(FlexDirection dir, std::vector<std::shared_ptr<Component>>&& comps)
-		: direction(dir), children(std::move(comps)), gap(0) {
+		: direction(dir), children(std::move(comps)), gap(0), padding(0) {
 	}
 
 	/**
 	 * \brief Adds a component to the layout.
 	 * \param comp The component to add
 	 */
-	void add(std::shared_ptr<Component> comp) {
-		children.push_back(std::move(comp));
-	}
+	void add(std::shared_ptr<Component> comp);
 
 	/**
 	 * \brief Sets the gap between children
-	 * \param gap the gap to add
+	 * \param g the gap to add
 	 */
-	Flex& set_gap(int g) {
-		gap = g;
-		return *this;
-	}
+	Flex& set_gap(int g);
+
+	/**
+	 * \brief Sets the padding of the Flex component
+	 * \param p the paddig to add
+	 */
+	Flex& set_padding(int p);
 
 	/// Clears all children from the layout.
-	void clear() {
-		children.clear();
-	}
-
+	void clear();
 	/**
 	 * \brief Renders the component at the specified position and size.
 	 * \param x The x-coordinate of the component's position.

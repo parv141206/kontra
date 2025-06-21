@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 file(GLOB_RECURSE KONTRA_SOURCES CONFIGURE_DEPENDS src/*.cpp)
 file(GLOB_RECURSE KONTRA_HEADERS CONFIGURE_DEPENDS include/*.hpp)
 
-add_library(kontra ${KONTRA_SOURCES} ${KONTRA_HEADERS})
+add_library(kontra ${KONTRA_SOURCES} ${KONTRA_HEADERS} "src/core/button.cpp" "test/button.cpp")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 target_include_directories(kontra PUBLIC include)
 
@@ -20,6 +20,8 @@ endfunction()
 
 add_executable(test_main test/main.cpp)
 add_executable(test_input test/input_box.cpp)
+add_executable(test_button test/button.cpp)
 
 link_kontra_test(test_main)
 link_kontra_test(test_input)
+link_kontra_test(test_button)

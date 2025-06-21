@@ -2,6 +2,27 @@
 #include "core/ansi.hpp"
 #include <stdexcept>
 
+
+void List::add(std::shared_ptr<Component> comp) {
+	children.push_back(std::move(comp));
+}
+
+
+List& List::set_gap(int g) {
+	gap = g;
+	return *this;
+}
+
+
+List& List::set_padding(int p) {
+	padding = p;
+	return *this;
+}
+
+void List::clear() {
+	children.clear();
+}
+
 /**
  * This is almost same as a Flex box but the thing is that this doesnt divide the space equally. stacks the children xD
  */

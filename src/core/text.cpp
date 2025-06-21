@@ -35,7 +35,7 @@ void Text::render(int x, int y, int w, int h) const
 
     // styles
     if (!style.color.empty()) std::cout << style.color;
-    if (!style.backgroundColor.empty()) std::cout << style.backgroundColor;
+    if (!style.background_color.empty()) std::cout << style.background_color;
     if (style.bold) std::cout << ansi::BOLD;
     if (style.underline) std::cout << ansi::UNDERLINE;
     if (style.italic) std::cout << ansi::ITALIC;

@@ -1,18 +1,36 @@
 #include "core/flex.hpp"
 #include "core/ansi.hpp"
 
+void Flex::add(std::shared_ptr<Component> comp) {
+	children.push_back(std::move(comp));
+}
+
+Flex& Flex::set_gap(int g) {
+	gap = g;
+	return *this;
+}
+
+Flex& Flex::set_padding(int p) {
+	padding = p;
+	return *this;
+}
+
+void Flex::clear() {
+	children.clear();
+}
+
 /**
  * @brief Renders the Flex container and its children within the specified dimensions.
- * 
+ *
  * This function divides the available space (width and height) among the child elements
- * based on the Flex container's direction (Column or Row). It then calls the render 
+ * based on the Flex container's direction (Column or Row). It then calls the render
  * method of each child element to draw them in their respective positions.
- * 
+ *
  * @param x The x-coordinate of the top-left corner of the container.
  * @param y The y-coordinate of the top-left corner of the container.
  * @param w The width of the container.
  * @param h The height of the container.
- * 
+ *
  * @details
  * - If the direction is FlexDirection::Column, the height is divided equally among the children.
  * - If the direction is FlexDirection::Row, the width is divided equally among the children.

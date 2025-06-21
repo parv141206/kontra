@@ -12,45 +12,45 @@
 
 struct TextStyle {
     std::string color;
-    std::string backgroundColor;
+    std::string background_color;
     bool bold = false;
     bool underline = false;
     bool italic = false;
 
     TextStyle(
         const std::string& color = "",
-        const std::string& backgroundColor = "",
+        const std::string& background_color = "",
         bool bold = false,
         bool underline = false,
         bool italic = false
-    ) : color(color), backgroundColor(backgroundColor), bold(bold), underline(underline)  , italic(italic) {
+    ) : color(color), background_color(background_color), bold(bold), underline(underline)  , italic(italic) {
     }
 };
 
 struct TextStyleBuilder {
     TextStyle style;
 
-    TextStyleBuilder& setColor(const std::string& color) {
+    TextStyleBuilder& set_color(const std::string& color) {
         style.color = color;
         return *this;
     }
 
-    TextStyleBuilder& setBackgroundColor(const std::string& backgroundColor) {
-        style.backgroundColor = backgroundColor;
+    TextStyleBuilder& set_background_color(const std::string& background_color) {
+        style.background_color = background_color;
         return *this;
     }
 
-    TextStyleBuilder& setBold(bool bold) {
+    TextStyleBuilder& set_bold(bool bold) {
         style.bold = bold;
         return *this;
     }
 
-    TextStyleBuilder& setUnderline(bool underline) {
+    TextStyleBuilder& set_underline(bool underline) {
         style.underline = underline;
         return *this;
     }
 
-    TextStyleBuilder& setItalic(bool italic) {
+    TextStyleBuilder& set_italic(bool italic) {
         style.italic = italic;
         return *this;
     }
