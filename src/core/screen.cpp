@@ -1,7 +1,15 @@
 #include "core/screen.hpp"
 #include "core/ansi.hpp"
-
+#ifdef _WIN32
+#include <windows.h>
+#include <io.h>
+#include <fcntl.h>
+#endif
 void Screen::render(int x, int y, int w, int h) const {
+#ifdef _WIN32
+	SetConsoleOutputCP(CP_UTF8);
+#endif
+
 	ansi::clear_screen();
 	std::cout << "\033[2J\033[H";
 
@@ -15,6 +23,6 @@ void Screen::render(int x, int y, int w, int h) const {
 		child->render(x, y, absWidth, absHeight);
 	}
 
-	ansi::move_down(2);
+	//ansi::move_down(2);
 	//ansi::move_cursor(absWidth, absHeight);
 }

@@ -1,5 +1,6 @@
 ﻿#include "core/input_box.hpp"
 #include "core/ansi.hpp"
+#include "core/utils.hpp"
 #include <iostream>
 #include <cctype>
 #include <algorithm>
@@ -88,7 +89,8 @@ void InputBox::render(int x, int y, int w, int h) const {
 
 	// Top border
 	ansi::move_cursor(y, x);
-	std::cout << ansi::tl << std::string(innerW, ansi::h) << ansi::tr;
+	std::cout << ansi::tl << repeat(ansi::h, innerW) << ansi::tr;
+
 
 	// Content rows
 	for (int row = 0; row < innerH; ++row) {
@@ -131,5 +133,6 @@ void InputBox::render(int x, int y, int w, int h) const {
 
 	// Bottom border
 	ansi::move_cursor(y + h - 1, x);
-	std::cout << ansi::bl << std::string(innerW, ansi::h) << ansi::br;
+	std::cout << ansi::bl << repeat(ansi::h, innerW) << ansi::br;
+
 }

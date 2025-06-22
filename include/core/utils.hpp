@@ -33,3 +33,10 @@ std::shared_ptr<T> chain(std::shared_ptr<T> ptr, F&& fn) {
 	fn(*ptr);
 	return ptr;
 }
+
+inline std::string repeat(const char* ch, int count) {
+	std::string result;
+	result.reserve(count * 3); // UTF-8 safe
+	for (int i = 0; i < count; ++i) result += ch;
+	return result;
+}

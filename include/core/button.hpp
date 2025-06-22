@@ -9,6 +9,7 @@
 #include <iostream>
 #include "component.hpp"
 #include <functional>
+#include <memory>
 
 struct ButtonStyle {
 	std::string color;
@@ -83,7 +84,13 @@ private:
 public:
 
 	// For normal text labels
-	Button(std::string& label, std::function<void()> on_click_callback, const ButtonStyle& style = ButtonStyle()) : label([label]() { return label; }), on_click_callback(on_click_callback), active(false), style(style) {}
+	Button(std::string label, std::function<void()> on_click_callback, const ButtonStyle& style = ButtonStyle())
+		: label([label]() { return label; }),
+		on_click_callback(on_click_callback),
+		active(false),
+		style(style) {
+	}
+
 
 	// For dynamic text labels
 	Button(std::function<std::string()> provider, std::function<void()> on_click_callback, const ButtonStyle& style = ButtonStyle()) : label(std::move(provider)), on_click_callback(on_click_callback), active(false), style(style) {}

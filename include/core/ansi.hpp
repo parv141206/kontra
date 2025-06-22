@@ -18,26 +18,37 @@
 
 namespace ansi {
 
-	// Box drawing characters
-	constexpr bool useAsciiBox = true;
+	constexpr bool useAsciiBox = false;
 
-	/*const char tl = useAsciiBox ? '+' : '┌';
-	const char tr = useAsciiBox ? '+' : '┐';
-	const char bl = useAsciiBox ? '+' : '└';
-	const char br = useAsciiBox ? '+' : '┘';
-	const char h = useAsciiBox ? '-' : '─';
-	const char v = useAsciiBox ? '|' : '│';*/
+	struct BorderChars {
+		const char* tl;
+		const char* tr;
+		const char* bl;
+		const char* br;
+		const char* h;
+		const char* v;
 
-	const char tl = '+';
-	const char tr = '+';
-	const char bl = '+';
-	const char br = '+';
-	const char h = '-';
-	const char v = '|';
+		constexpr BorderChars(bool ascii)
+			: tl(ascii ? "+" : u8"┌"),
+			tr(ascii ? "+" : u8"┐"),
+			bl(ascii ? "+" : u8"└"),
+			br(ascii ? "+" : u8"┘"),
+			h(ascii ? "-" : u8"─"),
+			v(ascii ? "|" : u8"│") {
+		}
+	};
 
+	inline constexpr BorderChars border{ useAsciiBox };
+
+	inline constexpr const char* tl = border.tl;
+	inline constexpr const char* tr = border.tr;
+	inline constexpr const char* bl = border.bl;
+	inline constexpr const char* br = border.br;
+	inline constexpr const char* h = border.h;
+	inline constexpr const char* v = border.v;
 
 	// Cursor movement
-	inline constexpr const char* CLEAR_SCREEN = "\033[2J";
+	inline constexpr const char* CLEAR_SCREEN = "\033[H\033[J\033[2J";
 	inline constexpr const char* CURSOR_HOME = "\033[H";
 	inline constexpr const char* SAVE_CURSOR = "\033[s";
 	inline constexpr const char* RESTORE_CURSOR = "\033[u";
@@ -125,7 +136,7 @@ namespace ansi {
 	}
 
 	inline void clear_screen() {
-		std::cout << CLEAR_SCREEN << CURSOR_HOME;
+		std::cout << CLEAR_SCREEN << CURSOR_HOME << std::flush;
 	}
 
 	inline void clear_line() {

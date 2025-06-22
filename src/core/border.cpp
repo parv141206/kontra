@@ -1,5 +1,6 @@
 ﻿#include "core/border.hpp" 
 #include "core/ansi.hpp"  
+#include "core/utils.hpp"
 #include <iostream>        
 #include <string>          
 #include <algorithm>
@@ -36,7 +37,7 @@ void Border::render(int x, int y, int w, int h) const {
 	}
 
 	ansi::move_cursor(y, x);
-	std::cout << ansi::tl << std::string(absWidth - 2, ansi::h) << ansi::tr;
+	std::cout << ansi::tl << repeat(ansi::h, absWidth - 2) << ansi::tr;
 
 	for (int i = 1; i < absHeight - 1; ++i) {
 		ansi::move_cursor(y + i, x);
@@ -44,7 +45,8 @@ void Border::render(int x, int y, int w, int h) const {
 	}
 
 	ansi::move_cursor(y + absHeight - 1, x);
-	std::cout << ansi::bl << std::string(absWidth - 2, ansi::h) << ansi::br;
+	std::cout << ansi::bl << repeat(ansi::h, absWidth - 2) << ansi::br;
+
 
 	int innerX = x + 1;
 	int innerY = y + 1;
