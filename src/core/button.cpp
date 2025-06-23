@@ -22,6 +22,20 @@ void Button::render(int x, int y, int w, int h) const
 		return;
 	}
 
+	// Dirty logic
+	static bool last_active = false;
+	static std::string last_label;
+	bool state_changed = (text_value != last_label) || (active != last_active);
+
+	if (!state_changed && !is_dirty()) {
+		return;
+	}
+	if (state_changed) {
+		mark_dirty();
+	}
+	last_label = text_value;
+	last_active = active;
+
 	// styles
 	if (!active) {
 		if (!style.color.empty()) std::cout << style.color;

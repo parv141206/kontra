@@ -10,8 +10,8 @@ void Screen::render(int x, int y, int w, int h) const {
 	SetConsoleOutputCP(CP_UTF8);
 #endif
 
-	ansi::clear_screen();
-	std::cout << "\033[2J\033[H";
+	//ansi::clear_screen();
+	//std::cout << "\033[2J\033[H";
 
 	auto [termWidth, termHeight] = ansi::get_terminal_size();
 

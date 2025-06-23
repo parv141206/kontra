@@ -148,7 +148,7 @@ namespace kontra {
 				}
 #endif
 				if (dirty) {
-					clearScreen();
+					//clearScreen();
 					auto [termWidth, termHeight] = ansi::get_terminal_size();
 					screen->render(1, 1, 100, 100);
 					std::cout << std::flush;

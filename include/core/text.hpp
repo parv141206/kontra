@@ -62,6 +62,7 @@ struct TextStyleBuilder {
 class Text : public Component {
     std::function<std::string()> text;
     TextStyle style;
+    mutable std::string last_rendered_value;
 public:
 
     // Following is only for static test, simply a literal passed.

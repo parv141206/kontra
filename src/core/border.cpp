@@ -20,6 +20,17 @@ Border& Border::set_padding(int p) {
 }
 
 void Border::render(int x, int y, int w, int h) const {
+
+	// Dirty check
+	bool any_dirty = is_dirty();
+	for (const auto& child : children) {
+		if (child->is_dirty()) {
+			any_dirty = true;
+			break;
+		}
+	}
+	if (!any_dirty) return;
+
 	// I know following doesnt really make sense, for now it works , so it works :)
 	auto [termWidth, termHeight] = ansi::get_terminal_size();
 	int absWidth = (w * 100) / 100;
@@ -41,7 +52,9 @@ void Border::render(int x, int y, int w, int h) const {
 
 	for (int i = 1; i < absHeight - 1; ++i) {
 		ansi::move_cursor(y + i, x);
-		std::cout << ansi::v << std::string(absWidth - 2, ' ') << ansi::v;
+		std::cout << ansi::v; 
+		ansi::move_cursor(y + i, x + absWidth - 1);
+		std::cout << ansi::v; 
 	}
 
 	ansi::move_cursor(y + absHeight - 1, x);
@@ -65,4 +78,6 @@ void Border::render(int x, int y, int w, int h) const {
 		children[i]->render(innerX + padding, currentChildY + padding, innerW - padding, childHeight - padding);
 		currentChildY += childHeight;
 	}
+	clear_dirty();
+	//for (const auto& child : children) child->clear_dirty();
 }

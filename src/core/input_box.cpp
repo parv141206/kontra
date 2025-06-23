@@ -84,6 +84,25 @@ void InputBox::handle_input(char ch) {
 }
 
 void InputBox::render(int x, int y, int w, int h) const {
+	for (int row = 0; row < h; ++row) {
+		ansi::move_cursor(y + row, x);
+		std::cout << std::string(w, ' ');
+	}
+	std::string value = get_text();
+	static std::string last_value;
+	// Dirty check
+	static bool last_active = false;
+	bool state_changed = (value != last_value) || (active != last_active);
+
+	if (!state_changed && !is_dirty()) {
+		return;
+	}
+	if (state_changed) {
+		mark_dirty();
+	}
+	last_value = value;
+	last_active = active;
+	
 	int innerW = w - 2;
 	int innerH = h - 2;
 

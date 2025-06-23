@@ -12,7 +12,27 @@
 
 class Component
 {
+protected:
+	mutable bool dirty = true;
 public:
+
+	/**
+	 * Marks the component as dirty, indicating that it needs to be redrawn.
+	 */
+	void mark_dirty() const { dirty = true; }
+
+	/**
+	 * Clears the dirty flag, indicating that the component does not need to be redrawn.
+	 */
+	void clear_dirty() const { dirty = false; }
+
+	/**
+	 * Checks if the component is marked as dirty.
+	 * \return true if the component is dirty, false otherwise.
+	 */
+	bool is_dirty() const { return dirty; }
+
+
 	/**
 	 * \brief Renders the component at the specified position and size.
 	 * \param x The x-coordinate of the component's position.

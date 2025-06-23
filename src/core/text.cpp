@@ -29,7 +29,20 @@ int Text::get_preferred_height(int width) const {
 void Text::render(int x, int y, int w, int h) const
 {
     std::string text_value = text();
+
+    // Dirty checking:
+    if (text_value == last_rendered_value && !is_dirty()) {
+        return;
+    }
+
+    if (text_value != last_rendered_value) {
+        mark_dirty();
+    }
+
+    last_rendered_value = text_value;
+
     if (w <= 0 || h <= 0 || text_value.empty()) {
+        clear_dirty();
         return;
     }
 
@@ -66,4 +79,5 @@ void Text::render(int x, int y, int w, int h) const
         std::cout << std::string(w, ' '); 
         current_y++;
     }
+    clear_dirty();
 }
