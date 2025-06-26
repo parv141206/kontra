@@ -1,7 +1,7 @@
 /*****************************************************************//**
  * \file   button.hpp
  * \brief  A simple button with on_click!
- * 
+ *
  * \author parv141206
  * \date   June 2025
  *********************************************************************/
@@ -81,6 +81,9 @@ private:
 	std::function<void()> on_click_callback;
 	ButtonStyle style;
 
+	mutable std::string last_label;
+	mutable bool last_active = false;
+
 public:
 
 	// For normal text labels
@@ -120,4 +123,12 @@ public:
 	 * @param h The height of the input box.
 	 */
 	void render(int x, int y, int w, int h) const override;
+private:
+	// Last state for dirty checking and rendering optimization
+	struct LastState {
+		int x = 0, y = 0, w = 0, h = 0;
+		std::string label;
+		bool active = false;
+	};
+	mutable LastState last_state;
 };

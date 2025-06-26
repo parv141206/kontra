@@ -1,26 +1,8 @@
-#include "core/list.hpp"
+#include "core/input.hpp"
 #include "core/ansi.hpp"
 #include <iostream>
 
-void List::add(std::shared_ptr<Component> comp) {
-    children.push_back(std::move(comp));
-}
-
-List& List::set_gap(int g) {
-    gap = g;
-    return *this;
-}
-
-List& List::set_padding(int p) {
-    padding = p;
-    return *this;
-}
-
-void List::clear() {
-    children.clear();
-}
-
-int List::get_preferred_height(int width) const {
+int Input::get_preferred_height(int width) const {
     int absWidth = width > 2 * padding ? width - 2 * padding : 0;
     int total = 0;
     if (!children.empty()) {
@@ -33,10 +15,30 @@ int List::get_preferred_height(int width) const {
     return total;
 }
 
-void List::render(int x, int y, int w, int h) const {
+void Input::add(std::shared_ptr<InputBox> inputBox) {
+    children.push_back(std::move(inputBox));
+}
+
+void Input::clear() {
+    
+    children.clear();
+}
+
+Input& Input::set_gap(int g) {
+    gap = g;
+    return *this;
+}
+
+Input& Input::set_padding(int p) {
+    padding = p;
+    return *this;
+}
+
+
+void Input::render(int x, int y, int w, int h) const {
     bool frame_changed = !(
         last_state.x == x && last_state.y == y && last_state.w == w && last_state.h == h &&
-        last_state.child_count == children.size() 
+        last_state.child_count == children.size() && last_state.gap == gap && last_state.padding == padding
         );
 
     if (frame_changed) {
@@ -48,12 +50,11 @@ void List::render(int x, int y, int w, int h) const {
     for (const auto& child : children) {
         int child_h = child->get_preferred_height(inner_w);
         if (currentY + child_h > y + h) break;
-
         child->render(x + padding, currentY, inner_w, child_h);
         currentY += child_h + gap;
     }
 
     if (frame_changed) {
-        last_state = { x, y, w, h, children.size() };
+        last_state = { x, y, w, h, children.size(), gap, padding };
     }
 }

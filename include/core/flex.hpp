@@ -68,6 +68,7 @@ public:
 
 	/// Clears all children from the layout.
 	void clear();
+
 	/**
 	 * \brief Renders the component at the specified position and size.
 	 * \param x The x-coordinate of the component's position.
@@ -98,4 +99,14 @@ private:
 	 * Ends the variadic recursion.
 	 */
 	void add_components() {}
+
+	// Last state for dirty checking and rendering optimization
+	struct LastState {
+		int x = 0, y = 0, w = 0, h = 0;
+		size_t child_count = 0;
+		int gap = 0;
+		int padding = 0;
+		FlexDirection direction;
+	};
+	mutable LastState last_state;
 };

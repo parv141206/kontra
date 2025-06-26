@@ -11,17 +11,11 @@
 
 int InputBox::get_preferred_height(int width) const {
 	if (width <= 2) return 3;
-
 	int innerW = width - 2;
+	if (!wrap) return 3;
 
-	if (!wrap) {
-		return 3;
-	}
-
-	// wrapped mode
 	int lines = 1;
 	int currentLineLength = 0;
-
 	for (char c : text) {
 		if (c == '\n') {
 			lines++;
@@ -35,13 +29,13 @@ int InputBox::get_preferred_height(int width) const {
 			}
 		}
 	}
-
-	return lines + 2; // Adding 2 for top and bottom borders :3
+	return lines + 2;
 }
 
-
 void InputBox::set_active(bool is_active) {
-	active = is_active;
+	if (active != is_active) {
+		active = is_active;
+	}
 }
 
 bool InputBox::is_active() const {
@@ -60,18 +54,18 @@ void InputBox::handle_input(char ch) {
 	if (!active) return;
 
 	switch (ch) {
-	case '\b': case 127:  // backspace
+	case '\b': case 127:
 		if (cursor > 0) {
 			text.erase(cursor - 1, 1);
 			cursor--;
 		}
 		break;
-	case 27:  // ESC, optional exit
+	case 27:
 		break;
-	case 75:  // LEFT arrow
+	case 75:
 		if (cursor > 0) cursor--;
 		break;
-	case 77:  // RIGHT arrow
+	case 77:
 		if (cursor < (int)text.size()) cursor++;
 		break;
 	default:
@@ -84,43 +78,24 @@ void InputBox::handle_input(char ch) {
 }
 
 void InputBox::render(int x, int y, int w, int h) const {
-	for (int row = 0; row < h; ++row) {
-		ansi::move_cursor(y + row, x);
-		std::cout << std::string(w, ' ');
-	}
-	std::string value = get_text();
-	static std::string last_value;
-	// Dirty check
-	static bool last_active = false;
-	bool state_changed = (value != last_value) || (active != last_active);
-
-	if (!state_changed && !is_dirty()) {
+	if (last_state.x == x && last_state.y == y && last_state.w == w && last_state.h == h && last_state.text == text && last_state.cursor == cursor && last_state.active == active) {
 		return;
 	}
-	if (state_changed) {
-		mark_dirty();
-	}
-	last_value = value;
-	last_active = active;
-	
+
+	clear_area(last_state.x, last_state.y, last_state.w, last_state.h);
+
 	int innerW = w - 2;
 	int innerH = h - 2;
 
-	// Top border
 	ansi::move_cursor(y, x);
 	std::cout << ansi::tl << repeat(ansi::h, innerW) << ansi::tr;
 
-
-	// Content rows
 	for (int row = 0; row < innerH; ++row) {
 		ansi::move_cursor(y + 1 + row, x);
 		std::cout << ansi::v;
-
-		int start = 0;
 		std::string line(innerW, ' ');
-
 		if (wrap) {
-			start = row * innerW;
+			int start = row * innerW;
 			if (start < (int)text.size()) {
 				std::string slice = text.substr(start, innerW);
 				line.replace(0, slice.size(), slice);
@@ -128,30 +103,30 @@ void InputBox::render(int x, int y, int w, int h) const {
 		}
 		else {
 			if (row == 0) {
-				int offset = std::max(0, cursor - innerW);
+				int offset = std::max(0, cursor - innerW + 1);
 				std::string visible = text.substr(offset, innerW);
 				line.replace(0, visible.size(), visible);
 			}
 		}
 
-		// Draws text line with cursor if it lands on this row, basically the | block as a cursor
 		std::cout << line << ansi::v;
 
 		if (active) {
-			int cur_row = wrap ? (cursor / innerW) : 0;
-			int cur_col = wrap ? (cursor % innerW) : std::min(cursor, innerW - 1);
+			int display_cursor_pos = cursor - (wrap ? 0 : std::max(0, cursor - innerW + 1));
+			int cur_row = wrap ? (display_cursor_pos / innerW) : 0;
+			int cur_col = wrap ? (display_cursor_pos % innerW) : display_cursor_pos;
+
 			if (row == cur_row && cur_col < innerW) {
-				std::cout << "\033[s";
+				ansi::save_cursor();
 				ansi::move_cursor(y + 1 + cur_row, x + 1 + cur_col);
-				std::cout << "\033[7m" << line[cur_col] << "\033[0m";
-				std::cout << "\033[u";
+				char char_under_cursor = (cur_col < (int)line.length()) ? line[cur_col] : ' ';
+				std::cout << "\033[7m" << char_under_cursor << "\033[0m"; // Inverse video
+				ansi::restore_cursor();
 			}
 		}
-
 	}
 
-	// Bottom border
 	ansi::move_cursor(y + h - 1, x);
 	std::cout << ansi::bl << repeat(ansi::h, innerW) << ansi::br;
-
+	last_state = { x, y, w, h, text, cursor, active };
 }

@@ -10,3 +10,4 @@
 #include "./core/list.hpp"
 #include "./core/input_box.hpp"
 #include "./core/button.hpp"
+#include "./core/input.hpp"

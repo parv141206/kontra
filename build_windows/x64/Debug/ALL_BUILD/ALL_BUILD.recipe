@@ -14,6 +14,9 @@
       <FullPath>X:\projects\cpp\kontra\build_windows\Debug\test_main.exe</FullPath>
     </ProjectOutput>
     <ProjectOutput>
+      <FullPath>X:\projects\cpp\kontra\build_windows\Debug\test_todo_app.exe</FullPath>
+    </ProjectOutput>
+    <ProjectOutput>
       <FullPath>X:\projects\cpp\kontra\build_windows\x64\Debug\ALL_BUILD</FullPath>
     </ProjectOutput>
   </ProjectOutputs>

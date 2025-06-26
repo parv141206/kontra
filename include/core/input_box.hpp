@@ -1,7 +1,7 @@
 /*****************************************************************//**
  * \file   input_box.hpp
  * \brief  Basically a simple text box!
- * 
+ *
  * \author parv141206
  * \date   June 2025
  *********************************************************************/
@@ -14,9 +14,13 @@
 class InputBox : public Component {
 private:
     std::string text;
-    bool active;     
+    bool active;
     bool wrap = false;
     int cursor = 0;
+
+    mutable std::string last_rendered_text;
+    mutable bool last_rendered_active = false;
+    mutable int last_rendered_cursor = -1;
 
 public:
 
@@ -34,7 +38,7 @@ public:
     /**
      * @brief Lemmi guess...
      * @return True if the input box is active, false otherwise.
-	 */
+     */
     bool is_active() const;
 
     /**
@@ -64,4 +68,14 @@ public:
      * @param h The height of the input box.
      */
     void render(int x, int y, int w, int h) const override;
+private:
+
+    // Last state for dirty checking and rendering optimization
+    struct LastState {
+        int x = 0, y = 0, w = 0, h = 0;
+        std::string text;
+        int cursor = 0;
+        bool active = false;
+    };
+    mutable LastState last_state;
 };

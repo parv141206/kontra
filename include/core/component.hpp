@@ -1,53 +1,40 @@
 /*****************************************************************//**
  * \file   component.hpp
- * \brief  This file defines the Component interface for GUI elements.
- * The component can be inherited to create specific GUI components.
- * Each component must implement the render method to draw itself.
- *
- * \author parv141206
- * \date   June 2025
+ * \brief  The new, simplified component interface.
  *********************************************************************/
 #pragma once
 #include <iostream>
 
 class Component
 {
-protected:
-	mutable bool dirty = true;
 public:
+    virtual ~Component() = default;
 
-	/**
-	 * Marks the component as dirty, indicating that it needs to be redrawn.
+    /**
+     * Renders the component. The component itself will determine if a redraw
+     * is necessary by comparing the new state (x,y,w,h, content) to its
+     * last rendered state.
+     */
+    virtual void render(int x, int y, int w, int h) const = 0;
+
+    /**
+     * Returns the preferred height of the component. This is used to determine
+     * how much space the component would like to occupy in a layout.
 	 */
-	void mark_dirty() const { dirty = true; }
+    virtual int get_preferred_height(int width) const { return 1; }
 
-	/**
-	 * Clears the dirty flag, indicating that the component does not need to be redrawn.
-	 */
-	void clear_dirty() const { dirty = false; }
-
-	/**
-	 * Checks if the component is marked as dirty.
-	 * \return true if the component is dirty, false otherwise.
-	 */
-	bool is_dirty() const { return dirty; }
-
-
-	/**
-	 * \brief Renders the component at the specified position and size.
-	 * \param x The x-coordinate of the component's position.
-	 * \param y The y-coordinate of the component's position.
-	 * \param w The width of the component.
-	 * \param h The height of the component.
-	 */
-	virtual void render(int x, int y, int w, int h) const = 0;
-
-	/**
-	 * \brief Returns the preferred height of the component for a given width.
-	 * Used to prevent overflowing of content like text.
-	 * \param width The width given to the component.
-	 */
-	virtual int get_preferred_height(int width) const { return 1; }
-
-	virtual ~Component() = default;
+protected:
+    /**
+     * Helper function to clear a rectangular area of the terminal.
+     * Every component will use this to erase its old self.
+     */
+    void clear_area(int x, int y, int w, int h) const {
+        if (w <= 0 || h <= 0) return;
+        for (int i = 0; i < h; ++i) {
+            std::cout << "\033[" << y + i << ";" << x << "H";
+            for (int j = 0; j < w; ++j) {
+                std::cout << ' ';
+            }
+        }
+    }
 };

@@ -38,6 +38,8 @@ public:
 	 */
 	Border& set_padding(int p);
 
+	int get_preferred_height(int width) const override;
+
 	/**
 	 * @brief Renders the input box at the specified position and size.
 	 * @param x The x-coordinate of the input box's position.
@@ -83,4 +85,11 @@ private:
 	 * Ends the variadic recursion.
 	 */
 	void add_components() {}
+
+	// Last state for dirty checking and rendering optimization
+	struct LastState {
+		int x = 0, y = 0, w = 0, h = 0;
+		int padding = 0;
+	};
+	mutable LastState last_state;
 };

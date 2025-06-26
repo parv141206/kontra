@@ -5,79 +5,72 @@
 #include <string>          
 #include <algorithm>
 #include <memory>
+#ifdef _WIN32
+#undef min
+#undef max
+#endif
+
+int Border::get_preferred_height(int width) const {
+    int inner_width = width > 2 ? width - 2 - (2 * padding) : 0;
+    int children_height = 0;
+    for (const auto& child : children) {
+        if (child) {
+            children_height += child->get_preferred_height(inner_width);
+        }
+    }
+    return children_height + 2 + (2 * padding);
+}
+
 
 void Border::add_component(const std::shared_ptr<Component>& comp) {
-	children.push_back(comp);
+    children.push_back(comp);
 }
 
 void Border::add_component(std::shared_ptr<Component>&& comp) {
-	children.push_back(std::move(comp));
+    children.push_back(std::move(comp));
 }
 
 Border& Border::set_padding(int p) {
-	padding = p;
-	return *this;
+    padding = p;
+    return *this;
 }
 
 void Border::render(int x, int y, int w, int h) const {
+    if (last_state.x == x && last_state.y == y && last_state.w == w && last_state.h == h && last_state.padding == padding) {
+        if (!children.empty()) {
+            int innerX = x + 1;
+            int innerY = y + 1;
+            int innerW = w - 2;
+            int innerH = h - 2;
+            if (innerW > 0 && innerH > 0) {
+                children[0]->render(innerX + padding, innerY + padding, innerW - (2 * padding), innerH - (2 * padding));
+            }
+        }
+        return;
+    }
+    clear_area(last_state.x, last_state.y, last_state.w, last_state.h);
+    if (w >= 2 && h >= 2) {
+        ansi::move_cursor(y, x);
+        std::cout << ansi::tl << repeat(ansi::h, w - 2) << ansi::tr;
+        for (int i = 1; i < h - 1; ++i) {
+            ansi::move_cursor(y + i, x);
+            std::cout << ansi::v;
+            ansi::move_cursor(y + i, x + w - 1);
+            std::cout << ansi::v;
+        }
+        ansi::move_cursor(y + h - 1, x);
+        std::cout << ansi::bl << repeat(ansi::h, w - 2) << ansi::br;
+    }
 
-	// Dirty check
-	bool any_dirty = is_dirty();
-	for (const auto& child : children) {
-		if (child->is_dirty()) {
-			any_dirty = true;
-			break;
-		}
-	}
-	if (!any_dirty) return;
+    if (!children.empty()) {
+        int innerX = x + 1;
+        int innerY = y + 1;
+        int innerW = w - 2;
+        int innerH = h - 2;
+        if (innerW > 0 && innerH > 0) {
+            children[0]->render(innerX + padding, innerY + padding, innerW - (2 * padding), innerH - (2 * padding));
+        }
+    }
 
-	// I know following doesnt really make sense, for now it works , so it works :)
-	auto [termWidth, termHeight] = ansi::get_terminal_size();
-	int absWidth = (w * 100) / 100;
-	int absHeight = (h * 100) / 100;
-
-	if (absWidth < 2 || absHeight < 2) {
-		int count = children.size();
-		if (count > 0) {
-			int childHeight = absHeight / count;
-			for (int i = 0; i < count; ++i) {
-				children[i]->render(x, y + i * childHeight, absWidth, childHeight);
-			}
-		}
-		return;
-	}
-
-	ansi::move_cursor(y, x);
-	std::cout << ansi::tl << repeat(ansi::h, absWidth - 2) << ansi::tr;
-
-	for (int i = 1; i < absHeight - 1; ++i) {
-		ansi::move_cursor(y + i, x);
-		std::cout << ansi::v; 
-		ansi::move_cursor(y + i, x + absWidth - 1);
-		std::cout << ansi::v; 
-	}
-
-	ansi::move_cursor(y + absHeight - 1, x);
-	std::cout << ansi::bl << repeat(ansi::h, absWidth - 2) << ansi::br;
-
-
-	int innerX = x + 1;
-	int innerY = y + 1;
-	int innerW = absWidth - 2;
-	int innerH = absHeight - 2;
-
-	if (innerW <= 0 || innerH <= 0) return;
-
-	int count = children.size();
-	if (count == 0) return;
-
-	int childHeight = innerH / count;
-	int currentChildY = innerY;
-
-	for (int i = 0; i < count; ++i) {
-		children[i]->render(innerX + padding, currentChildY + padding, innerW - padding, childHeight - padding);
-		currentChildY += childHeight;
-	}
-	clear_dirty();
-	//for (const auto& child : children) child->clear_dirty();
+    last_state = { x, y, w, h, padding };
 }

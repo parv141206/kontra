@@ -3,81 +3,59 @@
 #include <iostream>
 #include <string>
 #include <algorithm> 
+#ifdef _WIN32
+#undef min
+#undef max
+#endif
+
 
 int Text::get_preferred_height(int width) const {
     if (width <= 0) return 1;
 
-    int lines = 1;
-    int currentLineLength = 0;
+    int lines = 0;
     std::string text_value = text();
-    for (char c : text_value) {
-        if (c == '\n') {
-            lines++;
-            currentLineLength = 0;
-        }
-        else {
-            currentLineLength++;
-            if (currentLineLength >= width) {
-                lines++;
-                currentLineLength = 0;
-            }
-        }
+    if (text_value.empty()) return 1;
+
+    int current_pos = 0;
+    while (current_pos < text_value.length()) {
+        lines++;
+        current_pos += width;
     }
     return lines;
 }
 
-void Text::render(int x, int y, int w, int h) const
-{
+void Text::render(int x, int y, int w, int h) const {
     std::string text_value = text();
 
-    // Dirty checking:
-    if (text_value == last_rendered_value && !is_dirty()) {
+    std::string current_text = text();
+
+    if (last_state.x == x && last_state.y == y && last_state.w == w && last_state.h == h && last_state.text == current_text) {
         return;
     }
-
-    if (text_value != last_rendered_value) {
-        mark_dirty();
-    }
-
-    last_rendered_value = text_value;
-
-    if (w <= 0 || h <= 0 || text_value.empty()) {
-        clear_dirty();
-        return;
-    }
-
-    // styles
+    clear_area(last_state.x, last_state.y, last_state.w, last_state.h);
     if (!style.color.empty()) std::cout << style.color;
     if (!style.background_color.empty()) std::cout << style.background_color;
     if (style.bold) std::cout << ansi::BOLD;
     if (style.underline) std::cout << ansi::UNDERLINE;
     if (style.italic) std::cout << ansi::ITALIC;
 
-    int current_y = y; 
-    int text_pos = 0; 
+    for (int i = 0; i < h; ++i) {
+        ansi::move_cursor(y + i, x);
+        std::cout << std::string(w, ' ');
+    }
+
+    int current_y = y;
+    int text_pos = 0;
 
     while (text_pos < text_value.length() && (current_y - y) < h) {
         ansi::move_cursor(current_y, x);
-        int chars_on_line = (w < (int)(text_value.length() - text_pos)) ? w : (int)(text_value.length() - text_pos);
-
+        int chars_on_line = std::min(w, (int)(text_value.length() - text_pos));
         std::cout << text_value.substr(text_pos, chars_on_line);
-
-        if (chars_on_line < w) {
-            std::cout << std::string(w - chars_on_line, ' ');
-        }
-
         text_pos += chars_on_line;
-
         current_y++;
     }
-
     std::cout << ansi::RESET;
 
-	// This is just filling up the remaining space with empty lines if needed, couldnt find a better way to do this :/
-    while ((current_y - y) < h) {
-        ansi::move_cursor(current_y, x);
-        std::cout << std::string(w, ' '); 
-        current_y++;
-    }
-    clear_dirty();
+
+    last_state = { x, y, w, h, current_text, style };
 }

@@ -88,4 +88,13 @@ public:
      * @param h The height of the input box.
      */
     void render(int x, int y, int w, int h) const override;
+protected:
+
+    // Last state for dirty checking and rendering optimization
+    struct LastState {
+        int x, y, w, h;
+        std::string text;
+        TextStyle style; 
+    };
+    mutable LastState last_state;
 };
