@@ -1,0 +1,8 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/KontraTargets.cmake")
+
+set(Kontra_INCLUDE_DIRS "@PACKAGE_INCLUDE_INSTALL_DIR@")
+set(Kontra_LIBRARIES kontra)
+
+# Add any additional configuration variables here if needed.
