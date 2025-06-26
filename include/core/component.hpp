@@ -4,6 +4,7 @@
  *********************************************************************/
 #pragma once
 #include <iostream>
+#include "core/screen_buffer.hpp"
 
 class Component
 {
@@ -15,7 +16,7 @@ public:
      * is necessary by comparing the new state (x,y,w,h, content) to its
      * last rendered state.
      */
-    virtual void render(int x, int y, int w, int h) const = 0;
+    virtual void render(ScreenBuffer& buffer, int x, int y, int w, int h) const = 0;
 
     /**
      * Returns the preferred height of the component. This is used to determine
@@ -28,7 +29,7 @@ protected:
      * Helper function to clear a rectangular area of the terminal.
      * Every component will use this to erase its old self.
      */
-    void clear_area(int x, int y, int w, int h) const {
+    void clear_area(ScreenBuffer& buffer, int x, int y, int w, int h) const {
         if (w <= 0 || h <= 0) return;
         for (int i = 0; i < h; ++i) {
             std::cout << "\033[" << y + i << ";" << x << "H";

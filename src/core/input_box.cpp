@@ -76,57 +76,50 @@ void InputBox::handle_input(char ch) {
 		break;
 	}
 }
+void InputBox::render(ScreenBuffer& buffer, int x, int y, int w, int h) const {
+	const std::string border_style = ansi::RESET;
+	const std::string text_style = ansi::RESET;
+	const std::string cursor_style = ansi::INVERSE;
 
-void InputBox::render(int x, int y, int w, int h) const {
-	if (last_state.x == x && last_state.y == y && last_state.w == w && last_state.h == h && last_state.text == text && last_state.cursor == cursor && last_state.active == active) {
-		return;
-	}
-
-	clear_area(last_state.x, last_state.y, last_state.w, last_state.h);
-
-	int innerW = w - 2;
-	int innerH = h - 2;
-
-	ansi::move_cursor(y, x);
-	std::cout << ansi::tl << repeat(ansi::h, innerW) << ansi::tr;
-
-	for (int row = 0; row < innerH; ++row) {
-		ansi::move_cursor(y + 1 + row, x);
-		std::cout << ansi::v;
-		std::string line(innerW, ' ');
-		if (wrap) {
-			int start = row * innerW;
-			if (start < (int)text.size()) {
-				std::string slice = text.substr(start, innerW);
-				line.replace(0, slice.size(), slice);
-			}
-		}
-		else {
-			if (row == 0) {
-				int offset = std::max(0, cursor - innerW + 1);
-				std::string visible = text.substr(offset, innerW);
-				line.replace(0, visible.size(), visible);
-			}
-		}
-
-		std::cout << line << ansi::v;
-
-		if (active) {
-			int display_cursor_pos = cursor - (wrap ? 0 : std::max(0, cursor - innerW + 1));
-			int cur_row = wrap ? (display_cursor_pos / innerW) : 0;
-			int cur_col = wrap ? (display_cursor_pos % innerW) : display_cursor_pos;
-
-			if (row == cur_row && cur_col < innerW) {
-				ansi::save_cursor();
-				ansi::move_cursor(y + 1 + cur_row, x + 1 + cur_col);
-				char char_under_cursor = (cur_col < (int)line.length()) ? line[cur_col] : ' ';
-				std::cout << "\033[7m" << char_under_cursor << "\033[0m"; // Inverse video
-				ansi::restore_cursor();
-			}
+	const int innerW = w - 2;
+	int scroll_offset = 0;
+	if (innerW > 0 && !wrap) {
+		if (cursor >= innerW) {
+			scroll_offset = cursor - innerW + 1;
 		}
 	}
 
-	ansi::move_cursor(y + h - 1, x);
-	std::cout << ansi::bl << repeat(ansi::h, innerW) << ansi::br;
-	last_state = { x, y, w, h, text, cursor, active };
+	for (int i = 0; i < h; ++i) {
+		for (int j = 0; j < w; ++j) {
+			const int current_x = x + j;
+			const int current_y = y + i;
+
+			const bool is_top = (i == 0);
+			const bool is_bottom = (i == h - 1);
+			const bool is_left = (j == 0);
+			const bool is_right = (j == w - 1);
+
+			if (is_top && is_left) { buffer.set_cell(current_x, current_y, ansi::tl, border_style); continue; }
+			if (is_top && is_right) { buffer.set_cell(current_x, current_y, ansi::tr, border_style); continue; }
+			if (is_bottom && is_left) { buffer.set_cell(current_x, current_y, ansi::bl, border_style); continue; }
+			if (is_bottom && is_right) { buffer.set_cell(current_x, current_y, ansi::br, border_style); continue; }
+			if (is_top || is_bottom) { buffer.set_cell(current_x, current_y, ansi::h, border_style); continue; }
+			if (is_left || is_right) { buffer.set_cell(current_x, current_y, ansi::v, border_style); continue; }
+
+			const int content_col = j - 1;
+			wchar_t char_to_draw = L' ';
+			std::string style_to_use = text_style;
+
+			if (scroll_offset + content_col < text.length()) {
+				char_to_draw = text[scroll_offset + content_col];
+			}
+
+			const int cursor_in_view_col = cursor - scroll_offset;
+			if (active && content_col == cursor_in_view_col) {
+				style_to_use = cursor_style;
+			}
+
+			buffer.set_cell(current_x, current_y, std::string(1, char_to_draw), style_to_use);
+		}
+	}
 }

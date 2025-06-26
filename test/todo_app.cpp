@@ -38,8 +38,8 @@ int main() {
         for (size_t i = 0; i < tasks.size(); ++i) {
             // Dynamically choose a style based on whether the task is selected.
             auto style = (selected_task == static_cast<int>(i))
-                ? TextStyle(ansi::FG_BLACK, ansi::BG_YELLOW, true, false) // Highlighted style
-                : TextStyle(ansi::FG_WHITE, "", false, false);             // Default style
+                ? TextStyle(ansi::FG_BLACK, ansi::BG_YELLOW, false, false)             // Default style
+                : TextStyle(ansi::FG_WHITE, ansi::BG_DEFAULT, true, false); // Highlighted style
 
             // Create a new Text component for each task. The lambda ensures the
             // text updates if the underlying data were to change.

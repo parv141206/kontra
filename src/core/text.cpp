@@ -1,62 +1,47 @@
 #include "core/text.hpp"
 #include "core/ansi.hpp"
-#include <iostream>
+#include "core/screen_buffer.hpp"
 #include <string>
-#include <algorithm> 
+#include <algorithm>
+
 #ifdef _WIN32
 #undef min
 #undef max
 #endif
 
 int Text::get_preferred_height(int width) const {
-    if (width <= 0) return 1;
-    int lines = 0;
-    std::string text_value = text();
-    if (text_value.empty()) return 1;
-    int current_pos = 0;
-    while (current_pos < text_value.length()) {
-        lines++;
-        current_pos += width;
-    }
-    return lines;
+	if (width <= 0) return 1;
+	std::string text_value = text();
+	if (text_value.empty()) return 1;
+	return (text_value.length() + width - 1) / width;
 }
 
-void Text::render(int x, int y, int w, int h) const {
-    std::string current_text = text();
 
-    if (last_state.x == x && last_state.y == y && last_state.w == w && last_state.h == h && last_state.text == current_text) {
-        return;
-    }
+void Text::render(ScreenBuffer& buffer, int x, int y, int w, int h) const {
+	std::string style_str = style.color + style.background_color;
+	if (style.bold) style_str += ansi::BOLD;
+	if (style.underline) style_str += ansi::UNDERLINE;
+	if (style.italic) style_str += ansi::ITALIC;
 
-    clear_area(last_state.x, last_state.y, last_state.w, last_state.h);
+	std::string text_value = text();
+	int actual_text_lines = get_preferred_height(w);
 
-    int text_pos = 0;
-
-    for (int i = 0; i < h; ++i) {
-        ansi::move_cursor(y + i, x);
-
-        if (text_pos < current_text.length()) {
-            if (!style.color.empty()) std::cout << style.color;
-            if (!style.background_color.empty()) std::cout << style.background_color;
-            if (style.bold) std::cout << ansi::BOLD;
-            if (style.underline) std::cout << ansi::UNDERLINE;
-            if (style.italic) std::cout << ansi::ITALIC;
-
-            int chars_on_line = std::min(w, (int)current_text.length() - text_pos);
-            std::cout << current_text.substr(text_pos, chars_on_line);
-            text_pos += chars_on_line;
-
-            if (chars_on_line < w) {
-                std::cout << std::string(w - chars_on_line, ' ');
-            }
-        }
-        else {
-            std::cout << ansi::RESET;
-            std::cout << std::string(w, ' ');
-        }
-    }
-
-    std::cout << ansi::RESET;
-
-    last_state = { x, y, w, h, current_text };
+	int text_pos = 0;
+	for (int i = 0; i < h; ++i) {
+		if (i < actual_text_lines) {
+			for (int j = 0; j < w; ++j) {
+				char char_to_draw = ' ';
+				if (text_pos < text_value.length()) {
+					char_to_draw = text_value[text_pos];
+				}
+				buffer.set_cell(x + j, y + i, std::string(1, char_to_draw), style_str);
+				text_pos++;
+			}
+		}
+		else {
+			for (int j = 0; j < w; ++j) {
+				buffer.set_cell(x + j, y + i, " ", ansi::RESET);
+			}
+		}
+	}
 }

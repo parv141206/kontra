@@ -19,51 +19,35 @@ void Flex::clear() {
 	children.clear();
 }
 
-void Flex::render(int x, int y, int w, int h) const {
-    bool frame_changed = !(
-        last_state.x == x && last_state.y == y && last_state.w == w && last_state.h == h &&
-        last_state.child_count == children.size() && last_state.gap == gap &&
-        last_state.padding == padding && last_state.direction == direction
-        );
+void Flex::render(ScreenBuffer& buffer, int x, int y, int w, int h) const {
+	int count = children.size();
+	if (count == 0) return;
 
-    if (frame_changed) {
-        clear_area(last_state.x, last_state.y, last_state.w, last_state.h);
-    }
+	int innerX = x + padding;
+	int innerY = y + padding;
+	int innerW = w - (2 * padding);
+	int innerH = h - (2 * padding);
 
-    int count = children.size();
-    if (count > 0) {
-        int innerX = x + padding;
-        int innerY = y + padding;
-        int innerW = w - (2 * padding);
-        int innerH = h - (2 * padding);
-
-        if (direction == FlexDirection::Column) {
-            int totalGap = gap * (count - 1);
-            int availableHeight = innerH - totalGap;
-            int childHeight = availableHeight > 0 ? availableHeight / count : 0;
-            int currentY = innerY;
-
-            for (const auto& child : children) {
-                if (currentY >= y + h) break;
-                child->render(innerX, currentY, innerW, childHeight);
-                currentY += childHeight + gap;
-            }
-        }
-        else { // FlexDirection::Row
-            int totalGap = gap * (count - 1);
-            int availableWidth = innerW - totalGap;
-            int childWidth = availableWidth > 0 ? availableWidth / count : 0;
-            int currentX = innerX;
-
-            for (const auto& child : children) {
-                if (currentX >= x + w) break;
-                child->render(currentX, innerY, childWidth, innerH);
-                currentX += childWidth + gap;
-            }
-        }
-    }
-
-    if (frame_changed) {
-        last_state = { x, y, w, h, children.size(), gap, padding, direction };
-    }
+	if (direction == FlexDirection::Column) {
+		int totalGap = gap * (count - 1);
+		int availableHeight = innerH - totalGap;
+		int childHeight = availableHeight > 0 ? availableHeight / count : 0;
+		int currentY = innerY;
+		for (const auto& child : children) {
+			if (currentY >= y + h) break;
+			child->render(buffer, innerX, currentY, innerW, childHeight);
+			currentY += childHeight + gap;
+		}
+	}
+	else {
+		int totalGap = gap * (count - 1);
+		int availableWidth = innerW - totalGap;
+		int childWidth = availableWidth > 0 ? availableWidth / count : 0;
+		int currentX = innerX;
+		for (const auto& child : children) {
+			if (currentX >= x + w) break;
+			child->render(buffer, currentX, innerY, childWidth, innerH);
+			currentX += childWidth + gap;
+		}
+	}
 }

@@ -16,42 +16,25 @@ void Button::click() {
 	if (on_click_callback) on_click_callback();
 }
 
-void Button::render(int x, int y, int w, int h) const {
+void Button::render(ScreenBuffer& buffer, int x, int y, int w, int h) const {
 	std::string current_label = label();
-	bool current_active = is_active();
 
-	if (last_state.x == x && last_state.y == y && last_state.w == w && last_state.h == h && last_state.label == current_label && last_state.active == current_active) {
-		return;
-	}
+	std::string style_str = is_active()
+		? style.color_active + style.background_color_active
+		: style.color + style.background_color;
 
-	clear_area(last_state.x, last_state.y, last_state.w, last_state.h);
-
-	if (!active) {
-		if (!style.color.empty()) std::cout << style.color;
-		if (!style.background_color.empty()) std::cout << style.background_color;
-	}
-	else {
-		if (!style.color_active.empty()) std::cout << style.color_active;
-		if (!style.background_color_active.empty()) std::cout << style.background_color_active;
-	}
-	if (style.bold) std::cout << ansi::BOLD;
-	if (style.underline) std::cout << ansi::UNDERLINE;
-	if (style.italic) std::cout << ansi::ITALIC;
+	if (style.bold) style_str += ansi::BOLD;
+	if (style.underline) style_str += ansi::UNDERLINE;
+	if (style.italic) style_str += ansi::ITALIC;
 
 	for (int i = 0; i < h; ++i) {
-		ansi::move_cursor(y + i, x);
-		std::cout << std::string(w, ' ');
+		for (int j = 0; j < w; ++j) {
+			char char_to_draw = ' ';
+			int text_pos = (i * w) + j;
+			if (text_pos < current_label.length()) {
+				char_to_draw = current_label[text_pos];
+			}
+			buffer.set_cell(x + j, y + i, std::string(1, char_to_draw), style_str);
+		}
 	}
-
-	int current_y = y;
-	int text_pos = 0;
-	while (text_pos < current_label.length() && (current_y - y) < h) {
-		ansi::move_cursor(current_y, x);
-		int chars_on_line = (w < (int)(current_label.length() - text_pos)) ? w : (int)(current_label.length() - text_pos);
-		std::cout << current_label.substr(text_pos, chars_on_line);
-		text_pos += chars_on_line;
-		current_y++;
-	}
-	std::cout << ansi::RESET;
-	last_state = { x, y, w, h, current_label, current_active };
 }

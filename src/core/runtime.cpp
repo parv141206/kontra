@@ -11,12 +11,12 @@
  */
 #include "core/runtime.hpp"
 #include "core/ansi.hpp"
-
+#include "core/screen_buffer.hpp"
 #include <iostream>
 #include <thread>
 #include <chrono>
 
-// VIBE CODE STARTS HERE
+ // VIBE CODE STARTS HERE
 
 #ifdef _WIN32
 #include <windows.h>
@@ -130,29 +130,52 @@ namespace kontra {
 
 	void run(std::shared_ptr<Screen> screen, std::function<void(char)> onInput) {
 		init();
-		bool dirty = true;
+		ansi::hide_cursor();
+
+		auto [w, h] = ansi::get_terminal_size();
+		ScreenBuffer current_buffer(w, h);
+		ScreenBuffer previous_buffer(w, h);
+		std::cout << ansi::CLEAR_SCREEN << std::flush;
+
+		bool needs_render = true;
 
 		try {
 			while (true) {
-#ifdef _WIN32
-				if (_kbhit()) {
-					char ch = _getch();
-					if (onInput) onInput(ch);
-					dirty = true;
-				}
-#else
 				if (kbhit()) {
-					char ch = getch();
-					if (onInput) onInput(ch);
-					dirty = true;
+					if (onInput) onInput(getch());
+					needs_render = true;
 				}
-#endif
-				if (dirty) {
-					//clearScreen();
-					auto [termWidth, termHeight] = ansi::get_terminal_size();
-					screen->render(1, 1, 100, 100);
-					std::cout << std::flush;
-					dirty = false;
+
+				if (needs_render) {
+					auto [term_w, term_h] = ansi::get_terminal_size();
+					if (term_w != current_buffer.width() || term_h != current_buffer.height()) {
+						current_buffer.resize(term_w, term_h);
+						previous_buffer.resize(term_w, term_h);
+						std::cout << ansi::CLEAR_SCREEN;
+					}
+
+					current_buffer.clear();
+					screen->render(current_buffer, 0, 0, current_buffer.width(), current_buffer.height());
+
+					std::string out_str;
+					for (int y = 0; y < current_buffer.height(); ++y) {
+						for (int x = 0; x < current_buffer.width(); ++x) {
+							if (current_buffer.get_cell(x, y) != previous_buffer.get_cell(x, y)) {
+
+								out_str += "\033[" + std::to_string(y + 1) + ";" + std::to_string(x + 1) + "H";
+								const auto& cell = current_buffer.get_cell(x, y);
+
+								out_str += cell.style;
+
+								out_str += cell.character;
+							}
+						}
+					}
+					out_str += ansi::RESET;
+					std::cout << out_str << std::flush;
+
+					previous_buffer = current_buffer;
+					needs_render = false;
 				}
 
 				std::this_thread::sleep_for(std::chrono::milliseconds(16));

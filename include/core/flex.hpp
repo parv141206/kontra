@@ -76,7 +76,7 @@ public:
 	 * \param w The width of the component.
 	 * \param h The height of the component.
 	 */
-	virtual void render(int x, int y, int w, int h) const override;
+	virtual void render(ScreenBuffer& buffer, int x, int y, int w, int h) const override;
 
 private:
 	/**
@@ -99,14 +99,4 @@ private:
 	 * Ends the variadic recursion.
 	 */
 	void add_components() {}
-
-	// Last state for dirty checking and rendering optimization
-	struct LastState {
-		int x = 0, y = 0, w = 0, h = 0;
-		size_t child_count = 0;
-		int gap = 0;
-		int padding = 0;
-		FlexDirection direction;
-	};
-	mutable LastState last_state;
 };
