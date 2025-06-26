@@ -7,23 +7,39 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 file(GLOB_RECURSE KONTRA_SOURCES CONFIGURE_DEPENDS src/*.cpp)
 file(GLOB_RECURSE KONTRA_HEADERS CONFIGURE_DEPENDS include/*.hpp)
 
-add_library(kontra ${KONTRA_SOURCES} ${KONTRA_HEADERS} "src/core/button.cpp" "test/button.cpp")
+add_library(kontra ${KONTRA_SOURCES} ${KONTRA_HEADERS})
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 target_include_directories(kontra PUBLIC include)
 
 # ─────────────────────────────────────────────────────
-# Test executable
+# Helper function to link an executable against the kontra library
 function(link_kontra_test target)
     target_link_libraries(${target} PRIVATE kontra)
     target_include_directories(${target} PRIVATE include)
 endfunction()
 
-add_executable(test_main test/main.cpp)
-add_executable(test_input test/input_box.cpp)
-add_executable(test_button test/button.cpp)
-add_executable(test_todo_app test/todo_app.cpp)
+# ─────────────────────────────────────────────────────
+# Examples
+# Each example is defined as a separate executable target
+# and then linked using helper function.
 
-link_kontra_test(test_main)
-link_kontra_test(test_input)
-link_kontra_test(test_button)
-link_kontra_test(test_todo_app)
+add_executable(run_main examples/main.cpp)
+link_kontra_test(run_main)
+
+add_executable(run_border_example examples/border_example.cpp)
+link_kontra_test(run_border_example)
+
+add_executable(run_button_example examples/button_example.cpp)
+link_kontra_test(run_button_example)
+
+add_executable(run_flex_example examples/flex_example.cpp)
+link_kontra_test(run_flex_example)
+
+add_executable(run_input_box_example examples/input_box_example.cpp)
+link_kontra_test(run_input_box_example)
+
+add_executable(run_list_example examples/list_example.cpp)
+link_kontra_test(run_list_example)
+
+add_executable(run_todo_showcase examples/showcase/todo_app_showcase.cpp)
+link_kontra_test(run_todo_showcase)

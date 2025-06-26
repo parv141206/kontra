@@ -55,6 +55,12 @@ public:
     std::string get_text() const;
 
     /**
+     * @brief Sets the text of the input box.
+	 * @param new_text The new text to set in the input box.
+     */
+	void set_text(const std::string& new_text);
+
+    /**
      * @brief Handles input for the input box.
      * @param ch The character input to process (DUDE PASS THIS CAREFULLY, SEE DOCS).
      */

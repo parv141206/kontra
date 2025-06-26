@@ -50,6 +50,11 @@ std::string InputBox::get_text() const {
 	return text;
 }
 
+void InputBox::set_text(const std::string& new_text) {
+    text = new_text;
+    cursor = std::min(cursor, (int)text.size());
+}
+
 void InputBox::handle_input(char ch) {
 	if (!active) return;
 
