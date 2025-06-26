@@ -1,5 +1,5 @@
-﻿<p align="center">
-  <img src="./docs/kontra_logo.svg" height="300">
+﻿﻿<p align="center">
+  <img src="./docs/kontra_logo.svg" height="200">
 </p>
 
 <h1 align="center">Kontra</h1>
@@ -9,21 +9,8 @@
 
 # 🚀 What is Kontra?
 
-**Kontra** lets you build awesome terminal user interfaces with C++.  
-No clunky GUI frameworks, no weird DSLs — just clean code, styled boxes, and full control.
-
-It’s built for devs who love the terminal and want their apps to feel sharp, responsive, and fun to use.  
-Layout systems, input handling, styled text, borders — all baked in and easy to use.
-
----
-
-### ⚡ Why you'll love it
-
-- 🔲 Layouts that don’t fight you  
-- 🎨 Customizable styling (hello, ANSI magic)  
-- 🎯 Smooth keyboard input & focus handling  
-- 🧩 Build clean components and compose them with ease  
-- 🧵 Looks terminal, feels modern
+**Kontra** is a C++ library for building sleek terminal UIs — no GUI bloat, no weird DSLs.
+Just clean code, styled boxes, smooth input, and full control — all in your terminal.
 
 ---
 
