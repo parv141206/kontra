@@ -50,7 +50,7 @@ public:
 	/// Clears all children from the Input.
 	void clear();
 
-	int Input::get_preferred_height(int width) const override;
+	int get_preferred_height(int width) const override;
 
 	/**
 	 * \brief Renders the component at the specified position and size.
