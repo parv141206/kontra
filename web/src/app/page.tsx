@@ -8,7 +8,7 @@ import UtilityShowcase from "~/components/home/UtilityShowcase";
 import { SubTitle } from "~/components/text-utils";
 export default function HomePage() {
   return (
-    <main className="relative mx-auto flex min-h-screen max-w-7xl flex-col items-center border border-dashed border-gray-600">
+    <main className="relative mx-auto flex min-h-screen max-w-7xl flex-col items-center overflow-x-hidden border border-dashed border-gray-600 md:overflow-x-visible">
       <section className="relative flex w-full flex-col items-center justify-center gap-5 border-b border-dashed border-gray-600 py-64">
         <Branding />
       </section>

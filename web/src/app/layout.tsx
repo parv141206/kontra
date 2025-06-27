@@ -3,6 +3,7 @@ import "~/styles/globals.css";
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import Navbar from "~/components/Navbar";
+import Footer from "~/components/Footer";
 
 export const metadata: Metadata = {
   title: "Kontra",
@@ -23,9 +24,10 @@ export default function RootLayout({
       lang="en"
       className={`${geist.variable} max-w-screen overflow-x-hidden bg-black text-[#ededed]`}
     >
-      <body className="max-w-screen overflow-x-hidden">
+      <body className="relative min-h-screen max-w-screen">
         <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );

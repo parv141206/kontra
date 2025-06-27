@@ -4,7 +4,7 @@ import { Corner } from "../Corner";
 
 export default function ComponentsShowcase() {
   return (
-    <div className="flex w-full flex-col gap-5 md:flex-row">
+    <div className="flex w-full flex-col gap-5 md:flex-row md:gap-0">
       <div className="flex flex-col gap-5 border-b border-dashed border-gray-600 p-7 md:w-1/2 md:border-e md:border-b-0">
         <SubTitle>Components</SubTitle>
         <Details className="flex flex-col gap-3">
