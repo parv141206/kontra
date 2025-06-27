@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
+import Navbar from "~/components/Navbar";
 
 export const metadata: Metadata = {
   title: "Kontra",
@@ -18,8 +19,14 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geist.variable}`}>
-      <body>{children}</body>
+    <html
+      lang="en"
+      className={`${geist.variable} max-w-screen overflow-x-hidden bg-black text-[#ededed]`}
+    >
+      <body className="max-w-screen overflow-x-hidden">
+        <Navbar />
+        {children}
+      </body>
     </html>
   );
 }

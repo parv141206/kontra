@@ -1,6 +1,15 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter&family=Lexend&family=Press+Start+2P&family=Silkscreen&display=swap");
+
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
+  --font-sans:
+    var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-title: "Silkscreen", "monospace";
+  --font-sub-title: "Lexend";
+  --font-body: "Inter";
+}
+body {
+  @apply font-body;
 }
