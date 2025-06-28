@@ -62,8 +62,8 @@ This is the fastest and easiest way to integrate Kontra. It automatically fetche
     # We recommend pinning to a specific version/release tag for stability.
     CPMAddPackage(
         NAME Kontra
-        GITHUB_REPOSITORY parv141206/kontra # Replace with your actual username/repo
-        GIT_TAG main                     # Or use a release tag like "v1.0.0"
+        GITHUB_REPOSITORY parv141206/kontra 
+        GIT_TAG master
     )
 
     # Create your application executable
