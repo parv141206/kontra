@@ -20,7 +20,7 @@ export default function Branding() {
         <SubTitle>Build wicked terminal UIs in raw C++</SubTitle>
 
         <div className="flex items-center justify-center gap-3 drop-shadow-2xl drop-shadow-black">
-          <ButtonLink href="/docs" title="Documentation" />
+          <ButtonLink href="/docs/getting-started" title="Documentation" />
           <ButtonLink
             href="https://github.com/parv141206/kontra"
             newTab

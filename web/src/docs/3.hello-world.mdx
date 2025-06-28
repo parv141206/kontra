@@ -1,0 +1,166 @@
+import { CodeBlock } from "~/components/CodeBlock";
+
+# Hello, World! 🌟
+
+Welcome to your first **Kontra TUI** app!  
+Let’s walk through a simple example to understand the **core structure** and **flow** of any Kontra application.
+
+---
+
+## 🧠 The Big Picture
+
+A basic Kontra app follows this simple flow:
+
+1. **Create Components** – like `Text` or `InputBox`.
+2. **Wrap them in Layouts** – like `Border`, `Flex`, or `List`.
+3. **Render everything inside a `Screen`** – the root container.
+4. **Call `kontra::run()`** – to launch the app and handle user input.
+
+---
+
+## 📦 Includes
+
+<CodeBlock
+  lang="cpp"
+  code={`
+    #include "../include/kontra.hpp"
+    #include <memory> // for std::make_shared
+    `}
+/>
+
+---
+
+## Step 1: Create the Text
+
+<CodeBlock
+  lang="cpp"
+  code={`
+    auto hello_text = std::make_shared<Text>(
+        "Hello, may the force be with you!",
+        TextStyle(ansi::FG_YELLOW, "", true) // yellow + bold
+    );
+
+`}
+/>
+
+<br />
+
+- The `TextStyle` lets you style text with foreground color, background
+  color, and options like bold. - All components in Kontra are created using
+  `std::make_shared`, so memory is managed automatically.
+
+---
+
+## Step 2: Wrap it with a Border
+
+<CodeBlock
+  lang="cpp"
+  code={`
+    auto bordered_text = std::make_shared<Border>(hello_text);
+    bordered_text->set_padding(2);
+    `}
+/>
+
+<br />
+
+- The `Border` component wraps anything you give it.
+- `set_padding(2)` adds spacing around the text inside the border.
+
+---
+
+## Step 3: Create a Screen
+
+<CodeBlock
+  lang="cpp"
+  code={`
+    auto screen = std::make_shared<Screen>(bordered_text);
+  
+  `}
+/>
+
+<br />
+
+Every UI needs a screen – think of it like the canvas your TUI will be drawn on.
+
+---
+
+## Step 4: Run the App
+
+<CodeBlock
+  lang="cpp"
+  code={`
+    kontra::run(screen, [&](char ch) {
+        if (ch == 17) exit(0); // Ctrl+Q to quit
+    });
+
+`}
+/>
+
+<br />
+
+- The second parameter is a lambda function that handles **keypress events**.
+- Here, pressing **Ctrl+Q** (ASCII 17) exits the app.
+
+---
+
+## 🚀 Final Code
+
+<CodeBlock
+  lang="cpp"
+  code={String.raw`
+    #include "../include/kontra.hpp" 
+    #include <memory>
+
+    int main() {
+        // It's good practice to clear the terminal screen before starting
+        // the TUI application to ensure a clean slate.
+        ansi::clear_screen();
+
+        auto hello_text = std::make_shared<Text>(
+            "Hello, may the force be with you!",
+            TextStyle(ansi::FG_YELLOW, "", true) // Yellow, bold text
+        );
+
+        auto bordered_text = std::make_shared<Border>(hello_text);
+
+        bordered_text->set_padding(2);
+
+        auto screen = std::make_shared<Screen>(bordered_text);
+
+        kontra::run(screen, [&](char ch) {
+            // We define a simple exit condition. If the user presses Ctrl+Q
+            // (which corresponds to character code 17), the program exits cleanly.
+            if (ch == 17) {
+                exit(0);
+            }
+        });
+
+        return 0;
+    }
+
+`}
+/>
+
+---
+
+## ✅ Output
+
+<img
+  src="/images/hello-world.png"
+  className="w-full"
+  alt="Kontra Logo"
+  width="200"
+/>
+
+---
+
+## 🏁 Summary
+
+You just built your first terminal UI with **Kontra** – clean, minimal, and fully in your control.
+
+### But hey — this is just the beginning.
+
+Every component in Kontra packs a punch. With powerful layouts, rich styling, and interactive elements, there's a lot more waiting for you under the hood.
+
+Start exploring, start building.  
+Your terminal deserves better. 🚀

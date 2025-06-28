@@ -24,7 +24,7 @@ export default function RootLayout({
       lang="en"
       className={`${geist.variable} max-w-screen overflow-x-hidden bg-black text-[#ededed]`}
     >
-      <body className="relative min-h-screen max-w-screen">
+      <body className="relative flex min-h-screen max-w-screen flex-col">
         <Navbar />
         {children}
         <Footer />

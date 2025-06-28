@@ -12,7 +12,7 @@ export default function Conclusion() {
         <p>Layouts, inputs, styles — all minimal, all documented, all yours.</p>
         <p>Crack it open, copy a snippet, and ⚡ boom — terminal UI magic.</p>
         <div className="my-5 flex items-center justify-center gap-3 drop-shadow-2xl drop-shadow-black">
-          <ButtonLink href="/docs" title="Documentation" />
+          <ButtonLink href="/docs/getting-started" title="Documentation" />
           <ButtonLink
             href="https://github.com/parv141206/kontra"
             newTab

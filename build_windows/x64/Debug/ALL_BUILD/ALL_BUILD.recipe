@@ -5,25 +5,25 @@
       <FullPath>X:\projects\cpp\kontra\build_windows\x64\Debug\ZERO_CHECK</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>X:\projects\cpp\kontra\build_windows\Debug\run_border_example.exe</FullPath>
+      <FullPath>X:\projects\cpp\kontra\build_windows\examples\Debug\run_border_example.exe</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>X:\projects\cpp\kontra\build_windows\Debug\run_button_example.exe</FullPath>
+      <FullPath>X:\projects\cpp\kontra\build_windows\examples\Debug\run_button_example.exe</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>X:\projects\cpp\kontra\build_windows\Debug\run_flex_example.exe</FullPath>
+      <FullPath>X:\projects\cpp\kontra\build_windows\examples\Debug\run_flex_example.exe</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>X:\projects\cpp\kontra\build_windows\Debug\run_input_box_example.exe</FullPath>
+      <FullPath>X:\projects\cpp\kontra\build_windows\examples\Debug\run_input_box_example.exe</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>X:\projects\cpp\kontra\build_windows\Debug\run_list_example.exe</FullPath>
+      <FullPath>X:\projects\cpp\kontra\build_windows\examples\Debug\run_list_example.exe</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>X:\projects\cpp\kontra\build_windows\Debug\run_main.exe</FullPath>
+      <FullPath>X:\projects\cpp\kontra\build_windows\examples\Debug\run_main.exe</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>X:\projects\cpp\kontra\build_windows\Debug\run_todo_showcase.exe</FullPath>
+      <FullPath>X:\projects\cpp\kontra\build_windows\examples\Debug\run_todo_showcase.exe</FullPath>
     </ProjectOutput>
     <ProjectOutput>
       <FullPath>X:\projects\cpp\kontra\build_windows\x64\Debug\ALL_BUILD</FullPath>

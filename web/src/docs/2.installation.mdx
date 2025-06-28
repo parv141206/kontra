@@ -1,0 +1,155 @@
+# Installation
+
+Getting Kontra TUI into your project is designed to be simple, modern, and efficient — just like the terminal UIs you’ll build with it. You’ve got two ways to integrate it, depending on your preferences.
+
+---
+
+## Method 1: The Modern Way with `CPM.cmake` (Recommended ✨)
+
+This is the fastest and cleanest way to use Kontra — no cloning, no hassle. It fetches the library automatically during the CMake configuration step.
+
+### Prerequisites:
+
+- A **C++17** compatible compiler.
+- **CMake** version **3.16** or higher.
+
+### Step 1: Download `CPM.cmake`
+
+Download the latest `CPM.cmake` from [CPM Github](https://github.com/cpm-cmake/CPM.cmake) by following the steps given and place it in a `cmake/` folder in your project.
+
+<CodeBlock
+  lang="text"
+  theme="ayu-dark"
+  code={String.raw`
+    YourCoolApp/
+    ├── main.cpp
+    ├── CMakeLists.txt
+    └── external/
+        └── kontra/
+
+`}/>
+
+### Step 2: Add Kontra to your `CMakeLists.txt`
+
+<CodeBlock lang="cmake" theme="ayu-dark" code={String.raw`
+    # YourCoolApp/CMakeLists.txt
+
+    cmake_minimum_required(VERSION 3.16)
+    project(YourCoolApp LANGUAGES CXX)
+
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+    # Tell CMake where CPM.cmake is
+    list(APPEND CMAKE_MODULE_PATH "\${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+    include(CPM)
+
+    # ✨ Fetch Kontra from GitHub
+    CPMAddPackage(
+        NAME Kontra
+        GITHUB_REPOSITORY parv141206/kontra
+        GIT_TAG master
+    )
+
+    add_executable(YourCoolApp main.cpp)
+
+    # Link Kontra
+    target_link_libraries(YourCoolApp PRIVATE kontra)
+
+`}/>
+
+### Step 3: Build
+
+<CodeBlock
+  lang="bash"
+  theme="ayu-dark"
+  code={String.raw`
+    cmake -S . -B build
+    cmake --build build
+
+`}
+/>
+
+You're done! 🚀
+
+---
+
+## 📦 Method 2: The Classic Way with `git submodule`
+
+Use this method if you prefer to track Kontra directly in your repository or want to work offline.
+
+### Prerequisites:
+
+- `git`
+- A **C++17** compatible compiler
+- **CMake** 3.16+
+
+### Step 1: Add Kontra as a Git Submodule
+
+<CodeBlock
+  lang="bash"
+  theme="ayu-dark"
+  code={String.raw`
+    git submodule add https://github.com/parv141206/kontra.git external/kontra
+    git submodule update --init --recursive
+
+`}
+/>
+
+Resulting structure:
+
+<CodeBlock
+  lang="text"
+  theme="ayu-dark"
+  code={String.raw`
+    YourCoolApp/
+    ├── main.cpp
+    ├── CMakeLists.txt
+    └── external/
+        └── kontra/
+
+`}/>
+
+### Step 2: Modify `CMakeLists.txt`
+
+<CodeBlock
+  lang="cmake"
+  theme="ayu-dark"
+  code={String.raw`
+    # YourCoolApp/CMakeLists.txt
+
+    cmake_minimum_required(VERSION 3.16)
+    project(YourCoolApp LANGUAGES CXX)
+
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+    # 📦 Add Kontra from local subdirectory
+    add_subdirectory(external/kontra)
+
+    add_executable(YourCoolApp main.cpp)
+
+    # Link Kontra
+    target_link_libraries(YourCoolApp PRIVATE kontra)
+
+`}/>
+
+### Step 3: Build
+
+<CodeBlock
+  lang="bash"
+  theme="ayu-dark"
+  code={String.raw`
+    cmake -S . -B build
+    cmake --build build
+
+`}
+/>
+
+---
+
+Still deciding?  
+🔰 Use **CPM.cmake** if you want ease of setup and automatic updates.  
+🔒 Use **submodules** if you want local control and version locking.
+
+Either way, you're just a few lines away from building stylish terminal apps in C++. ✨

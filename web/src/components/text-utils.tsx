@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { cn } from "~/lib/utils"; // assuming you use a clsx + twMerge based utility
+import { cn } from "~/lib/utils";
 
 interface TextProps {
   children: ReactNode;
