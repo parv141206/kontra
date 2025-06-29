@@ -18,7 +18,7 @@ export default function PreviousAndNext({ slug }: Props) {
   const next = allDocs[currentIndex + 1];
 
   return (
-    <div className="text-muted-foreground mt-16 flex w-full flex-col gap-4 border-t border-dashed border-gray-600 pt-8 text-sm md:flex-row md:justify-between">
+    <div className="text-muted-foreground mt-16 flex w-full flex-row gap-4 border-t border-dashed border-gray-600 pt-8 text-sm md:flex-row md:justify-between">
       {prev ? (
         <Link
           href={`/docs/${prev.slug.join("/")}`}

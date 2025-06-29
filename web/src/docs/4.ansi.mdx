@@ -1,0 +1,185 @@
+# `ansi.hpp`
+
+The `ansi.hpp` header is your all-in-one utility to control **terminal appearance and behavior** using ANSI escape codes.
+
+It exposes predefined constants for colors, text styles, and cursor control - making it incredibly easy to style components and customize your terminal UI **without manually writing escape sequences**.
+
+> This is the file I used in Kontra to build pretty much every component! It's packed with escape sequences I dug up from all corners of the internet :)
+
+---
+
+## Usage
+
+- You don't need to include it separately.
+
+- You can simply do following,
+
+`#include <kontra.hpp>`
+
+---
+
+## ✨ Why use `ansi.hpp`?
+
+- Easy to use
+- Type-safe and constexpr-defined
+- Clean abstraction over ugly ANSI escape codes
+- Works on **Linux, macOS**, and **Windows**
+
+---
+
+## 🎨 Colors
+
+You can change foreground (text) or background colors using predefined constants:
+
+### Foreground Colors
+
+<CodeBlock 
+    border
+    code={`
+    ansi::FG_BLACK
+    ansi::FG_RED
+    ansi::FG_GREEN
+    ansi::FG_YELLOW
+    ansi::FG_BLUE
+    ansi::FG_MAGENTA
+    ansi::FG_CYAN
+    ansi::FG_WHITE
+
+    ansi::FG_BRIGHT_BLACK
+    ansi::FG_BRIGHT_RED
+    ansi::FG_BRIGHT_GREEN
+    ansi::FG_BRIGHT_YELLOW
+    ansi::FG_BRIGHT_BLUE
+    ansi::FG_BRIGHT_MAGENTA
+    ansi::FG_BRIGHT_CYAN
+    ansi::FG_BRIGHT_WHITE
+
+    ansi::FG_DEFAULT
+    `}
+
+/>
+
+### Background Colors
+
+<CodeBlock 
+    border
+    code={`
+    ansi::BG_BLACK
+    ansi::BG_RED
+    ansi::BG_GREEN
+    ansi::BG_YELLOW
+    ansi::BG_BLUE
+    ansi::BG_MAGENTA
+    ansi::BG_CYAN
+    ansi::BG_WHITE
+
+    ansi::BG_BRIGHT_BLACK
+    ansi::BG_BRIGHT_RED
+    ansi::BG_BRIGHT_GREEN
+    ansi::BG_BRIGHT_YELLOW
+    ansi::BG_BRIGHT_BLUE
+    ansi::BG_BRIGHT_MAGENTA
+    ansi::BG_BRIGHT_CYAN
+    ansi::BG_BRIGHT_WHITE
+
+    ansi::BG_DEFAULT
+    `}
+
+/>
+
+### Resetting
+
+- You can reset all the color and other effects simply using,
+
+<CodeBlock
+  border
+  code={`
+    ansi::RESET
+    `}
+/>
+
+---
+
+## ✍️ Text Styles
+
+<CodeBlock
+  border
+  code={`
+    ansi::BOLD
+    ansi::DIM
+    ansi::ITALIC
+    ansi::UNDERLINE
+    ansi::INVERSE
+    ansi::STRIKETHROUGH
+    `}
+/>
+
+---
+
+## ➡️ Cursor Utilities
+
+Want to move or hide the cursor?
+
+<CodeBlock
+  border
+  code={`
+    ansi::move_cursor(row, col);
+    ansi::move_up(n);
+    ansi::move_down(n);
+    ansi::move_left(n);
+    ansi::move_right(n);
+
+    ansi::hide_cursor();
+    ansi::show_cursor();
+
+    ansi::save_cursor();
+    ansi::restore_cursor();
+    `}
+
+/>
+
+---
+
+## 🧹 Screen & Line Clearing
+
+<CodeBlock
+  border
+  code={`
+    ansi::clear_screen();       // Clears entire screen and moves cursor to top
+    ansi::clear_line();         // Clears current line
+    `}
+
+/>
+
+- Manual control also possible with:
+
+<CodeBlock
+  border
+  code={`
+    ansi::CLEAR_SCREEN
+    ansi::CLEAR_ENTIRE_LINE
+    ansi::CLEAR_TO_END
+    ansi::CLEAR_LINE_TO_START
+    `}
+/>
+
+---
+
+## 📐 Terminal Size
+
+- Get the current terminal width and height:
+
+<CodeBlock
+  border
+  code={`
+    auto [cols, rows] = ansi::get_terminal_size();
+    `}
+/>
+
+---
+
+## TL;DR
+
+- The ansi.hpp module is a powerful and convenient helper for customizing your terminal UI in Kontra.
+
+- Use it to colorize, stylize, move cursors, and more - with zero boilerplate.

@@ -79,7 +79,7 @@ export default function Sidebar({ slugs }: SidebarProps) {
   };
 
   return (
-    <div className="sticky top-24 w-full self-start border-r border-dashed border-gray-600 p-4 md:w-fit">
+    <div className="sticky top-24 z-20 w-full self-start border-r border-dashed border-gray-600 p-4 backdrop-blur-3xl md:w-fit">
       <aside className="bg-with-noise w-full rounded border border-gray-700 px-4 py-3 md:w-64 md:border-none md:bg-transparent md:px-0">
         <div className="mb-2 flex items-center justify-between md:mb-4 md:border-b md:border-dashed md:border-gray-600 md:pb-2">
           <div className="text-lg font-bold text-gray-100">Docs</div>

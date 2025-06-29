@@ -13,3 +13,23 @@
 body {
   @apply font-body;
 }
+/* scrollbar */
+/* width */
+::-webkit-scrollbar {
+  @apply w-1 md:w-2;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  @apply bg-[#000000];
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  @apply rounded-xl bg-[#00ff5e];
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-[#01c047];
+}

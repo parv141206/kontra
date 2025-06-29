@@ -13,7 +13,7 @@ export default function Branding() {
         width={900}
         height={900}
         alt="Kontra logo"
-        className="absolute z-[-1] opacity-20"
+        className="absolute z-[-1] w-full opacity-20 md:w-auto"
       />
       <div className="flex flex-col items-center justify-center gap-5 drop-shadow-2xl drop-shadow-black text-shadow-black text-shadow-lg">
         <MainTitle>Kontra</MainTitle>

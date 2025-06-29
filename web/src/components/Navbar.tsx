@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { RiMenu3Fill } from "react-icons/ri";
 import clsx from "clsx";
+import { FaGithub } from "react-icons/fa";
 
 export default function Navbar() {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -78,6 +79,11 @@ export default function Navbar() {
                 {item.label}
               </Link>
             ))}
+            <Link href="https://github.com/parv141206/kontra">
+              <div className="flex items-center justify-center gap-1 text-2xl">
+                <FaGithub />
+              </div>
+            </Link>
           </ul>
         </div>
       </div>
