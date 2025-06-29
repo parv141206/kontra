@@ -7,15 +7,44 @@ import Footer from "~/components/Footer";
 import { inter, lexend, silkscreen, pressStart } from "~/fonts";
 
 export const metadata: Metadata = {
-  title: "Kontra",
-  description: "Kontra",
+  title: "Kontra - Terminal UI Library",
+  description:
+    "Kontra is a terminal UI library for building text-based interfaces easily with styled components and layouts.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
+  keywords: [
+    "Kontra",
+    "terminal UI",
+    "TUI library",
+    "CLI UI",
+    "C++ TUI",
+    "C++",
+    "TUI",
+  ],
+  authors: [{ name: "Parv", url: "https://github.com/parv141206" }],
+  creator: "Parv",
+  openGraph: {
+    title: "Kontra - Terminal UI Library",
+    description: "Build beautiful text-based TUIs with Kontra.",
+    url: "https://kontralib.vercel.app/",
+    siteName: "Kontra",
+    images: [
+      {
+        url: "https://kontralib.vercel.app/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Kontra preview",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kontra - Terminal UI Framework",
+    description: "Build beautiful text-based UIs with Kontra.",
+    images: ["https://kontralib.vercel.app/og-image.png"],
+  },
 };
-
-const geist = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
 
 export default function RootLayout({
   children,
@@ -23,7 +52,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geist.variable} ${inter.variable} ${lexend.variable} ${silkscreen.variable} ${pressStart.variable} max-w-screen overflow-x-hidden bg-black text-[#ededed]`}
+      className={`${inter.variable} ${lexend.variable} ${silkscreen.variable} ${pressStart.variable} max-w-screen overflow-x-hidden bg-black text-[#ededed]`}
     >
       <body className="relative flex min-h-screen max-w-screen flex-col">
         <Navbar />

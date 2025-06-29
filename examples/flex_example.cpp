@@ -1,61 +1,61 @@
 // ===================================================================
 // KONTRA TUI: flex_example.cpp
 //
-// This example demonstrates the Flex layout container.
-// A Flex container arranges its children either horizontally (Row) or
-// vertically (Column). Its key feature is that it divides the available
-// space equally among all its children. This is useful for creating
-// side-by-side panels or evenly spaced sections.
+// This example demonstrates the `Flex` layout container, correcting a
+// common layout issue by using Flex as the top-level container.
 // ===================================================================
+
 #include "../include/kontra.hpp"
+
 int main() {
-	// --- 1. Create Components to Arrange ---
-	// We'll create several Text components with background colors to
-	// clearly visualize how the Flex container allocates space.
-	auto text1 = std::make_shared<Text>("Panel 1", TextStyle("", ansi::BG_RED));
-	auto text2 = std::make_shared<Text>("Panel 2", TextStyle("", ansi::BG_GREEN));
-	auto text3 = std::make_shared<Text>("Panel 3", TextStyle("", ansi::BG_BLUE));
+    // --- 1. Create Components to Arrange ---
+    auto panel1 = std::make_shared<Text>("Panel 1", TextStyle(ansi::FG_RED));
+    auto panel2 = std::make_shared<Text>("Panel 2", TextStyle(ansi::FG_GREEN));
+    auto panel3 = std::make_shared<Text>("Panel 3", TextStyle(ansi::FG_BLUE));
 
-	// --- 2. Create a Horizontal Flex Layout (Row) ---
-	// This Flex container will arrange its children from left to right.
-	// It will divide the total screen width by 3 for these children.
-	auto flex_row = std::make_shared<Flex>(
-		FlexDirection::Row,
-		text1,
-		text2,
-		text3
-	);
-	// A gap adds empty columns between the children.
-	flex_row->set_gap(5);
+    // --- 2. Create the Horizontal (Row) Example ---
+    auto flex_row = std::make_shared<Flex>(FlexDirection::Row, panel1, panel2, panel3);
+    flex_row->set_gap(5);
 
-	// --- 3. Create a Vertical Flex Layout (Column) ---
-	// This Flex container will arrange its children from top to bottom.
-	// We reuse the same text components for this demonstration.
-	auto flex_column = std::make_shared<Flex>(
-		FlexDirection::Column,
-		text1,
-		text2,
-		text3
-	);
-	flex_column->set_gap(1);
+    auto bordered_row_example = std::make_shared<Border>(
+        flex_row,
+        BorderStyleBuilder().set_title("FlexDirection::Row").set_color(ansi::FG_CYAN).build()
+    );
+    bordered_row_example->set_padding(1);
 
-	// --- 4. Combine Both Examples on One Screen ---
-	// We can nest layouts. Here, a vertical Flex container holds our
-	// row example and our column example, stacking them.
-	auto main_layout = std::make_shared<Flex>(
-		FlexDirection::Column,
-		flex_row,
-		flex_column
-	);
+    // --- 3. Create the Vertical (Column) Example ---
+    // NOTE: To avoid bugs with reusing components in multiple parents,
+    // we create new instances for the second example.
+    auto panel4 = std::make_shared<Text>("Panel 1", TextStyle(ansi::FG_RED));
+    auto panel5 = std::make_shared<Text>("Panel 2", TextStyle(ansi::FG_GREEN));
+    auto panel6 = std::make_shared<Text>("Panel 3", TextStyle(ansi::FG_BLUE));
 
-	auto screen = std::make_shared<Screen>(main_layout);
+    auto flex_column = std::make_shared<Flex>(FlexDirection::Column, panel4, panel5, panel6);
+    flex_column->set_gap(1);
 
-	// --- 5. Run the Application ---
-	kontra::run(screen, [&](char ch) {
-		if (ch == 17) { // Exit on Ctrl+Q
-			exit(0);
-		}
-		});
+    auto bordered_column_example = std::make_shared<Border>(
+        flex_column,
+        BorderStyleBuilder().set_title("FlexDirection::Column").set_color(ansi::FG_YELLOW).build()
+    );
+    bordered_column_example->set_padding(1);
 
-	return 0;
+    // --- 4. THE FIX: Use Flex as the Main Layout ---
+    // By using a Flex(Column) at the top level, we divide the entire screen
+    // height between our two bordered examples, giving them space to "flex".
+    auto main_layout = std::make_shared<Flex>(
+        FlexDirection::Column,
+        bordered_row_example,
+        bordered_column_example
+    );
+
+    auto screen = std::make_shared<Screen>(main_layout);
+
+    // --- 5. Run the Application ---
+    kontra::run(screen, [&](char ch) {
+        if (ch == 17) {
+            exit(0);
+        }
+        });
+
+    return 0;
 }
