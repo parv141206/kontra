@@ -1,7 +1,6 @@
 import "~/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Geist } from "next/font/google";
 import Navbar from "~/components/Navbar";
 import Footer from "~/components/Footer";
 import { inter, lexend, silkscreen, pressStart } from "~/fonts";

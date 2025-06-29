@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://kontralib.vercel.app
+
+# Sitemaps
+Sitemap: https://kontralib.vercel.app/sitemap.xml
