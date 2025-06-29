@@ -62,9 +62,6 @@ export const mdxComponents: MDXComponents = {
   ),
   ul: (props: ComponentPropsWithoutRef<"ul">) => (
     <ul
-      // THE FIX:
-      // 1. Change `list-inside` to `list-outside`. This is a more stable layout model.
-      // 2. Add left padding (e.g., `pl-6`) to make space for the bullet points.
       className="mb-4 list-outside list-disc space-y-2 pl-6 text-gray-300"
       {...props}
     />

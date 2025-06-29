@@ -3,7 +3,7 @@ import { CodeBlock } from "~/components/CodeBlock";
 # Hello, World! 🌟
 
 Welcome to your first **Kontra TUI** app!  
-Let’s walk through a simple example to understand the **core structure** and **flow** of any Kontra application.
+Let's walk through a simple example to understand the **core structure** and **flow** of any Kontra application.
 
 ---
 
@@ -21,6 +21,7 @@ A basic Kontra app follows this simple flow:
 ## 📦 Includes
 
 <CodeBlock
+  border
   lang="cpp"
   code={`
     #include "../include/kontra.hpp"
@@ -32,7 +33,7 @@ A basic Kontra app follows this simple flow:
 
 ## Step 1: Create the Text
 
-<CodeBlock
+<CodeBlock border 
   lang="cpp"
   code={`
     auto hello_text = std::make_shared<Text>(
@@ -43,8 +44,6 @@ A basic Kontra app follows this simple flow:
 `}
 />
 
-<br />
-
 - The `TextStyle` lets you style text with foreground color, background
   color, and options like bold. - All components in Kontra are created using
   `std::make_shared`, so memory is managed automatically.
@@ -54,14 +53,13 @@ A basic Kontra app follows this simple flow:
 ## Step 2: Wrap it with a Border
 
 <CodeBlock
+  border
   lang="cpp"
   code={`
     auto bordered_text = std::make_shared<Border>(hello_text);
     bordered_text->set_padding(2);
     `}
 />
-
-<br />
 
 - The `Border` component wraps anything you give it.
 - `set_padding(2)` adds spacing around the text inside the border.
@@ -71,6 +69,7 @@ A basic Kontra app follows this simple flow:
 ## Step 3: Create a Screen
 
 <CodeBlock
+  border
   lang="cpp"
   code={`
     auto screen = std::make_shared<Screen>(bordered_text);
@@ -78,15 +77,13 @@ A basic Kontra app follows this simple flow:
   `}
 />
 
-<br />
-
 Every UI needs a screen – think of it like the canvas your TUI will be drawn on.
 
 ---
 
 ## Step 4: Run the App
 
-<CodeBlock
+<CodeBlock border 
   lang="cpp"
   code={`
     kontra::run(screen, [&](char ch) {
@@ -96,8 +93,6 @@ Every UI needs a screen – think of it like the canvas your TUI will be drawn o
 `}
 />
 
-<br />
-
 - The second parameter is a lambda function that handles **keypress events**.
 - Here, pressing **Ctrl+Q** (ASCII 17) exits the app.
 
@@ -105,7 +100,7 @@ Every UI needs a screen – think of it like the canvas your TUI will be drawn o
 
 ## 🚀 Final Code
 
-<CodeBlock
+<CodeBlock border 
   lang="cpp"
   code={String.raw`
     #include "../include/kontra.hpp" 
@@ -158,7 +153,7 @@ Every UI needs a screen – think of it like the canvas your TUI will be drawn o
 
 You just built your first terminal UI with **Kontra** – clean, minimal, and fully in your control.
 
-### But hey — this is just the beginning.
+### But hey - this is just the beginning.
 
 Every component in Kontra packs a punch. With powerful layouts, rich styling, and interactive elements, there's a lot more waiting for you under the hood.
 

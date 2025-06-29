@@ -137,46 +137,43 @@ namespace kontra {
 		ScreenBuffer previous_buffer(w, h);
 		std::cout << ansi::CLEAR_SCREEN << std::flush;
 
-		bool needs_render = true;
-
 		try {
 			while (true) {
+
 				if (kbhit()) {
 					if (onInput) onInput(getch());
-					needs_render = true;
 				}
 
-				if (needs_render) {
-					auto [term_w, term_h] = ansi::get_terminal_size();
-					if (term_w != current_buffer.width() || term_h != current_buffer.height()) {
-						current_buffer.resize(term_w, term_h);
-						previous_buffer.resize(term_w, term_h);
-						std::cout << ansi::CLEAR_SCREEN;
-					}
+				auto [term_w, term_h] = ansi::get_terminal_size();
+				if (term_w != current_buffer.width() || term_h != current_buffer.height()) {
+					current_buffer.resize(term_w, term_h);
+					previous_buffer.resize(term_w, term_h);
+					std::cout << ansi::CLEAR_SCREEN; 
+				}
 
-					current_buffer.clear();
-					screen->render(current_buffer, 0, 0, current_buffer.width(), current_buffer.height());
+				current_buffer.clear();
+				screen->render(current_buffer, 0, 0, current_buffer.width(), current_buffer.height());
 
-					std::string out_str;
-					for (int y = 0; y < current_buffer.height(); ++y) {
-						for (int x = 0; x < current_buffer.width(); ++x) {
-							if (current_buffer.get_cell(x, y) != previous_buffer.get_cell(x, y)) {
-
-								out_str += "\033[" + std::to_string(y + 1) + ";" + std::to_string(x + 1) + "H";
-								const auto& cell = current_buffer.get_cell(x, y);
-
+				std::string out_str;
+				std::string last_style = " ";
+				for (int y = 0; y < current_buffer.height(); ++y) {
+					for (int x = 0; x < current_buffer.width(); ++x) {
+						if (current_buffer.get_cell(x, y) != previous_buffer.get_cell(x, y)) {
+							out_str += "\033[" + std::to_string(y + 1) + ";" + std::to_string(x + 1) + "H";
+							const auto& cell = current_buffer.get_cell(x, y);
+							if (cell.style != last_style) {
 								out_str += cell.style;
-
-								out_str += cell.character;
+								last_style = cell.style;
 							}
+							out_str += cell.character;
 						}
 					}
-					out_str += ansi::RESET;
-					std::cout << out_str << std::flush;
-
-					previous_buffer = current_buffer;
-					needs_render = false;
 				}
+				out_str += ansi::RESET;
+				out_str += ansi::HIDE_CURSOR;
+				std::cout << out_str << std::flush;
+
+				previous_buffer = current_buffer;
 
 				std::this_thread::sleep_for(std::chrono::milliseconds(16));
 			}

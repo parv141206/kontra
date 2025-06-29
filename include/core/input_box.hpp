@@ -17,10 +17,11 @@ private:
     bool active;
     bool wrap = false;
     int cursor = 0;
+    std::string label;
 
-    mutable std::string last_rendered_text;
-    mutable bool last_rendered_active = false;
-    mutable int last_rendered_cursor = -1;
+    //mutable std::string last_rendered_text;
+    //mutable bool last_rendered_active = false;
+    //mutable int last_rendered_cursor = -1;
 
 public:
 
@@ -40,6 +41,12 @@ public:
      * @return True if the input box is active, false otherwise.
      */
     bool is_active() const;
+
+    /**
+     * @brief Sets the label to be displayed in the top border of the input box.
+     * @param label_text The text to display.
+     */
+    void set_label(const std::string& label_text);
 
     /**
      * @brief Sets text wrap.

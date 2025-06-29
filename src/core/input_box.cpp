@@ -50,6 +50,10 @@ std::string InputBox::get_text() const {
 	return text;
 }
 
+void InputBox::set_label(const std::string& label_text) {
+    label = label_text;
+}
+
 void InputBox::set_text(const std::string& new_text) {
     text = new_text;
     cursor = std::min(cursor, (int)text.size());
@@ -90,8 +94,9 @@ void InputBox::render(ScreenBuffer& buffer, int x, int y, int w, int h) const {
 
     const int innerW = w - 2;
 
-    for (int i = 0; i < h; ++i) {  
-        for (int j = 0; j < w; ++j) { 
+    // --- Draw every cell of the component ---
+    for (int i = 0; i < h; ++i) {
+        for (int j = 0; j < w; ++j) {
             const int current_x = x + j;
             const int current_y = y + i;
 
@@ -100,13 +105,35 @@ void InputBox::render(ScreenBuffer& buffer, int x, int y, int w, int h) const {
             const bool is_left = (j == 0);
             const bool is_right = (j == w - 1);
 
+            // --- Draw Corners and Vertical/Bottom Lines ---
             if (is_top && is_left) { buffer.set_cell(current_x, current_y, ansi::tl, border_style); continue; }
             if (is_top && is_right) { buffer.set_cell(current_x, current_y, ansi::tr, border_style); continue; }
             if (is_bottom && is_left) { buffer.set_cell(current_x, current_y, ansi::bl, border_style); continue; }
             if (is_bottom && is_right) { buffer.set_cell(current_x, current_y, ansi::br, border_style); continue; }
-            if (is_top || is_bottom) { buffer.set_cell(current_x, current_y, ansi::h, border_style); continue; }
+            if (is_bottom) { buffer.set_cell(current_x, current_y, ansi::h, border_style); continue; }
             if (is_left || is_right) { buffer.set_cell(current_x, current_y, ansi::v, border_style); continue; }
 
+            // --- Draw Top Line (with Label Logic) ---
+            if (is_top) {
+                if (label.empty() || label.length() > w - 4) {
+                    buffer.set_cell(current_x, current_y, ansi::h, border_style);
+                }
+                else {
+                    std::string display_label = " " + label + " ";
+                    int label_len = display_label.length();
+                    int label_start_col = 2; // Always align left for input boxes
+
+                    if (j >= label_start_col && j < label_start_col + label_len) {
+                        buffer.set_cell(current_x, current_y, std::string(1, display_label[j - label_start_col]), border_style);
+                    }
+                    else {
+                        buffer.set_cell(current_x, current_y, ansi::h, border_style);
+                    }
+                }
+                continue;
+            }
+
+            // --- Draw Inner Content (unchanged) ---
             const int content_row = i - 1;
             const int content_col = j - 1;
             wchar_t char_to_draw = L' ';

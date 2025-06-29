@@ -48,11 +48,11 @@ export default function InteractivityShowcase() {
         <SubTitle>Interactivity</SubTitle>
         <Details className="flex flex-col gap-3">
           <p>
-            Hook into raw keypresses and map them to actions — no black-box
+            Hook into raw keypresses and map them to actions - no black-box
             magic, just clean C++ logic.
           </p>
           <p>
-            Build apps that <b>feel alive</b> in the terminal — fast reactions,
+            Build apps that <b>feel alive</b> in the terminal - fast reactions,
             tight control, full interactivity.
           </p>
         </Details>

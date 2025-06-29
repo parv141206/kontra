@@ -16,6 +16,9 @@ int main() {
     // --- 1. Component Initialization ---
     // Create the InputBox. It's crucial to set it as active.
     auto input_box = std::make_shared<InputBox>();
+    
+	input_box->set_label("Type something: ");
+
     input_box->set_active(true);
 
 	// If you want to enable "text wrapping", you can do so:

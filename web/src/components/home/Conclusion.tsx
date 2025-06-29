@@ -9,8 +9,8 @@ export default function Conclusion() {
       <SubTitle className="text-center">Dive into the Docs</SubTitle>
       <Details className="flex flex-col gap-3">
         <p>Ready to build legendary CLIs? 🧙‍♂️ The docs are your spellbook.</p>
-        <p>Layouts, inputs, styles — all minimal, all documented, all yours.</p>
-        <p>Crack it open, copy a snippet, and ⚡ boom — terminal UI magic.</p>
+        <p>Layouts, inputs, styles - all minimal, all documented, all yours.</p>
+        <p>Crack it open, copy a snippet, and ⚡ boom - terminal UI magic.</p>
         <div className="my-5 flex items-center justify-center gap-3 drop-shadow-2xl drop-shadow-black">
           <ButtonLink href="/docs/getting-started" title="Documentation" />
           <ButtonLink

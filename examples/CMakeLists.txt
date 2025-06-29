@@ -6,6 +6,7 @@ function(add_kontra_example name source)
 endfunction()
 
 add_kontra_example(run_main                    main.cpp)
+add_kontra_example(run_text_example            text_example.cpp)
 add_kontra_example(run_border_example          border_example.cpp)
 add_kontra_example(run_button_example          button_example.cpp)
 add_kontra_example(run_flex_example            flex_example.cpp)

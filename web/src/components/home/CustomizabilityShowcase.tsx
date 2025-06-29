@@ -31,12 +31,12 @@ export default function CustomizabilityShowcase() {
         <SubTitle>Customizability</SubTitle>
         <Details className="flex flex-col gap-3">
           <p>
-            Tweak every pixel — from colors and borders to boldness and
+            Tweak every pixel - from colors and borders to boldness and
             behavior.
           </p>
           <p>
             Kontra hands you builder-style APIs for ultimate control. Not just
-            usable — <b>custom-crafted</b>.
+            usable - <b>custom-crafted</b>.
           </p>
         </Details>
       </div>

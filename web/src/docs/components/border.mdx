@@ -1,14 +1,16 @@
 # Border
 
-The `Border` component is used to wrap **one single child component** with a styled border around it. It’s great for highlighting parts of your interface like status messages, input boxes, or grouped UI elements.
+The `Border` component is used to wrap **one single child component** with a styled border around it. It's great for highlighting parts of your interface like status messages, input boxes, or grouped UI elements.
 
 ### Usage
 
-Here’s how you create a border around any component:
+Here's how you create a border around any component:
 
 <CodeBlock
+  border
   lang="cpp"
-  code={`auto border = std::make_shared<Border>(child, border_style);`}
+  code={`
+    auto border = std::make_shared<Border>(child, border_style);`}
 />
 
 > **Note**: A border can only wrap one child component. If you need to group multiple components, use a layout component like `Flex` or `List` inside the border.
@@ -22,17 +24,19 @@ You can customize the appearance of the border using `BorderStyleBuilder`, which
 Here's a complete example:
 
 <CodeBlock
+  border
   lang="cpp"
-  code={`auto border_style = BorderStyleBuilder()
-    .set_color(ansi::FG_GREEN)
-    .set_background_color(ansi::BG_DEFAULT)
-    .set_title("Success!")
-    .set_title_alignment(TitleAlignment::Center)
-    .set_characters(BorderPreset::DOUBLE)
-    .build();`}
+  code={`
+    auto border_style = BorderStyleBuilder()
+      .set_color(ansi::FG_GREEN)
+      .set_background_color(ansi::BG_DEFAULT)
+      .set_title("Success!")
+      .set_title_alignment(TitleAlignment::Center)
+      .set_characters(BorderPreset::DOUBLE)
+      .build();`}
 />
 
-### 🛠️ Available Customizations
+### Available Customizations
 
 - `set_color(ansi::FG_COLOR)`
   Sets the **foreground color** of the border. Choose any color from [`ansi`](/docs/ansi).
@@ -60,27 +64,28 @@ Here's a complete example:
 
 ---
 
-## 📦 Example: Success Box
+## Example: Success Box
 
 <CodeBlock
+  border
   lang="cpp"
-  code={`auto message = std::make_shared<Text>("Operation completed successfully!");
-auto styled = BorderStyleBuilder()
-    .set_color(ansi::FG_GREEN)
-    .set_title("Success")
-    .set_characters(BorderPreset::DOUBLE)
-    .build();
-
-auto bordered = std::make_shared<Border>(message, styled);`}
+  code={`
+    auto message = std::make_shared<Text>("Operation completed successfully!");
+    auto styled = BorderStyleBuilder()
+        .set_color(ansi::FG_GREEN)
+        .set_title("Success")
+        .set_characters(BorderPreset::DOUBLE)
+        .build();
+    auto bordered = std::make_shared<Border>(message, styled);`}
 />
 
 This will render your message text inside a double-lined green border, titled "Success" at the top.
 
 ---
 
-### TL;DR
+## TL;DR
 
 - The `Border` component **wraps** another component and adds a styled **border** around it.
 - Only **one child** is allowed inside a `Border`.
-- Customize look and feel using `BorderStyleBuilder()` — title, color, alignment, characters, and more.
+- Customize look and feel using `BorderStyleBuilder()` - title, color, alignment, characters, and more.
 - Combine `Border` with `List`, `Flex`, or **nested layouts** to create clear, modular UIs. Perfect for making sections feel **grouped**, **highlighted**, or just ✨ cleaner ✨.

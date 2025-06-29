@@ -7,6 +7,7 @@ The `Button` component is used to create interactive elements in your Kontra TUI
 A basic button can be created like this:
 
 <CodeBlock
+  border
   lang="cpp"
   code={`
     auto button = std::make_shared<Button>("Click Me!", []() {
@@ -14,16 +15,17 @@ A basic button can be created like this:
     });
 `}
 />
-<br />
+
 You can also customize its appearance using the `ButtonStyleBuilder`.
 
 ---
 
-## 🎨 Styling Buttons
+## Styling Buttons
 
 The `ButtonStyleBuilder` makes it easy to define visual appearance for both normal and active (focused) states.
 
 <CodeBlock
+  border
   lang="cpp"
   code={`
     auto style = ButtonStyleBuilder()
@@ -34,34 +36,33 @@ The `ButtonStyleBuilder` makes it easy to define visual appearance for both norm
     .set_bold(true)
     .build();`}
 />
-<br />
 
-- `set_color(...)`: normal text color
-- `set_background_color(...)`: normal background
-- `set_color_active(...)`: focused/active text color
-- `set_background_color_active(...)`: focused/active background
-- `set_bold(...)`: makes the button text bold
+- `set_color(...)`- normal text color
+- `set_background_color(...)`- normal background
+- `set_color_active(...)`- focused/active text color
+- `set_background_color_active(...)`- focused/active background
+- `set_bold(...)`- makes the button text bold
 
 All color options come from [`ansi`](/docs/ansi).
 
 You can pass this style when creating a button:
 
 <CodeBlock
+  border
   lang="cpp"
   code={`
     auto button = std::make_shared<Button>("Styled", []() {
         std::cout << "Clicked!";
     }, style);`}
 />
-<br />
 
 ---
 
-## 🔁 Managing Focus
+## Managing Focus
 
 Since Kontra doesn't manage focus automatically, you need to set which button is active manually.
 
-<CodeBlock
+<CodeBlock border 
   lang="cpp"
   code={`
     button1->set_active(true);
@@ -72,11 +73,10 @@ Since Kontra doesn't manage focus automatically, you need to set which button is
 
 />
 
-<br />
-
-To switch focus on `Tab`:
+To switch focus on `Tab`-
 
 <CodeBlock
+  border
   lang="cpp"
   code={`
     if (ch == '\\t') {
@@ -86,30 +86,29 @@ To switch focus on `Tab`:
         active_button = button1->is_active() ? button1 : button2;
     }`}
 />
-<br />
 
 ---
 
-## ⏎ Handling Click
+## Handling Click
 
 To simulate a button click (e.g., when user presses `Enter`):
 
 <CodeBlock
+  border
   lang="cpp"
   code={`
     if (ch == '\\n' || ch == '\\r') {
         active_button->click();
     }`}
 />
-<br />
 
 ---
 
-## ✅ Complete Layout Example
+## Complete Layout Example
 
 You can stack buttons in a layout like this:
 
-<CodeBlock
+<CodeBlock border 
   lang="cpp"
   code={`
     auto layout = std::make_shared<List>(
@@ -123,11 +122,9 @@ You can stack buttons in a layout like this:
 
 />
 
-<br />
-
 ---
 
-### TL;DR
+## TL;DR
 
 - Use `Button` to make parts of your terminal interface **interactive**.
 - Each button has a **label**, an **onClick callback**, and **customizable styles**.

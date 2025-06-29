@@ -3,14 +3,14 @@
 </p>
 
 <h1 align="center">Kontra</h1>
-<p align="center"><b>A modern C++ Terminal UI library <br> because `std::cout` just doesn’t cut it anymore.</b></p>
+<p align="center"><b>A modern C++ Terminal UI library <br> because `std::cout` just doesn't cut it anymore.</b></p>
 
 ---
 
 # 🚀 What is Kontra?
 
-**Kontra** is a C++ library for building sleek terminal UIs — no GUI bloat, no weird DSLs.
-Just clean code, styled boxes, smooth input, and full control — all in your terminal.
+**Kontra** is a C++ library for building sleek terminal UIs - no GUI bloat, no weird DSLs.
+Just clean code, styled boxes, smooth input, and full control - all in your terminal.
 
 ---
 
@@ -23,8 +23,9 @@ Getting Kontra TUI into your project is designed to be simple and modern using C
 This is the fastest and easiest way to integrate Kontra. It automatically fetches the library from GitHub when you configure your project.
 
 **Prerequisites:**
-*   A C++17 compatible compiler.
-*   CMake (version 3.16 or higher).
+
+- A C++17 compatible compiler.
+- CMake (version 3.16 or higher).
 
 **Steps:**
 
@@ -62,7 +63,7 @@ This is the fastest and easiest way to integrate Kontra. It automatically fetche
     # We recommend pinning to a specific version/release tag for stability.
     CPMAddPackage(
         NAME Kontra
-        GITHUB_REPOSITORY parv141206/kontra 
+        GITHUB_REPOSITORY parv141206/kontra
         GIT_TAG master
     )
 
@@ -89,9 +90,10 @@ This is the fastest and easiest way to integrate Kontra. It automatically fetche
 This method is great if you want to work offline or have a local copy of the library source code locked to your project's git history.
 
 **Prerequisites:**
-*   `git` installed on your system.
-*   A C++17 compatible compiler.
-*   CMake (version 3.16 or higher).
+
+- `git` installed on your system.
+- A C++17 compatible compiler.
+- CMake (version 3.16 or higher).
 
 **Steps:**
 
@@ -102,7 +104,9 @@ This method is great if you want to work offline or have a local copy of the lib
     git submodule add https://github.com/parv141206/kontra.git external/kontra
     git submodule update --init --recursive
     ```
+
     Your project structure will now look like this:
+
     ```
     YourCoolApp/
     ├── main.cpp
@@ -150,4 +154,5 @@ This method is great if you want to work offline or have a local copy of the lib
     ```
 
 ---
+
 Happy building! 💖 I am excited to see what you create with Kontra TUI :)

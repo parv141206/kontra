@@ -1,12 +1,12 @@
 # Installation
 
-Getting Kontra TUI into your project is designed to be simple, modern, and efficient — just like the terminal UIs you’ll build with it. You’ve got two ways to integrate it, depending on your preferences.
+Getting Kontra TUI into your project is designed to be simple, modern, and efficient - just like the terminal UIs you'll build with it. You've got two ways to integrate it, depending on your preferences.
 
 ---
 
 ## Method 1: The Modern Way with `CPM.cmake` (Recommended ✨)
 
-This is the fastest and cleanest way to use Kontra — no cloning, no hassle. It fetches the library automatically during the CMake configuration step.
+This is the fastest and cleanest way to use Kontra - no cloning, no hassle. It fetches the library automatically during the CMake configuration step.
 
 ### Prerequisites:
 
@@ -17,7 +17,7 @@ This is the fastest and cleanest way to use Kontra — no cloning, no hassle. It
 
 Download the latest `CPM.cmake` from [CPM Github](https://github.com/cpm-cmake/CPM.cmake) by following the steps given and place it in a `cmake/` folder in your project.
 
-<CodeBlock
+<CodeBlock border 
   lang="text"
   theme="ayu-dark"
   code={String.raw`
@@ -31,7 +31,7 @@ Download the latest `CPM.cmake` from [CPM Github](https://github.com/cpm-cmake/C
 
 ### Step 2: Add Kontra to your `CMakeLists.txt`
 
-<CodeBlock lang="cmake" theme="ayu-dark" code={String.raw`
+<CodeBlock border  lang="cmake" theme="ayu-dark" code={String.raw`
     # YourCoolApp/CMakeLists.txt
 
     cmake_minimum_required(VERSION 3.16)
@@ -60,7 +60,7 @@ Download the latest `CPM.cmake` from [CPM Github](https://github.com/cpm-cmake/C
 
 ### Step 3: Build
 
-<CodeBlock
+<CodeBlock border 
   lang="bash"
   theme="ayu-dark"
   code={String.raw`
@@ -86,7 +86,7 @@ Use this method if you prefer to track Kontra directly in your repository or wan
 
 ### Step 1: Add Kontra as a Git Submodule
 
-<CodeBlock
+<CodeBlock border 
   lang="bash"
   theme="ayu-dark"
   code={String.raw`
@@ -98,7 +98,7 @@ Use this method if you prefer to track Kontra directly in your repository or wan
 
 Resulting structure:
 
-<CodeBlock
+<CodeBlock border 
   lang="text"
   theme="ayu-dark"
   code={String.raw`
@@ -112,7 +112,7 @@ Resulting structure:
 
 ### Step 2: Modify `CMakeLists.txt`
 
-<CodeBlock
+<CodeBlock border 
   lang="cmake"
   theme="ayu-dark"
   code={String.raw`
@@ -136,7 +136,7 @@ Resulting structure:
 
 ### Step 3: Build
 
-<CodeBlock
+<CodeBlock border 
   lang="bash"
   theme="ayu-dark"
   code={String.raw`
