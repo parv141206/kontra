@@ -62,10 +62,14 @@ export const mdxComponents: MDXComponents = {
   ),
   ul: (props: ComponentPropsWithoutRef<"ul">) => (
     <ul
-      className="mb-4 list-inside list-disc space-y-2 text-gray-300"
+      // THE FIX:
+      // 1. Change `list-inside` to `list-outside`. This is a more stable layout model.
+      // 2. Add left padding (e.g., `pl-6`) to make space for the bullet points.
+      className="mb-4 list-outside list-disc space-y-2 pl-6 text-gray-300"
       {...props}
     />
   ),
+
   ol: (props: ComponentPropsWithoutRef<"ol">) => (
     <ol
       className="mb-4 list-inside list-decimal space-y-2 text-gray-300"
@@ -73,7 +77,7 @@ export const mdxComponents: MDXComponents = {
     />
   ),
   li: (props: ComponentPropsWithoutRef<"li">) => (
-    <li className="leading-relaxed" {...props} />
+    <li className="leading-[1.7] break-words text-gray-300" {...props} />
   ),
   blockquote: (props: ComponentPropsWithoutRef<"blockquote">) => (
     <blockquote
@@ -89,7 +93,7 @@ export const mdxComponents: MDXComponents = {
   ),
   code: (props: ComponentPropsWithoutRef<"code">) => (
     <code
-      className="rounded bg-gray-800 px-1 py-0.5 font-mono text-green-300"
+      className="rounded-sm bg-gray-800 px-1 py-[0.1rem] font-mono text-green-300"
       {...props}
     />
   ),

@@ -11,6 +11,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 file(GLOB_RECURSE KONTRA_SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 
+# The library definition now uses this always-fresh variable.
 add_library(kontra ${KONTRA_SOURCES})
 
 target_compile_options(kontra PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
@@ -19,7 +20,6 @@ target_include_directories(kontra PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
-
 # ===================================================================
 # INSTALLATION RULES
 # ===================================================================
@@ -62,7 +62,7 @@ install(FILES
 # To build them, a developer runs: cmake .. -DKONTRA_BUILD_EXAMPLES=ON
 # ===================================================================
 
-option(KONTRA_BUILD_EXAMPLES "Build the example executables" OFF) # Default is OFF
+option(KONTRA_BUILD_EXAMPLES "Build the example executables" ON)
 
 if(KONTRA_BUILD_EXAMPLES)
     add_subdirectory(examples)

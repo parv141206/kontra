@@ -16,10 +16,19 @@ int main() {
 		TextStyle(ansi::FG_CYAN)
 	);
 
+	// Might as well add some styles!
+	auto border_style = BorderStyleBuilder()
+		.set_color(ansi::FG_GREEN)
+		.set_background_color(ansi::BG_DEFAULT)
+		.set_title("Success!")
+		.set_title_alignment(TitleAlignment::Center)
+		.set_characters(BorderPreset::DOUBLE)
+		.build();
+	
 	// --- 2. Create the Border ---
 	// The Border is initialized with the component it should contain.
 	// We can then chain methods like `set_padding()` to configure it.
-	auto bordered_component = std::make_shared<Border>(inner_text);
+	auto bordered_component = std::make_shared<Border>(inner_text , border_style);
 
 	// Padding adds empty cells between the border lines and the child's content.
 	bordered_component->set_padding(2);

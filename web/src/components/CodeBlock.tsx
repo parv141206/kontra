@@ -6,12 +6,26 @@ interface CodeBlockProps {
   theme?: string;
 }
 
+function normalizeCode(code: string): string {
+  const lines = code.split("\n");
+  while (lines.length && lines[0]!.trim() === "") {
+    lines.shift();
+  }
+
+  while (lines.length && lines[lines.length - 1]!.trim() === "") {
+    lines.pop();
+  }
+  return ["", ...lines, "", ""].join("\n");
+}
+
 export async function CodeBlock({
   code,
-  lang,
+  lang = "c++",
   theme = "ayu-dark",
 }: CodeBlockProps) {
-  const html = await codeToHtml(code, {
+  const cleanedCode = normalizeCode(code);
+
+  const html = await codeToHtml(cleanedCode, {
     lang,
     theme,
   });

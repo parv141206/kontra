@@ -1,1 +1,141 @@
 # Flex
+
+The `Flex` layout is one of the most powerful containers in **Kontra TUI**. It allows you to arrange components in a **row** or **column**, distributing space **evenly** among them.
+
+If you're familiar with CSS Flexbox—you're going to feel right at home.
+
+---
+
+## Basic Usage
+
+A `Flex` container takes a direction (`Row` or `Column`) and one or more children. It automatically divides the available space equally between them.
+
+<CodeBlock
+  lang="cpp"
+  code={`
+    auto layout = std::make_shared<Flex>(
+        FlexDirection::Row, // or FlexDirection::Column
+        child1,
+        child2,
+        ...
+    );
+`}
+/>
+
+---
+
+## Options & Tweaks
+
+The `Flex` component comes with a few helpful methods to customize layout behavior.
+
+### Direction
+
+- `FlexDirection::Row`: Arrange children side by side (left to right)
+- `FlexDirection::Column`: Stack children vertically (top to bottom)
+
+### Spacing
+
+- `.set_gap(n)`: Adds horizontal or vertical spacing between children, depending on layout direction.
+
+<CodeBlock
+  lang="cpp"
+  code={`
+    flex->set_gap(2); // Adds 2 columns or 2 rows of space between children`}
+/>
+
+---
+
+## Creating Children
+
+Let’s create three simple `Text` components with colored backgrounds so we can clearly visualize the layout behavior.
+
+<CodeBlock
+  lang="cpp"
+  code={`
+    auto text1 = std::make_shared<Text>("Panel 1", TextStyle("", ansi::BG_RED));
+    auto text2 = std::make_shared<Text>("Panel 2", TextStyle("", ansi::BG_GREEN));
+    auto text3 = std::make_shared<Text>("Panel 3", TextStyle("", ansi::BG_BLUE));`}
+/>
+
+---
+
+## ➡️ Horizontal Layout
+
+Let’s use a `Row` layout to place these side-by-side.
+
+<CodeBlock
+  lang="cpp"
+  code={`
+    auto flex_row = std::make_shared<Flex>(
+        FlexDirection::Row,
+        text1,
+        text2,
+        text3
+    );
+    flex_row->set_gap(5);`}
+/>
+
+This will distribute the terminal's width into three equal panels with a gap of 5 columns in between.
+
+---
+
+## ⬇️ Vertical Layout
+
+Let’s stack the same components vertically.
+
+<CodeBlock
+  lang="cpp"
+  code={`
+    auto flex_column = std::make_shared<Flex>(
+        FlexDirection::Column,
+        text1,
+        text2,
+        text3
+    );
+    flex_column->set_gap(1);`}
+/>
+
+---
+
+## Nesting Flex Layouts
+
+Layouts can be **nested**. For example, you can stack a row and column layout together like this:
+
+<CodeBlock
+  lang="cpp"
+  code={`
+    auto main_layout = std::make_shared<Flex>(
+        FlexDirection::Column,
+        flex_row,
+        flex_column
+    );`}
+/>
+
+---
+
+## 🖥️ Rendering to Screen
+
+Finally, render your layout using the `Screen` component:
+
+<CodeBlock
+  lang="cpp"
+  code={`
+    auto screen = std::make_shared<Screen>(main_layout);
+
+    kontra::run(screen, [&](char ch) {
+        if (ch == 17) { // Ctrl+Q to quit
+            exit(0);
+        }
+    );`}
+
+/>
+
+---
+
+## TL;DR
+
+- Use `FlexDirection::Row` or `FlexDirection::Column` to control direction.
+- All children share space equally by default.
+- Add spacing with `.set_gap(n)`.
+- Layouts can be nested for more complex UIs.
+- Great for building dashboards, split views, or structured UIs in terminal.
