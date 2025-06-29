@@ -4,6 +4,7 @@ import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import Navbar from "~/components/Navbar";
 import Footer from "~/components/Footer";
+import { inter, lexend, silkscreen, pressStart } from "~/fonts";
 
 export const metadata: Metadata = {
   title: "Kontra",
@@ -22,7 +23,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geist.variable} max-w-screen overflow-x-hidden bg-black text-[#ededed]`}
+      className={`${geist.variable} ${inter.variable} ${lexend.variable} ${silkscreen.variable} ${pressStart.variable} max-w-screen overflow-x-hidden bg-black text-[#ededed]`}
     >
       <body className="relative flex min-h-screen max-w-screen flex-col">
         <Navbar />
