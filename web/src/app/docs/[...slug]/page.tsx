@@ -5,15 +5,10 @@ import { mdxComponents } from "~/components/MDXComponents";
 import Sidebar from "~/components/Sidebar";
 import PreviousAndNext from "~/components/PreviousAndNext";
 
-export default async function DocPage({
-  params,
-}: {
-  params: { slug?: string[] };
-}) {
-  // eslint-disable-next-line @typescript-eslint/await-thenable
-  const params_ = await params;
+export default function DocPage({ params }: { params: { slug?: string[] } }) {
+  const params_ = params;
   const slug = params_.slug ?? ["getting-started"];
-  const { content } = await getDocFromSlug(slug);
+  const { content } = getDocFromSlug(slug);
 
   const slugMap = getAllDocSlugs();
   const allSlugs = Object.keys(slugMap);

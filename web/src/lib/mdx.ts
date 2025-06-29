@@ -8,7 +8,7 @@ function stripNumericPrefix(name: string): string {
   return name.replace(/^\d+\./, "");
 }
 
-export async function getDocFromSlug(slug: string[]) {
+export function getDocFromSlug(slug: string[]) {
   const slugMap = getAllDocSlugs();
   const fullSlug = slug.join("/");
   const realSlug = slugMap[fullSlug];
