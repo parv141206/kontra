@@ -21,7 +21,7 @@ export default function Navbar() {
   }, []);
 
   const menuItems = [
-    { href: "/docs", label: "Documentation" },
+    { href: "/docs/getting-started", label: "Documentation" },
     { href: "/about", label: "About" },
   ];
 
