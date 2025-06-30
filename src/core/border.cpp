@@ -32,7 +32,8 @@ Border& Border::set_padding(int p) {
     return *this;
 }
 
-void Border::render(ScreenBuffer& buffer, int x, int y, int w, int h) const {
+void Border::render(ScreenBuffer& buffer, int x, int y, int w, int h) {
+    Component::render(buffer, x, y, w, h); 
     std::string full_style = style.color + style.background_color;
     const auto& chars = style.characters;
 

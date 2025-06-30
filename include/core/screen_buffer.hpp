@@ -1,6 +1,7 @@
 ﻿/*****************************************************************//**
  * \file   screen_buffer.hpp
  * \brief  This file, the screen_buffer, basically represents the terminal screen in memory.
+ * 
  * I am dividing the whole terminal screen into a grid of cells, where each cell can hold a character and its style.
  *
  * I got this idea from NEOVIM and how it represents the terminal screen in memory.

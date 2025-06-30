@@ -40,12 +40,20 @@ int main() {
         std::make_shared<Border>(main_list) // Wrap in a border for context
     );
 
-    kontra::run(screen, [&](char ch) {
-        if (ch == 17) { // Exit on Ctrl+Q
-            exit(0);
+    kontra::run(screen, [&](const InputEvent& event) {
+        switch (event.type) {
+        case EventType::KEY_PRESS:
+            input_item->handle_input(event.key);
+            break;
+        case EventType::MOUSE_SCROLL_UP:
+            main_list->scroll_up();
+            break;
+        case EventType::MOUSE_SCROLL_DOWN:
+            main_list->scroll_down();
+            break;
+        default:
+            break;
         }
-        // Make the input box interactive
-        input_item->handle_input(ch);
         });
 
     return 0;

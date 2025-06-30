@@ -12,6 +12,8 @@
 #include "core/runtime.hpp"
 #include "core/ansi.hpp"
 #include "core/screen_buffer.hpp"
+#include "core/event.hpp" 
+#include "core/terminal.hpp" 
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -108,80 +110,114 @@ char getch() {
 
 // VIBE CODE ENDS HERE
 
-
 namespace kontra {
 
-	void init() {
+    void init() {
 #ifdef _WIN32
-		hideCursor();
-#else
-		enableRawMode();
-		hideCursor();
+        HANDLE h_in = GetStdHandle(STD_INPUT_HANDLE);
+        HANDLE h_out = GetStdHandle(STD_OUTPUT_HANDLE);
+        DWORD in_mode = 0, out_mode = 0;
+        GetConsoleMode(h_in, &in_mode);
+        GetConsoleMode(h_out, &out_mode);
+        in_mode |= ENABLE_VIRTUAL_TERMINAL_INPUT;
+        in_mode &= ~ENABLE_ECHO_INPUT;
+        in_mode &= ~ENABLE_LINE_INPUT;
+        SetConsoleMode(h_in, in_mode);
+        out_mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+        SetConsoleMode(h_out, out_mode);
 #endif
-	}
+        hideCursor();
+        std::cout << "\033[?1003h\033[?1006h" << std::flush;
+    }
 
-	void shutdown() {
-		std::cout << ansi::RESET << std::flush;
-		showCursor();
-#ifndef _WIN32
-		disableRawMode();
-#endif
-	}
+    void shutdown() {
+        std::cout << "\033[?1003l\033[?1006l" << std::flush;
+        showCursor();
+    }
 
-	void run(std::shared_ptr<Screen> screen, std::function<void(char)> onInput) {
-		init();
-		ansi::hide_cursor();
+    void read_and_parse_input(std::vector<InputEvent>& events) {
+        std::string buffer;
+        while (_kbhit()) {
+            buffer += _getch();
+        }
 
-		auto [w, h] = ansi::get_terminal_size();
-		ScreenBuffer current_buffer(w, h);
-		ScreenBuffer previous_buffer(w, h);
-		std::cout << ansi::CLEAR_SCREEN << std::flush;
+        if (buffer.empty()) return;
 
-		try {
-			while (true) {
+        size_t pos = 0;
+        while (pos < buffer.length()) {
+            if (buffer[pos] == '\033' && pos + 2 < buffer.length() && buffer[pos + 1] == '[' && buffer[pos + 2] == '<') {
+                size_t end_m = buffer.find('M', pos + 3);
+                if (end_m != std::string::npos) {
+                    std::string sequence = buffer.substr(pos + 3, end_m - (pos + 3));
+                    int btn, x, y;
+                    if (sscanf(sequence.c_str(), "%d;%d;%d", &btn, &x, &y) == 3) {
+                        if (btn == 64) events.push_back({ EventType::MOUSE_SCROLL_UP, 0, x, y });
+                        if (btn == 65) events.push_back({ EventType::MOUSE_SCROLL_DOWN, 0, x, y });
+                    }
+                    pos = end_m + 1;
+                    continue;
+                }
+            }
 
-				if (kbhit()) {
-					if (onInput) onInput(getch());
-				}
+            events.push_back({ EventType::KEY_PRESS, buffer[pos] });
+            pos++;
+        }
+    }
 
-				auto [term_w, term_h] = ansi::get_terminal_size();
-				if (term_w != current_buffer.width() || term_h != current_buffer.height()) {
-					current_buffer.resize(term_w, term_h);
-					previous_buffer.resize(term_w, term_h);
-					std::cout << ansi::CLEAR_SCREEN; 
-				}
 
-				current_buffer.clear();
-				screen->render(current_buffer, 0, 0, current_buffer.width(), current_buffer.height());
+    void run(std::shared_ptr<Screen> screen, std::function<void(const InputEvent&)> onInput) {
+        terminal::initialize();
 
-				std::string out_str;
-				std::string last_style = " ";
-				for (int y = 0; y < current_buffer.height(); ++y) {
-					for (int x = 0; x < current_buffer.width(); ++x) {
-						if (current_buffer.get_cell(x, y) != previous_buffer.get_cell(x, y)) {
-							out_str += "\033[" + std::to_string(y + 1) + ";" + std::to_string(x + 1) + "H";
-							const auto& cell = current_buffer.get_cell(x, y);
-							if (cell.style != last_style) {
-								out_str += cell.style;
-								last_style = cell.style;
-							}
-							out_str += cell.character;
-						}
-					}
-				}
-				out_str += ansi::RESET;
-				out_str += ansi::HIDE_CURSOR;
-				std::cout << out_str << std::flush;
+        auto [w, h] = ansi::get_terminal_size();
+        ScreenBuffer current_buffer(w, h);
+        ScreenBuffer previous_buffer(w, h);
+        std::cout << ansi::CLEAR_SCREEN << std::flush;
 
-				previous_buffer = current_buffer;
+        std::vector<InputEvent> events;
 
-				std::this_thread::sleep_for(std::chrono::milliseconds(16));
-			}
-		}
-		catch (const std::exception& e) {
-			std::cerr << ansi::BG_RED << ansi::FG_BLACK << "\n[Runtime Error] " << e.what() << '\n' << ansi::RESET;
-		}
-		shutdown();
-	}
+        while (true) {
+            events.clear();
+            terminal::read_input_events(events);
 
+            for (const auto& event : events) {
+                if (event.type == EventType::KEY_PRESS && event.key == 17) { 
+                    terminal::shutdown();
+                    return;
+                }
+                if (onInput) {
+                    onInput(event);
+                }
+            }
+
+            auto [term_w, term_h] = ansi::get_terminal_size();
+            if (term_w != current_buffer.width() || term_h != current_buffer.height()) {
+                current_buffer.resize(term_w, term_h);
+                previous_buffer.resize(term_w, term_h);
+                std::cout << ansi::CLEAR_SCREEN;
+            }
+            current_buffer.clear();
+            screen->render(current_buffer, 0, 0, current_buffer.width(), current_buffer.height());
+            std::string out_str;
+            std::string last_style = " ";
+            for (int y_idx = 0; y_idx < current_buffer.height(); ++y_idx) {
+                for (int x_idx = 0; x_idx < current_buffer.width(); ++x_idx) {
+                    if (current_buffer.get_cell(x_idx, y_idx) != previous_buffer.get_cell(x_idx, y_idx)) {
+                        out_str += "\033[" + std::to_string(y_idx + 1) + ";" + std::to_string(x_idx + 1) + "H";
+                        const auto& cell = current_buffer.get_cell(x_idx, y_idx);
+                        if (cell.style != last_style) {
+                            out_str += cell.style;
+                            last_style = cell.style;
+                        }
+                        out_str += cell.character;
+                    }
+                }
+            }
+            out_str += ansi::RESET;
+            out_str += ansi::HIDE_CURSOR;
+            std::cout << out_str << std::flush;
+            previous_buffer = current_buffer;
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(16));
+        }
+    }
 }

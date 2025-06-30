@@ -105,5 +105,13 @@ public:
 	void set_child(std::shared_ptr<Component> child_component);
 
 	int get_preferred_height(int width) const override;
-	void render(ScreenBuffer& buffer, int x, int y, int w, int h) const override;
+
+	/**
+	 * @brief Renders the border at the specified position and size.
+	 * @param x The x-coordinate of the input box's position.
+	 * @param y The y-coordinate of the input box's position.
+	 * @param w The width of the input box.
+	 * @param h The height of the input box.
+	 */
+	void render(ScreenBuffer& buffer, int x, int y, int w, int h)  override;
 };

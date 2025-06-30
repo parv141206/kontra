@@ -87,14 +87,14 @@ void InputBox::handle_input(char ch) {
 }
 
 
-void InputBox::render(ScreenBuffer& buffer, int x, int y, int w, int h) const {
+void InputBox::render(ScreenBuffer& buffer, int x, int y, int w, int h) {
+    Component::render(buffer, x, y, w, h);
     const std::string border_style = ansi::RESET;
     const std::string text_style = ansi::RESET;
     const std::string cursor_style = ansi::INVERSE;
 
     const int innerW = w - 2;
 
-    // --- Draw every cell of the component ---
     for (int i = 0; i < h; ++i) {
         for (int j = 0; j < w; ++j) {
             const int current_x = x + j;
@@ -105,7 +105,6 @@ void InputBox::render(ScreenBuffer& buffer, int x, int y, int w, int h) const {
             const bool is_left = (j == 0);
             const bool is_right = (j == w - 1);
 
-            // --- Draw Corners and Vertical/Bottom Lines ---
             if (is_top && is_left) { buffer.set_cell(current_x, current_y, ansi::tl, border_style); continue; }
             if (is_top && is_right) { buffer.set_cell(current_x, current_y, ansi::tr, border_style); continue; }
             if (is_bottom && is_left) { buffer.set_cell(current_x, current_y, ansi::bl, border_style); continue; }
@@ -113,7 +112,6 @@ void InputBox::render(ScreenBuffer& buffer, int x, int y, int w, int h) const {
             if (is_bottom) { buffer.set_cell(current_x, current_y, ansi::h, border_style); continue; }
             if (is_left || is_right) { buffer.set_cell(current_x, current_y, ansi::v, border_style); continue; }
 
-            // --- Draw Top Line (with Label Logic) ---
             if (is_top) {
                 if (label.empty() || label.length() > w - 4) {
                     buffer.set_cell(current_x, current_y, ansi::h, border_style);
@@ -133,7 +131,6 @@ void InputBox::render(ScreenBuffer& buffer, int x, int y, int w, int h) const {
                 continue;
             }
 
-            // --- Draw Inner Content (unchanged) ---
             const int content_row = i - 1;
             const int content_col = j - 1;
             wchar_t char_to_draw = L' ';

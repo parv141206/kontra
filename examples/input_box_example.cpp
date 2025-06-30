@@ -47,14 +47,10 @@ int main() {
     // --- 3. Event Loop ---
     // The logic is simple: pass every character (that isn't the exit key)
     // directly to the input box's `handle_input` method.
-    kontra::run(screen, [&](char ch) {
-        if (ch == 17) { // Exit on Ctrl+Q
-            exit(0);
+    kontra::run(screen, [&](const InputEvent& event) {
+        if (event.type == EventType::KEY_PRESS) {
+            input_box->handle_input(event.key);
         }
-
-        // The InputBox component knows how to handle backspace, arrows,
-        // and printable characters internally.
-        input_box->handle_input(ch);
         });
 
     return 0;

@@ -4,13 +4,14 @@
  *
  * Like this provides a nice template to run the TUI app and handle input and stuff.
  *
- * \author parv1
+ * \author parv141206
  * \date   June 2025
  *********************************************************************/
 #pragma once
 #include "screen.hpp"
 #include <functional>
 #include <memory>
+#include "event.hpp"
 
 namespace kontra {
 	/**
@@ -33,6 +34,6 @@ namespace kontra {
 	 * \param onInput A callback function that will be called with the input character when a key is pressed.
 	 */
 	void run(std::shared_ptr<Screen> screen,
-		std::function<void(char)> onInput = nullptr);
+		std::function<void(const InputEvent&)> onInput);
 
 }

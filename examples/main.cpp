@@ -62,13 +62,12 @@ int main() {
     // The second argument is a C++ lambda function. This function is your
     // "event handler" - it gets called automatically every time a key is pressed.
     // The character of the key that was pressed is passed in as `ch`.
-    kontra::run(screen, [&](char ch) {
-        // We define a simple exit condition. If the user presses Ctrl+Q
-        // (which corresponds to character code 17), the program exits cleanly.
-        if (ch == 17) {
-            exit(0);
-        }
+    // UPDATED: The lambda now takes an InputEvent.
+    // The main loop already handles Ctrl+Q for exiting.
+    kontra::run(screen, [&](const InputEvent& event) {
+        // This example is static and requires no input handling.
         });
+
 
     return 0;
 }

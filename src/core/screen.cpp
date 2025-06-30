@@ -5,7 +5,8 @@
 #include <io.h>
 #include <fcntl.h>
 #endif
-void Screen::render(ScreenBuffer& buffer, int x, int y, int w, int h) const {
+void Screen::render(ScreenBuffer& buffer, int x, int y, int w, int h) {
+	Component::render(buffer, x, y, w, h);
 #ifdef _WIN32
 	SetConsoleOutputCP(CP_UTF8);
 #endif
@@ -30,3 +31,4 @@ void Screen::render(ScreenBuffer& buffer, int x, int y, int w, int h) const {
 	//ansi::move_down(2);
 	//ansi::move_cursor(absWidth, absHeight);
 }
+

@@ -11,3 +11,6 @@
 #include "./core/input_box.hpp"
 #include "./core/button.hpp"
 #include "./core/input.hpp"
+#include "./core/event.hpp"
+#include "./core/terminal.hpp"
+#include "./core/box.hpp"

@@ -16,7 +16,8 @@ void Button::click() {
 	if (on_click_callback) on_click_callback();
 }
 
-void Button::render(ScreenBuffer& buffer, int x, int y, int w, int h) const {
+void Button::render(ScreenBuffer& buffer, int x, int y, int w, int h) {
+	Component::render(buffer, x, y, w, h); 
 	std::string current_label = label();
 
 	std::string style_str = is_active()

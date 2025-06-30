@@ -19,7 +19,8 @@ void Flex::clear() {
 	children.clear();
 }
 
-void Flex::render(ScreenBuffer& buffer, int x, int y, int w, int h) const {
+void Flex::render(ScreenBuffer& buffer, int x, int y, int w, int h) {
+	Component::render(buffer, x, y, w, h);
 	int count = children.size();
 	if (count == 0) return;
 

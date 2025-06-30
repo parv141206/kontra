@@ -35,7 +35,8 @@ Input& Input::set_padding(int p) {
 }
 
 
-void Input::render(ScreenBuffer& buffer, int x, int y, int w, int h) const {
+void Input::render(ScreenBuffer& buffer, int x, int y, int w, int h) {
+	Component::render(buffer, x, y, w, h);
 	int currentY = y + padding;
 	int inner_w = w - (2 * padding);
 	for (const auto& child : children) {

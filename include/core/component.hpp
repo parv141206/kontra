@@ -1,6 +1,6 @@
 /*****************************************************************//**
  * \file   component.hpp
- * \brief  The new, simplified component interface.
+ * \brief  The base class for all components in the terminal UI.
  *********************************************************************/
 #pragma once
 #include <iostream>
@@ -8,6 +8,7 @@
 
 class Component
 {
+    int last_x = -1, last_y = -1, last_w = -1, last_h = -1;
 public:
     virtual ~Component() = default;
 
@@ -16,7 +17,27 @@ public:
      * is necessary by comparing the new state (x,y,w,h, content) to its
      * last rendered state.
      */
-    virtual void render(ScreenBuffer& buffer, int x, int y, int w, int h) const = 0;
+    virtual void render(ScreenBuffer& buffer, int x, int y, int w, int h) {
+        this->last_x = x;
+        this->last_y = y;
+        this->last_w = w;
+        this->last_h = h;
+    }
+
+    /**
+	 * \brief Checks if the component contains the given mouse coordinates, for handling mouse events.
+	 * \param mouse_x The x-coordinate of the mouse event.
+	 * \param mouse_y The y-coordinate of the mouse event.
+     */
+    bool contains(int mouse_x, int mouse_y) const {
+        if (last_x == -1) return false; 
+
+        int check_x = mouse_x - 1;
+        int check_y = mouse_y - 1;
+
+        return (check_x >= last_x && check_x < last_x + last_w &&
+                check_y >= last_y && check_y < last_y + last_h);
+    }
 
     /**
      * Returns the preferred height of the component. This is used to determine

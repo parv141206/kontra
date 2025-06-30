@@ -51,10 +51,8 @@ int main() {
     auto screen = std::make_shared<Screen>(main_layout);
 
     // --- 5. Run the Application ---
-    kontra::run(screen, [&](char ch) {
-        if (ch == 17) {
-            exit(0);
-        }
+    kontra::run(screen, [&](const InputEvent& event) {
+        // Static example, no input needed.
         });
 
     return 0;

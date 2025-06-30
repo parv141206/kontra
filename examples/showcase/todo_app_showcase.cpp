@@ -1,114 +1,153 @@
 // ===================================================================
 // KONTRA TUI: todo_app_showcase.cpp
 //
-// This application combines all core Kontra components to create a
-// functional and good-looking TODO list application.
-//
-// It demonstrates:
-// - A clean separation of application state and UI components.
-// - A central `update_task_list` function to sync state with the UI.
-// - A dynamic list of `Text` components with conditional styling.
-// - A horizontal `Flex` layout for a row of buttons.
-// - A vertical `List` layout for the main application structure.
-// - Simplified keyboard controls for a good user experience.
+// This version is syntactically correct and uses a clean, state-driven
+// approach to building the UI.
 // ===================================================================
 
 #include "../include/kontra.hpp"
+#include "../include/core/box.hpp"
 #include "../include/core/utils.hpp"
 #include <vector>
 #include <string>
 #include <memory>
 
+enum class AppMode {
+    Navigating,
+    Editing
+};
+
 int main() {
     // --- 1. STATE MANAGEMENT ---
     std::vector<std::string> tasks;
     int selected_task = -1;
+    AppMode current_mode = AppMode::Navigating;
 
     // --- 2. COMPONENT INITIALIZATION ---
     auto input_box = std::make_shared<InputBox>();
-    input_box->set_active(true);
-    auto task_list = std::make_shared<List>();
+    auto main_list = std::make_shared<List>();
+    // These vectors will be populated by the update_ui function
+    std::vector<std::shared_ptr<Text>> task_text_components;
+    std::vector<std::shared_ptr<Button>> buttons;
 
-    // --- 3. CORE LOGIC ---
-    auto update_task_list = [&]() {
-        task_list->clear();
+    // --- 3. ACTIONS (Lambdas) ---
+    // Define the application logic first. These will be captured by the UI update function.
+    std::function<void()> add_task;
+    std::function<void()> remove_task;
+    std::function<void()> clear_tasks;
+
+    // --- 4. UI UPDATE FUNCTION ---
+    auto update_ui = [&]() {
+        input_box->set_active(current_mode == AppMode::Editing);
+        main_list->clear();
+        task_text_components.clear();
+        buttons.clear();
+
+        auto header_text = std::make_shared<Text>([&]() {
+            return (current_mode == AppMode::Editing)
+                ? "EDITING | Enter: Add Task | Esc: Cancel"
+                : "NAVIGATION | i: Insert | j/k: Nav | d: Del | Mouse";
+            }, TextStyle(ansi::FG_WHITE, ansi::BG_BLUE, true));
+
+        // Create buttons and pass the action lambdas to their constructors
+        auto add_button = std::make_shared<Button>(" Add ", add_task,
+            ButtonStyleBuilder().set_background_color(ansi::BG_GREEN).set_color(ansi::FG_BLACK).set_bold(true).build());
+
+        auto remove_button = std::make_shared<Button>(" Remove ", remove_task,
+            ButtonStyleBuilder().set_background_color(ansi::BG_RED).set_color(ansi::FG_WHITE).set_bold(true).build());
+
+        auto clear_button = std::make_shared<Button>(" Clear All ", clear_tasks,
+            ButtonStyleBuilder().set_background_color(ansi::BG_BRIGHT_BLACK).set_color(ansi::FG_WHITE).set_bold(true).build());
+
+        buttons = { add_button, remove_button, clear_button };
+
+        auto button_bar = std::shared_ptr<Flex>(new Flex(FlexDirection::Row, {
+            chain(std::make_shared<Box>(add_button),    [](Box& b) { b.set_width(9); }),
+            chain(std::make_shared<Box>(remove_button), [](Box& b) { b.set_width(12); }),
+            chain(std::make_shared<Box>(clear_button),  [](Box& b) { b.set_width(15); })
+            }));
+        chain(button_bar, [](Flex& f) { f.set_gap(1); });
+
+        main_list->add(header_text);
+        main_list->add(input_box);
+        main_list->add(button_bar);
+
         for (size_t i = 0; i < tasks.size(); ++i) {
             auto style = (selected_task == static_cast<int>(i))
-                ? TextStyle(ansi::FG_BLACK, ansi::BG_YELLOW, true)
-                : TextStyle(ansi::FG_WHITE, ansi::BG_BLACK, false);
-
+                ? TextStyle(ansi::FG_BLACK, ansi::BG_BRIGHT_WHITE, true)
+                : TextStyle(ansi::FG_WHITE, "", false);
             auto txt = std::make_shared<Text>(tasks[i], style);
-            task_list->add(txt);
+            main_list->add(txt);
+            task_text_components.push_back(txt);
         }
         };
 
-    // --- 4. ACTIONS (BUTTONS) ---
-    auto add_button = std::make_shared<Button>("Add ('1')", [&]() {
+    // --- Now define the implementation of the actions ---
+    add_task = [&]() {
         if (!input_box->get_text().empty()) {
             tasks.push_back(input_box->get_text());
+            input_box->set_text("");
             selected_task = tasks.size() - 1;
-            update_task_list();
+            current_mode = AppMode::Navigating;
+            update_ui();
         }
-        }, ButtonStyleBuilder().set_background_color(ansi::BG_GREEN).set_color(ansi::FG_BLACK).set_bold(true).build());
-
-    auto remove_button = std::make_shared<Button>("Remove ('2')", [&]() {
+        };
+    remove_task = [&]() {
         if (selected_task >= 0 && selected_task < tasks.size()) {
             tasks.erase(tasks.begin() + selected_task);
-            if (selected_task >= tasks.size() && !tasks.empty()) {
-                selected_task = tasks.size() - 1;
-            }
-            else if (tasks.empty()) {
-                selected_task = -1;
-            }
-            update_task_list();
+            if (selected_task >= (int)tasks.size() && !tasks.empty()) { selected_task = tasks.size() - 1; }
+            else if (tasks.empty()) { selected_task = -1; }
+            update_ui();
         }
-        }, ButtonStyleBuilder().set_background_color(ansi::BG_RED).set_color(ansi::FG_WHITE).set_bold(true).build());
-
-    auto clear_button = std::make_shared<Button>("Clear All ('3')", [&]() {
+        };
+    clear_tasks = [&]() {
         tasks.clear();
         selected_task = -1;
-        update_task_list();
-        }, ButtonStyleBuilder().set_background_color(ansi::BG_BRIGHT_BLACK).set_color(ansi::FG_WHITE).set_bold(true).build());
+        update_ui();
+        };
 
-    update_task_list();
+    update_ui(); // Initial UI draw
 
     // --- 5. LAYOUT ---
-    auto main_content = std::make_shared<List>(
-        std::make_shared<Text>("TODO List | Nav: j/k", TextStyle(ansi::FG_WHITE, ansi::BG_BLUE, true)),
-        std::make_shared<Input>(input_box),
-        std::make_shared<Flex>(FlexDirection::Row, add_button, remove_button, clear_button),
-        task_list
+    chain(main_list, [](List& l) { l.set_gap(1); });
+    auto screen = std::make_shared<Screen>(
+        chain(std::make_shared<Border>(main_list), [](Border& b) { b.set_padding(1); })
     );
-    main_content->set_gap(1);
-
-    auto bordered_layout = std::make_shared<Border>(main_content);
-    bordered_layout->set_padding(1);
-
-    auto screen = std::make_shared<Screen>(bordered_layout);
 
     // --- 6. EVENT LOOP ---
-    kontra::run(screen, [&](char ch) {
-        if (ch == 17) exit(0); // Ctrl+Q
-
-        switch (ch) {
-        case '1': add_button->click(); break;
-        case '2': remove_button->click(); break;
-        case '3': clear_button->click(); break;
-        case 'j': // Down
-            if (!tasks.empty() && selected_task < tasks.size() - 1) {
-                selected_task++;
-                update_task_list();
+    kontra::run(screen, [&](const InputEvent& event) {
+        if (current_mode == AppMode::Editing) {
+            if (event.type == EventType::KEY_PRESS) {
+                switch (event.key) {
+                case 13: add_task(); break;
+                case 27: current_mode = AppMode::Navigating; update_ui(); break;
+                default: input_box->handle_input(event.key); break;
+                }
             }
-            break;
-        case 'k': // Up
-            if (selected_task > 0) {
-                selected_task--;
-                update_task_list();
+        }
+        else {
+            switch (event.type) {
+            case EventType::KEY_PRESS:
+                switch (event.key) {
+                case 'i': current_mode = AppMode::Editing; update_ui(); break;
+                case 'd': remove_task(); break;
+                case 'j': if (!tasks.empty() && selected_task < (int)tasks.size() - 1) { selected_task++; update_ui(); } break;
+                case 'k': if (selected_task > 0) { selected_task--; update_ui(); } break;
+                }
+                break;
+            case EventType::MOUSE_PRESS:
+                if (buttons[0]->contains(event.mouse_x, event.mouse_y)) add_task();
+                else if (buttons[1]->contains(event.mouse_x, event.mouse_y)) remove_task();
+                else if (buttons[2]->contains(event.mouse_x, event.mouse_y)) clear_tasks();
+                else {
+                    for (size_t i = 0; i < task_text_components.size(); ++i) { if (task_text_components[i]->contains(event.mouse_x, event.mouse_y)) { selected_task = i; update_ui(); return; } }
+                    if (input_box->contains(event.mouse_x, event.mouse_y)) { current_mode = AppMode::Editing; update_ui(); }
+                }
+                break;
+            case EventType::MOUSE_SCROLL_UP:   main_list->scroll_up();   break;
+            case EventType::MOUSE_SCROLL_DOWN: main_list->scroll_down(); break;
+            default: break;
             }
-            break;
-        default:
-            input_box->handle_input(ch);
-            break;
         }
         });
 

@@ -59,7 +59,7 @@ public:
 	 * \param w The width of the component.
 	 * \param h The height of the component.
 	 */
-	virtual void render(ScreenBuffer& buffer, int x, int y, int w, int h) const override;
+	virtual void render(ScreenBuffer& buffer, int x, int y, int w, int h) override;
 
 private:
 	template <typename First, typename... Rest>

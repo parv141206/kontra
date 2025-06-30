@@ -109,6 +109,14 @@ public:
 	 * @return True if the input box is active, false otherwise.
 	 */
 	bool is_active() const;
+	
+	/**
+	 * @brief Sets the callback function to be triggered on button click.
+	 * @param callback The new callback function to set.
+	 */
+	void set_on_click_callback(const std::function<void()>& callback) {
+		on_click_callback = callback;
+	}
 
 	/**
 	 * @brief Triggers the button's click callback if any.
@@ -116,11 +124,11 @@ public:
 	void click();
 
 	/**
-	 * @brief Renders the input box at the specified position and size.
+	 * @brief Renders the button at the specified position and size.
 	 * @param x The x-coordinate of the input box's position.
 	 * @param y The y-coordinate of the input box's position.
 	 * @param w The width of the input box.
 	 * @param h The height of the input box.
 	 */
-	void render(ScreenBuffer& buffer, int x, int y, int w, int h) const override;
+	void render(ScreenBuffer& buffer, int x, int y, int w, int h) override;
 };

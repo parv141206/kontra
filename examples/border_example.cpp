@@ -41,10 +41,8 @@ int main() {
 	// --- 4. Run the Application ---
 	// The event loop is minimal here. It just waits for the user to exit.
 	// The UI is static and doesn't require any input handling.
-	kontra::run(screen, [&](char ch) {
-		if (ch == 17) { // Exit on Ctrl+Q
-			exit(0);
-		}
+	kontra::run(screen, [&](const InputEvent& event) {
+		// Static example, no input needed. Exit is handled by runtime.
 		});
 
 	return 0;

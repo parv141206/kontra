@@ -48,6 +48,11 @@ public:
 		: direction(dir), children(std::move(comps)), gap(0), padding(0) {
 	}
 
+	Flex(FlexDirection dir, const std::vector<std::shared_ptr<Component>>& comps)
+		: direction(dir), children(comps), gap(0), padding(0) {
+	}
+
+
 	/**
 	 * \brief Adds a component to the layout.
 	 * \param comp The component to add
@@ -76,7 +81,7 @@ public:
 	 * \param w The width of the component.
 	 * \param h The height of the component.
 	 */
-	virtual void render(ScreenBuffer& buffer, int x, int y, int w, int h) const override;
+	virtual void render(ScreenBuffer& buffer, int x, int y, int w, int h)  override;
 
 private:
 	/**
