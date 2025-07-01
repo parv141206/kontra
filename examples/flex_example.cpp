@@ -39,9 +39,6 @@ int main() {
     );
     bordered_column_example->set_padding(1);
 
-    // --- 4. THE FIX: Use Flex as the Main Layout ---
-    // By using a Flex(Column) at the top level, we divide the entire screen
-    // height between our two bordered examples, giving them space to "flex".
     auto main_layout = std::make_shared<Flex>(
         FlexDirection::Column,
         bordered_row_example,

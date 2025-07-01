@@ -78,10 +78,10 @@ The component doesn't require you to manually handle individual keys (like backs
 <CodeBlock border 
   lang="cpp"
   code={`
-    kontra::run(screen, [&](char ch) {
-        if (ch == 17) exit(0); // Ctrl+Q to quit
-
-        input_box->handle_input(ch); // All input is handled internally
+    kontra::run(screen, [&](const InputEvent& event) {
+      if (event.type == EventType::KEY_PRESS) {
+          input_box->handle_input(event.key);
+      }
     });`}
 
 />

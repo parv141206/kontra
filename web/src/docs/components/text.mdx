@@ -123,11 +123,8 @@ Now simply adding it to the screen and rendering it!
   code={`
     auto screen = std::make_shared<Screen>(bordered_layout);
 
-    kontra::run(screen, [&](char ch) {
-        if (ch == 17) { // Exit on Ctrl+Q
-            exit(0);
-        }
-        // The redraw for time is handled automatically with respect to time, so no logic here!
+    kontra::run(screen, [&](const InputEvent& event) {
+
     });
     `
     }

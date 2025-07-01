@@ -86,15 +86,14 @@ Every UI needs a screen – think of it like the canvas your TUI will be drawn o
 <CodeBlock border 
   lang="cpp"
   code={`
-    kontra::run(screen, [&](char ch) {
-        if (ch == 17) exit(0); // Ctrl+Q to quit
+    kontra::run(screen, [&](const InputEvent& event) {
+      // This example is static and requires no event handling!
     });
 
 `}
 />
 
-- The second parameter is a lambda function that handles **keypress events**.
-- Here, pressing **Ctrl+Q** (ASCII 17) exits the app.
+- The second parameter is a lambda function that handles **events**.
 
 ---
 
@@ -122,12 +121,8 @@ Every UI needs a screen – think of it like the canvas your TUI will be drawn o
 
         auto screen = std::make_shared<Screen>(bordered_text);
 
-        kontra::run(screen, [&](char ch) {
-            // We define a simple exit condition. If the user presses Ctrl+Q
-            // (which corresponds to character code 17), the program exits cleanly.
-            if (ch == 17) {
-                exit(0);
-            }
+        kontra::run(screen, [&](const InputEvent& event) {
+          // This example is static and requires no event handling!
         });
 
         return 0;

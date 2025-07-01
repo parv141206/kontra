@@ -1,105 +1,112 @@
 # List
 
-The `List` component in **Kontra TUI** is a vertical layout container that stacks components top-to-bottom - like a column - but **respects each child's preferred height**. This makes it ideal for elements with varying size, like menus, multi-line text, and mixed content.
+The `List` component in **Kontra TUI** is a vertical layout container that stacks components top-to-bottom - like a column - but **respects each child's preferred height**.
+
+It's perfect for:
+
+- Menus
+- Multi-line text blocks
+- Mixed or dynamic content
+- Scrollable containers
 
 ---
 
-## Basic Usage
+## Creating a List
 
-You can create a list by passing any number of components to the constructor:
+Just pass your components to the constructor:
 
 <CodeBlock
   border
   lang="cpp"
-  code={`
+  code={String.raw`
     auto list = std::make_shared<List>(
         item1,
         item2,
         item3
-    );`}
+    );
+`}
 />
 
-Use `.set_gap(int)` to insert empty lines between components:
+You can add spacing between items using `.set_gap(...)`:
 
 <CodeBlock
   border
   lang="cpp"
-  code={`
-    list->set_gap(1);
-    `}
+  code={String.raw`
+list->set_gap(1);
+`}
 />
 
 ---
 
-## Features & Behavior
+## Why Use List?
 
-The `List` is different from a `Flex(Column)` layout because:
+Unlike `Flex(Column)`, `List`:
 
-- It **does not stretch** children to fill available space.
-- It respects each component's actual height.
-- It's ideal for **text blocks**, **menus**, **forms**, or **dynamic content**.
-
-You can include any component inside a list:
-
-<CodeBlock
-  border
-  lang="cpp"
-  code={`
-    auto input = std::make_shared<InputBox>();
-    input->set_text("Even InputBoxes work!");
-    auto list = std::make_shared<List>(
-        item1,
-        item2,
-        input
-    );`}
-/>
+- Does **not** stretch children to match height
+- Respects individual height from `get_preferred_height()`
+- Works great for uneven or dynamic layouts
 
 ---
 
-## Full Layout Example
+## Mixed Content Example
 
-Here's how you can build a list with various content:
+`List` supports any component inside - including `InputBox`:
 
 <CodeBlock border 
-  lang="cpp"
-  code={`
+  lang="cpp" 
+  code={String.raw`
     auto item1 = std::make_shared<Text>("This is a single-line item.");
-    
+
     auto item2 = std::make_shared<Text>("This is a\\nmulti-line item\\nthat takes up more space.");
-    
+
+    auto item3 = std::make_shared<Text>("This is another single-line item.");
+
     auto input_item = std::make_shared<InputBox>();
-    
     input_item->set_text("Lists can contain other components too!");
 
     auto main_list = std::make_shared<List>(
-        item1,
-        item2,
-        input_item
+      item1,
+      item2,
+      item3,
+      input_item
     );
 
-    main_list->set_gap(1);`}
+    main_list->set_gap(1);
 
-/>
+`} />
 
 ---
 
-## Render It on Screen
+## Render on Screen (with Scroll Support!)
 
-Wrap the `List` in a `Screen` and optionally a `Border`-
+Wrap the list in a `Screen` + `Border`, and handle input:
 
-<CodeBlock border 
-  lang="cpp"
-  code={`
+<CodeBlock 
+  border 
+  lang="cpp" 
+  code={String.raw`
     auto screen = std::make_shared<Screen>(
         std::make_shared<Border>(main_list)
     );
 
-    kontra::run(screen, [&](char ch) {
-        if (ch == 17) exit(0); // Ctrl+Q to quit
-        input_item->handle_input(ch); // Pass input to InputBox
-    });`}
+    kontra::run(screen, [&](const InputEvent& event) {
+      switch (event.type) {
+        case EventType::KEY_PRESS:
+          input_item->handle_input(event.key);
+          break;
+        case EventType::MOUSE_SCROLL_UP:
+          main_list->scroll_up();
+          break;
+        case EventType::MOUSE_SCROLL_DOWN:
+          main_list->scroll_down();
+          break;
+        default:
+          break;
+      }
+    });
 
-/>
+`} />
 
 ---
 
@@ -116,4 +123,8 @@ Wrap the `List` in a `Screen` and optionally a `Border`-
 
 ## TL;DR
 
-Use `List` when you want to vertically stack components of varying height - like messages, comments, or mixed content blocks. It's a flexible layout that doesn't force equal sizing and works great with dynamic or reactive elements like `InputBox`, `Text`, and even nested lists.
+- Use `List` when vertically stacking components of **uneven height**
+- Supports mouse scroll out of the box!
+- Combine it with `InputBox`, `Text`, `Button`, etc.
+- `.set_gap()` is your friend for spacing
+- Easily wrapped with `Border` and rendered via `Screen`

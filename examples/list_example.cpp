@@ -37,7 +37,7 @@ int main() {
 
     // --- 3. Create the Screen and Run ---
     auto screen = std::make_shared<Screen>(
-        std::make_shared<Border>(main_list) // Wrap in a border for context
+        std::make_shared<Border>(main_list)
     );
 
     kontra::run(screen, [&](const InputEvent& event) {

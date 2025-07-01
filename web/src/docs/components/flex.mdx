@@ -128,11 +128,9 @@ Finally, render your layout using the `Screen` component:
   code={`
     auto screen = std::make_shared<Screen>(main_layout);
 
-    kontra::run(screen, [&](char ch) {
-        if (ch == 17) { // Ctrl+Q to quit
-            exit(0);
-        }
-    );`}
+    kontra::run(screen, [&](const InputEvent& event) {
+    // Static example, no input needed.
+    });`}
 
 />
 
@@ -188,10 +186,8 @@ Code for it,
 
         auto screen = std::make_shared<Screen>(main_layout);
 
-        kontra::run(screen, [&](char ch) {
-            if (ch == 17) {
-                exit(0);
-            }
+        kontra::run(screen, [&](const InputEvent& event) {
+          // Static example, no input needed.
         });
 
         return 0;

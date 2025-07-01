@@ -1,104 +1,112 @@
 # Button
 
-The `Button` component is used to create interactive elements in your Kontra TUI app. Buttons can trigger custom actions when "clicked" and respond to focus states for keyboard interaction.
+The `Button` component lets you make your terminal UI interactive — click, tab, or mouse-press your way through clean TUI controls.  
+Use it to perform actions, show feedback, or simply to give your app some life.
 
-## 🛠️ Creating a Button
+---
 
-A basic button can be created like this:
+## Creating a Button
+
+You can create a button with just a label and an `onClick` callback:
 
 <CodeBlock
   border
   lang="cpp"
   code={`
     auto button = std::make_shared<Button>("Click Me!", []() {
-        // Code to run when clicked
-    });
-`}
+      // Do something here
+    });`}
 />
 
-You can also customize its appearance using the `ButtonStyleBuilder`.
+Want to make it pop? Use `ButtonStyleBuilder` to give it color and personality 👇
 
 ---
 
 ## Styling Buttons
 
-The `ButtonStyleBuilder` makes it easy to define visual appearance for both normal and active (focused) states.
+Style your buttons with ease — including hover/focus state!
 
 <CodeBlock
   border
   lang="cpp"
   code={`
     auto style = ButtonStyleBuilder()
-    .set_color(ansi::FG_WHITE)
-    .set_background_color(ansi::BG_BLUE)
-    .set_color_active(ansi::FG_BLUE)
-    .set_background_color_active(ansi::BG_BRIGHT_WHITE)
-    .set_bold(true)
-    .build();`}
+      .set_color(ansi::FG_WHITE)
+      .set_background_color(ansi::BG_BLUE)
+      .set_color_active(ansi::FG_BLUE)
+      .set_background_color_active(ansi::BG_BRIGHT_WHITE)
+      .set_bold(true)
+      .build();`}
 />
 
-- `set_color(...)`- normal text color
-- `set_background_color(...)`- normal background
-- `set_color_active(...)`- focused/active text color
-- `set_background_color_active(...)`- focused/active background
-- `set_bold(...)`- makes the button text bold
+- `set_color(...)` - normal text color
+- `set_background_color(...)` - normal background
+- `set_color_active(...)` - focused/hover text color
+- `set_background_color_active(...)` - focused/hover background
+- `set_bold(...)` - bold text for extra spice
 
-All color options come from [`ansi`](/docs/ansi).
+All these come from the [`ansi`](/docs/ansi) header — the ultimate color toolbox.
 
-You can pass this style when creating a button:
+Now apply the style like this:
 
 <CodeBlock
   border
   lang="cpp"
   code={`
     auto button = std::make_shared<Button>("Styled", []() {
-        std::cout << "Clicked!";
+      std::cout << "Clicked!";
     }, style);`}
 />
 
 ---
 
-## Managing Focus
+## Handling Focus + Input
 
-Since Kontra doesn't manage focus automatically, you need to set which button is active manually.
+Kontra gives _you_ full control over what's active and clickable.
 
-<CodeBlock border 
-  lang="cpp"
-  code={`
-    button1->set_active(true);
-    button2->set_active(false);
-
-    std::shared_ptr<Button> active_button = button1;
-    `}
-
-/>
-
-To switch focus on `Tab`-
+### Switch focus with `Tab`:
 
 <CodeBlock
   border
   lang="cpp"
   code={`
-    if (ch == '\\t') {
-        // Toggle focus
-        button1->set_active(!button1->is_active());
-        button2->set_active(!button2->is_active());
-        active_button = button1->is_active() ? button1 : button2;
+    if (event.key == '\\t') {
+      button1->set_active(!button1->is_active());
+      button2->set_active(!button2->is_active());
+      active_button = button1->is_active() ? button1 : button2;
+    }`}
+/>
+
+### Trigger click with `Enter`:
+
+<CodeBlock
+  border
+  lang="cpp"
+  code={`
+    if (event.key == '\\n' || event.key == '\\r') {
+      active_button->click();
     }`}
 />
 
 ---
 
-## Handling Click
+## Mouse Support (Yup, we got that)
 
-To simulate a button click (e.g., when user presses `Enter`):
+You can even respond to mouse clicks:
 
 <CodeBlock
   border
   lang="cpp"
   code={`
-    if (ch == '\\n' || ch == '\\r') {
-        active_button->click();
+    if (event.type == EventType::MOUSE_PRESS) {
+      for (const auto& btn : buttons) {
+          if (btn->contains(event.mouse_x, event.mouse_y)) {
+              btn->click();
+              active_button->set_active(false);
+              btn->set_active(true);
+              active_button = btn;
+          }
+      }
     }`}
 />
 
@@ -106,32 +114,57 @@ To simulate a button click (e.g., when user presses `Enter`):
 
 ## Complete Layout Example
 
-You can stack buttons in a layout like this:
-
 <CodeBlock border 
-  lang="cpp"
+  lang="cpp" 
   code={`
-    auto layout = std::make_shared<List>(
-        display_text,
-        button1,
-        button2
-    );
+    auto display_text = std::make_shared<Text>("Click or Tab to test!");
+
+    auto button1 = std::make_shared<Button>("Set Message 1", [&]() {
+      display_text->set_text("Button 1 clicked!");
+    });
+    auto button2 = std::make_shared<Button>("Set Message 2", [&]() {
+      display_text->set_text("Button 2 clicked!");
+    });
+
+    button1->set_active(true);
+    std::shared_ptr<Button> active_button = button1;
+    std::vector<std::shared_ptr<Button>> buttons = {button1, button2};
+
+    auto layout = std::make_shared<List>(display_text, button1, button2);
     layout->set_gap(1);
 
-    auto screen = std::make_shared<Screen>(std::make_shared<Border>(layout));`}
+    auto screen = std::make_shared<Screen>(std::make_shared<Border>(layout));
 
-/>
+    kontra::run(screen, [&](const InputEvent& event) {
+      if (event.type == EventType::KEY_PRESS) {
+        if (event.key == '\\t') {
+        // Swap focus
+          if (active_button == button1) {
+            button1->set_active(false);
+            button2->set_active(true);
+            active_button = button2;
+          } else {
+            button2->set_active(false);
+            button1->set_active(true);
+            active_button = button1;
+          }
+        } else if (event.key == '\\n' || event.key == '\\r') {
+          active_button->click();
+        }
+      } else if (event.type == EventType::MOUSE_PRESS) {
+          for (auto& btn : buttons) {
+            if (btn->contains(event.mouse_x, event.mouse_y)) {
+              btn->click();
+              active_button->set_active(false);
+              btn->set_active(true);
+              active_button = btn;
+            break;
+          }
+        }
+      }
+    });
 
----
-
-## Output
-
-<img
-  src="/images/button-example.png"
-  className="w-full"
-  alt="Button Example"
-  width="200"
-/>
+    `} />
 
 ---
 

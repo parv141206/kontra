@@ -31,7 +31,6 @@ int main() {
     layout->set_gap(1);
     auto screen = std::make_shared<Screen>(std::make_shared<Border>(layout));
 
-    // UPDATED: The event loop now handles keyboard and mouse events.
     kontra::run(screen, [&](const InputEvent& event) {
 
         if (event.type == EventType::KEY_PRESS) {

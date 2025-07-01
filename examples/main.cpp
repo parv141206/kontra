@@ -59,11 +59,6 @@ int main() {
     // `kontra::run` takes control of the terminal, starts the main event loop,
     // and handles drawing the screen and listening for keyboard input.
 
-    // The second argument is a C++ lambda function. This function is your
-    // "event handler" - it gets called automatically every time a key is pressed.
-    // The character of the key that was pressed is passed in as `ch`.
-    // UPDATED: The lambda now takes an InputEvent.
-    // The main loop already handles Ctrl+Q for exiting.
     kontra::run(screen, [&](const InputEvent& event) {
         // This example is static and requires no input handling.
         });
