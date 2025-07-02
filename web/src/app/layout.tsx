@@ -53,6 +53,12 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${lexend.variable} ${silkscreen.variable} ${pressStart.variable} max-w-screen overflow-x-hidden bg-black text-[#ededed]`}
     >
+      <head>
+        <meta
+          name="google-site-verification"
+          content="Plv7-l-9fD_Sg9-FqpB2yaOhOaV5njShdmBquxUa4fU"
+        />
+      </head>
       <body className="relative flex min-h-screen max-w-screen flex-col">
         <Navbar />
         {children}
