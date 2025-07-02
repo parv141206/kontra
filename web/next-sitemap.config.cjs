@@ -1,6 +1,41 @@
+const fs = require("fs");
+const path = require("path");
+
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
   siteUrl: "https://kontralib.vercel.app",
+
   generateRobotsTxt: true,
-  generateIndexSitemap: false,
+
+  additionalPaths: async (config) => {
+    const paths = [];
+
+    const guidesDir = path.join(process.cwd(), "src/docs");
+    const guideFiles = fs.readdirSync(guidesDir);
+
+    guideFiles.forEach((file) => {
+      if (path.extname(file) === ".mdx") {
+        const slug = file.replace(/\.mdx$/, "").replace(/^\d+\./, "");
+        paths.push({
+          loc: `/docs/${slug}`,
+          lastmod: new Date().toISOString(),
+        });
+      }
+    });
+
+    const componentsDir = path.join(process.cwd(), "src/docs/components");
+    const componentFiles = fs.readdirSync(componentsDir);
+
+    componentFiles.forEach((file) => {
+      if (path.extname(file) === ".mdx") {
+        const slug = file.replace(/\.mdx$/, "");
+        paths.push({
+          loc: `/docs/components/${slug}`,
+          lastmod: new Date().toISOString(),
+        });
+      }
+    });
+
+    return paths;
+  },
 };
