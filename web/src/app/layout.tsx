@@ -3,7 +3,7 @@ import "~/styles/globals.css";
 import { type Metadata } from "next";
 import Navbar from "~/components/Navbar";
 import Footer from "~/components/Footer";
-import { inter, lexend, silkscreen, pressStart } from "~/fonts";
+import { inter, lexend, silkscreen, pressStart, jetbrainsMono } from "~/fonts";
 
 export const metadata: Metadata = {
   title: "Kontra - Terminal UI Library",
@@ -51,7 +51,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${lexend.variable} ${silkscreen.variable} ${pressStart.variable} max-w-screen overflow-x-hidden bg-black text-[#ededed]`}
+      className={`${inter.variable} ${lexend.variable} ${jetbrainsMono.variable} ${silkscreen.variable} ${pressStart.variable} max-w-screen overflow-x-hidden bg-black text-[#ededed]`}
     >
       <head>
         <meta

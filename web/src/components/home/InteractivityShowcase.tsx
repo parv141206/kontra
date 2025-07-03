@@ -6,37 +6,39 @@ import { Corner } from "../Corner";
 export default function InteractivityShowcase() {
   const codeSnippet = String.raw`
   #include "../include/kontra.hpp"
-  #include "../include/core/utils.hpp" 
+  #include "../include/core/utils.hpp"
 
   int main() {
-      ...
-      kontra::run(screen, [&](char ch) {
-          if (ch == 17) exit(0); // Ctrl+Q
+    ...
+    kontra::run(screen, [&](const InputEvent& event) {
+        if (event.type == EventType::KEY_PRESS) {
+            if (event.key == 17) exit(0); // Ctrl+Q
 
-          switch (ch) {
-          case '1': add_button->click(); break;
-          case '2': remove_button->click(); break;
-          case '3': clear_button->click(); break;
-          case 'j': // Down
-              if (!tasks.empty() && selected_task < tasks.size() - 1) {
-                  selected_task++;
-                  update_task_list();
-              }
-              break;
-          case 'k': // Up
-              if (selected_task > 0) {
-                  selected_task--;
-                  update_task_list();
-              }
-              break;
-          default:
-              input_box->handle_input(ch);
-              break;
-          }
-      });
-      ...
+            switch (event.key) {
+                case '1': add_button->click(); break;
+                case '2': remove_button->click(); break;
+                case '3': clear_button->click(); break;
+                case 'j': // Down
+                    if (!tasks.empty() && selected_task < tasks.size() - 1) {
+                        selected_task++;
+                        update_task_list();
+                    }
+                    break;
+                case 'k': // Up
+                    if (selected_task > 0) {
+                        selected_task--;
+                        update_task_list();
+                    }
+                    break;
+                default:
+                    input_box->handle_input(event.key);
+                    break;
+            }
+        }
+    });
+    ...
   }
-  `;
+`;
 
   return (
     <div className="relative flex w-full flex-col-reverse md:flex-row">

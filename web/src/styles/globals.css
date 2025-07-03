@@ -33,3 +33,7 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-[#01c047];
 }
+.shiki pre,
+.shiki code {
+  font-family: var(--font-jetbrains-mono), monospace !important;
+}
