@@ -9,6 +9,13 @@
 
 enum class EventType {
     KEY_PRESS,
+    KEY_ENTER,         
+    KEY_BACKSPACE,     
+    KEY_ESCAPE,        
+    KEY_UP,     
+    KEY_DOWN,   
+    KEY_LEFT,   
+    KEY_RIGHT,  
     MOUSE_SCROLL_UP,
     MOUSE_SCROLL_DOWN,
     MOUSE_PRESS, 

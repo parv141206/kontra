@@ -1,148 +1,140 @@
 # 🎮 Event Handling in Kontra TUI
 
-Kontra TUI uses a unified input system to handle **keyboard**, **mouse**, and **scroll** events through the `InputEvent` struct.
+Kontra TUI uses a unified event system to handle **keyboard**, **mouse**, and **scroll** interactions through a single, clean interface.
 
-You handle all events inside the `kontra::run(...)` loop. This gives you complete control over user interactions.
+You handle all events inside the `kontra::run(...)` loop. This gives you complete control over your application's interactivity.
 
 ---
 
 ## 🧠 How It Works
 
-Kontra's main input loop looks like this:
+Kontra's main event loop provides an `InputEvent` object every time the user interacts with the terminal.
 
 <CodeBlock
   border
   lang="cpp"
   code={`
     kontra::run(screen, [&](const InputEvent& event) {
-        // handle event here
+        // Handle the event here
+        switch (event.type) {
+            // ... cases for different event types ...
+        }
     });`}
 />
 
-The `InputEvent` structure looks like this:
+The `InputEvent` struct abstracts away platform differences:
 
 ```cpp
+// core/event.hpp
 struct InputEvent {
-    EventType type;
-    int key;         // used for KEY_PRESS
-    int mouse_x;     // used for MOUSE events
-    int mouse_y;
+    EventType type;  // The kind of event that occurred
+    char key;        // The character, ONLY valid for EventType::KEY_PRESS
+    int mouse_x;     // X coordinate (column) for mouse events
+    int mouse_y;     // Y coordinate (row) for mouse events
 };
 ```
 
 ---
 
-## 🎛️ Event Types
+## 🎛️ Abstract Event Types
 
-Here are the main event types supported by `InputEvent`:
+Instead of checking for raw ASCII codes, you should handle these abstract event types. This makes your code readable and cross-platform.
 
-### `EventType::MOUSE_PRESS`
+Here are the main event types supported by `InputEvent`. Your application logic should check `event.type` to decide how to react.
 
-Triggered when the user left-clicks anywhere in the UI.
+-   **`EventType::KEY_PRESS`**
+    Triggered by any printable character (e.g., `a`, `b`, `1`, `2`, `!`, `?`). The character itself is stored in `event.key`.
 
-You can check if a component (like a button) was clicked using its `.contains(x, y)` method:
+-   **`EventType::KEY_ENTER`**
+    Triggered by the `Enter` key.
 
-<CodeBlock
-  border
-  lang="cpp"
-  code={`
-    if (event.type == EventType::MOUSE_PRESS) {
-        for (const auto& btn : buttons) {
-            if (btn->contains(event.mouse_x, event.mouse_y)) {
-                btn->click();
-            }
-        }
-    }`}
-/>
+-   **`EventType::KEY_BACKSPACE`**
+    Triggered by the `Backspace` key.
 
-### `EventType::KEY_PRESS`
+-   **`EventType::KEY_ESCAPE`**
+    Triggered by the `Esc` key.
 
-Triggered when any key is pressed on the keyboard.
+-   **`EventType::KEY_UP` / `KEY_DOWN`**
+    Triggered by the `Up` and `Down` arrow keys, respectively.
 
-Example usage:
+-   **`EventType::KEY_LEFT` / `KEY_RIGHT`**
+    Triggered by the `Left` and `Right` arrow keys, respectively.
 
-<CodeBlock
-  border
-  lang="cpp"
-  code={`
-    if (event.type == EventType::KEY_PRESS) {
-        switch (event.key) {
-            case 'j': main_list->scroll_down(); break;
-            case 'k': main_list->scroll_up(); break;
-            default: input_box->handle_input(event.key); break;
-        }
-    }`}
-/>
+-   **`EventType::MOUSE_PRESS`**
+    Triggered by a left mouse click. The coordinates are stored in `event.mouse_x` and `event.mouse_y`.
 
-### `EventType::MOUSE_SCROLL_UP` / `MOUSE_SCROLL_DOWN`
+-   **`EventType::MOUSE_SCROLL_UP`**
+    Triggered when the mouse wheel is scrolled up.
 
-These are triggered by mouse wheel movements. Great for scrolling lists or content.
-
-<CodeBlock
-  border
-  lang="cpp"
-  code={`
-    switch (event.type) {
-        case EventType::MOUSE_SCROLL_UP:
-            main_list->scroll_up();
-            break;
-
-        case EventType::MOUSE_SCROLL_DOWN:
-            main_list->scroll_down();
-            break;
-
-    }`} />
+-   **`EventType::MOUSE_SCROLL_DOWN`**
+    Triggered when the mouse wheel is scrolled down.
 
 ---
 
-## 🧩 Keyboard Input Example
+## Keyboard Input Example
 
-Handle basic keypresses like `i`, `j`, `k`, `Enter`, and `Esc`:
+Handle navigation with arrow keys and actions with Enter/Escape.
 
 <CodeBlock
   border
   lang="cpp"
   code={`
     kontra::run(screen, [&](const InputEvent& event) {
-        if (event.type == EventType::KEY_PRESS) {
-            switch (event.key) {
-                case 'i': current_mode = AppMode::Editing; update_ui(); break;
-                case 'j': selected_index++; update_ui(); break;
-                case 'k': selected_index--; update_ui(); break;
-                case 13:  handle_enter(); break;  // Enter key
-                case 27:  cancel_input(); break;  // Escape key
-            }
+        switch (event.type) {
+            case EventType::KEY_UP:
+                selected_index--;
+                update_ui();
+                break;
+            case EventType::KEY_DOWN:
+                selected_index++;
+                update_ui();
+                break;
+            case EventType::KEY_ENTER:
+                handle_selection();
+                break;
+            case EventType::KEY_ESCAPE:
+                cancel_input();
+                break;
+            case EventType::KEY_PRESS:
+                // Handle printable characters for an input box
+                if (event.key == 'i') {
+                    current_mode = AppMode::Editing;
+                    update_ui();
+                }
+                break;
         }
     });`}
 />
 
-## 🖱️ Mouse Click Example
+## Mouse Click Example
 
-Detect if the user clicked on a button or component:
+Detect if the user clicked on a button or component.
 
 <CodeBlock
   border
   lang="cpp"
   code={`
     if (event.type == EventType::MOUSE_PRESS) {
+        // Iterate through all clickable components
         for (const auto& btn : buttons) {
+            // Use the .contains() method to check for a hit
             if (btn->contains(event.mouse_x, event.mouse_y)) {
                 btn->click();
-                active_button->set_active(false);
-                btn->set_active(true);
+                // Optional: update focus to the clicked button
                 active_button = btn;
+                break; // Stop checking once a button is found
             }
         }
     }`}
 />
 
-> 📌 Tip: All Kontra components have a `.contains(x, y)` method to check if a coordinate lies within them.
+> 📌 Tip: All Kontra components inherit a `.contains(x, y)` method to check if a coordinate lies within their last rendered position.
 
 ---
 
-## 🧼 Scroll Example
+## Scroll Example
 
-Scroll vertically with the mouse wheel:
+Scroll vertically with the mouse wheel. This works best with scrollable components like `List`.
 
 <CodeBlock
   border
@@ -156,19 +148,15 @@ Scroll vertically with the mouse wheel:
             case EventType::MOUSE_SCROLL_DOWN:
                 main_list->scroll_down();
                 break;
-            default:
-                break;
         }
     });`}
 />
-
-Works best with scrollable components like `List`.
 
 ---
 
 ## 🤹 Combining Input Modes
 
-You can also manage complex states like editing vs navigating (like in a todo app):
+You can manage complex states like editing vs. navigating by checking an `AppMode` enum first.
 
 <CodeBlock
   border
@@ -176,26 +164,32 @@ You can also manage complex states like editing vs navigating (like in a todo ap
   code={`
     kontra::run(screen, [&](const InputEvent& event) {
         if (current_mode == AppMode::Editing) {
-            if (event.type == EventType::KEY_PRESS) {
-                switch (event.key) {
-                    case 13: add_task(); break;
-                    case 27: current_mode = AppMode::Navigating; update_ui(); break;
-                    default: input_box->handle_input(event.key); break;
-                }
-            }
-        } else {
+            // Handle events differently in editing mode
             switch (event.type) {
-                case EventType::KEY_PRESS:
-                    switch (event.key) {
-                        case 'i': current_mode = AppMode::Editing; update_ui(); break;
-                        case 'd': delete_task(); break;
-                    }
+                case EventType::KEY_ENTER:
+                    add_task();
                     break;
-                case EventType::MOUSE_PRESS:
-                    if (input_box->contains(event.mouse_x, event.mouse_y)) {
+                case EventType::KEY_ESCAPE:
+                    current_mode = AppMode::Navigating;
+                    update_ui();
+                    break;
+                default:
+                    // Pass all other events to the input box
+                    input_box->handle_event(event);
+                    break;
+            }
+        } else { // Navigation Mode
+            switch (event.type) {
+                case EventType::KEY_UP:   navigate_up(); break;
+                case EventType::KEY_DOWN: navigate_down(); break;
+                case EventType::KEY_PRESS:
+                    if (event.key == 'i') {
                         current_mode = AppMode::Editing;
                         update_ui();
                     }
+                    break;
+                case EventType::MOUSE_PRESS:
+                    // ... handle mouse clicks for navigation ...
                     break;
             }
         }
@@ -206,38 +200,20 @@ You can also manage complex states like editing vs navigating (like in a todo ap
 
 ## 📚 Best Practices
 
-- ✅ Keep your input logic state-driven (`AppMode`, `selected`, etc.)
-- ✅ Avoid deeply nested if-else blocks by organizing input logic cleanly
-- ✅ Use `contains(x, y)` to detect mouse clicks on any component
-- ✅ You can reuse lambdas or function references for click handlers
+- ✅ **Use Abstract Events:** Always check for `EventType` like `KEY_ENTER` instead of raw numbers like `13`.
+- ✅ **Keep Logic State-Driven:** Change state variables (`AppMode`, `selected_index`), then call an update function.
+- ✅ **Delegate:** Let container components (like `RadioGroup` or a smart `Input` form) handle their own internal events when possible.
+- ✅ **Use `contains(x, y)`** to detect mouse clicks on any component.
 
 ---
 
-## 🧪 Mini Challenge: Toggle Color on Keypress
+## TL;DR
 
-<CodeBlock border lang="cpp" 
-    code={`
-    TextStyle style = TextStyle(ansi::FG_WHITE);
-
-    kontra::run(screen, [&](const InputEvent& event) {
-        if (event.type == EventType::KEY_PRESS && event.key == 'c') {
-            style = (style.fg == ansi::FG_WHITE)
-                ? TextStyle(ansi::FG_GREEN)
-                : TextStyle(ansi::FG_WHITE);
-            my_text->set_style(style);
-        }
-    });`} />
-
----
-
-## 🧼 TL;DR
-
-- Use `InputEvent` inside `kontra::run()` for all interaction
-- Handle keypresses via `event.key`
-- Handle clicks with `event.mouse_x/y` and `.contains(...)`
-- Support scroll with `MOUSE_SCROLL_UP` / `DOWN`
-- Split input logic based on app mode or active components
-
----
+- Use `InputEvent` inside `kontra::run()` for all interaction.
+- Handle specific actions with `EventType::KEY_ENTER`, `KEY_UP`, etc.
+- Handle printable characters with `EventType::KEY_PRESS` and `event.key`.
+- Handle clicks with `event.mouse_x/y` and `.contains(...)`.
+- Support scroll with `MOUSE_SCROLL_UP` / `DOWN`.
+- Split input logic based on app mode or active components.
 
 Now go build something awesome and interactive ✨

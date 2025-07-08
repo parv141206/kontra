@@ -1,6 +1,6 @@
 # Button
 
-The `Button` component lets you make your terminal UI interactive — click, tab, or mouse-press your way through clean TUI controls.  
+The `Button` component lets you make your terminal UI interactive — click, tab, or mouse-press your way through clean TUI controls.
 Use it to perform actions, show feedback, or simply to give your app some life.
 
 ---
@@ -14,7 +14,8 @@ You can create a button with just a label and an `onClick` callback:
   lang="cpp"
   code={`
     auto button = std::make_shared<Button>("Click Me!", []() {
-      // Do something here
+      // This code runs when the button is clicked.
+      std::cout << "Button was clicked!" << std::endl;
     });`}
 />
 
@@ -24,21 +25,21 @@ Want to make it pop? Use `ButtonStyleBuilder` to give it color and personality �
 
 ## Styling Buttons
 
-Style your buttons with ease — including hover/focus state!
+Style your buttons with ease by defining separate styles for their `inactive` and `active` (focused) states.
 
 <CodeBlock
   border
   lang="cpp"
   code={`
     // 1. Create a style for the button when it's NOT focused (inactive)
-    auto inactive = StyleBuilder()
+    auto inactive_style = TextStyleBuilder()
         .set_color(ansi::FG_WHITE)
         .set_background_color(ansi::BG_BLUE)
         .set_bold(true)
         .build();
 
     // 2. Create a style for when it IS focused (active)
-    auto active = StyleBuilder()
+    auto active_style = TextStyleBuilder()
         .set_color(ansi::FG_BLUE)
         .set_background_color(ansi::BG_BRIGHT_WHITE)
         .set_bold(true)
@@ -46,15 +47,15 @@ Style your buttons with ease — including hover/focus state!
 
     // 3. Combine them using the ButtonStyleBuilder
     auto button_style = ButtonStyleBuilder()
-        .set_inactive_style(inactive)
-        .set_active_style(active)
+        .set_inactive_style(inactive_style)
+        .set_active_style(active_style)
         .build();`}
 />
 
-- `set_inactive_style(...)` - sets the full style for the normal state.
-- `set_active_style(...)` - sets the full style for the focused/hover state.
+-   `set_inactive_style(...)` - sets the full style for the normal state.
+-   `set_active_style(...)` - sets the full style for the focused/hover state.
 
-Each method takes a complete style object created with `StyleBuilder` (from `text.hpp`).
+Each method takes a complete style object created with `TextStyleBuilder` (from `text.hpp`).
 
 Now apply the style like this:
 
@@ -62,7 +63,7 @@ Now apply the style like this:
   border
   lang="cpp"
   code={`
-    auto button = std::make_shared<Button>("Styled", []() {
+    auto styled_button = std::make_shared<Button>("Styled", []() {
       // ... click logic ...
     }, button_style);`}
 />
@@ -71,7 +72,7 @@ Now apply the style like this:
 
 ## Handling Focus + Input
 
-Kontra gives _you_ full control over what's active and clickable.
+Kontra gives _you_ full control over what's active and clickable by handling abstract `InputEvent` types.
 
 ### Switch focus with `Tab`:
 
@@ -79,7 +80,7 @@ Kontra gives _you_ full control over what's active and clickable.
   border
   lang="cpp"
   code={`
-    if (event.key == '\\t') {
+    if (event.type == EventType::KEY_PRESS && event.key == '\\t') {
       active_button->set_active(false); // Deactivate the old one
       if (active_button == button1) {
           active_button = button2;
@@ -96,7 +97,7 @@ Kontra gives _you_ full control over what's active and clickable.
   border
   lang="cpp"
   code={`
-    if (event.key == '\\n' || event.key == '\\r') {
+    if (event.type == EventType::KEY_ENTER) {
       active_button->click();
     }`}
 />
@@ -132,31 +133,26 @@ You can even respond to mouse clicks:
 <CodeBlock border 
   lang="cpp" 
   code={`
-    // A Text component to show feedback
-    auto display_text = std::make_shared<Text>("Click or Tab to test!");
+    // State to hold the message
+    std::string message = "Click or Tab to test!";
+
+    // A dynamic Text component to show feedback
+    auto message_display = std::make_shared<Text>([&](){ return message; });
 
     // Define a shared style for the buttons
-    auto btn_inactive_style = StyleBuilder().set_bold(true).build();
-    auto btn_active_style = StyleBuilder().set_bold(true).set_background_color(ansi::BG_BRIGHT_BLACK).build();
     auto button_style = ButtonStyleBuilder()
-        .set_inactive_style(btn_inactive_style)
-        .set_active_style(btn_active_style)
+        .set_inactive_style(TextStyleBuilder().set_bold(true).build())
+        .set_active_style(TextStyleBuilder().set_bold(true).set_background_color(ansi::BG_BRIGHT_BLACK).build())
         .build();
 
+    // Define buttons and their click actions
     auto button1 = std::make_shared<Button>("Set Message 1", [&]() {
-      // The text component must be captured by reference to be modified
+      message = "Button 1 Clicked!";
     }, button_style);
     
-    // We'll create a dynamic Text component for the message
-    auto message_display = std::make_shared<Text>([&](){ return "Waiting..."; });
-
-    // Now define the button actions
-    button1->set_on_click_callback([&](){ *message_display = Text("Button 1 Clicked!"); });
-
     auto button2 = std::make_shared<Button>("Set Message 2", [&]() {
-      *message_display = Text("Button 2 Clicked!");
+      message = "Button 2 Clicked!";
     }, button_style);
-
 
     // Manage focus state
     button1->set_active(true);
@@ -169,26 +165,30 @@ You can even respond to mouse clicks:
     auto screen = std::make_shared<Screen>(std::make_shared<Border>(layout));
 
     kontra::run(screen, [&](const InputEvent& event) {
-      if (event.type == EventType::KEY_PRESS) {
-        if (event.key == '\\t') {
-          // Swap focus
-          active_button->set_active(false);
-          active_button = (active_button == button1) ? button2 : button1;
-          active_button->set_active(true);
-        } else if (event.key == '\\n' || event.key == '\\r') {
-          active_button->click();
+        switch (event.type) {
+            case EventType::KEY_PRESS:
+                if (event.key == '\\t') {
+                    // Swap focus
+                    active_button->set_active(false);
+                    active_button = (active_button == button1) ? button2 : button1;
+                    active_button->set_active(true);
+                }
+                break;
+            case EventType::KEY_ENTER:
+                active_button->click();
+                break;
+            case EventType::MOUSE_PRESS:
+                for (auto& btn : buttons) {
+                    if (btn->contains(event.mouse_x, event.mouse_y)) {
+                        btn->click();
+                        active_button->set_active(false);
+                        btn->set_active(true);
+                        active_button = btn;
+                        break;
+                    }
+                }
+                break;
         }
-      } else if (event.type == EventType::MOUSE_PRESS) {
-          for (auto& btn : buttons) {
-            if (btn->contains(event.mouse_x, event.mouse_y)) {
-              btn->click();
-              active_button->set_active(false);
-              btn->set_active(true);
-              active_button = btn;
-              break;
-            }
-        }
-      }
     });
     `} />
 
@@ -196,7 +196,7 @@ You can even respond to mouse clicks:
 
 ## TL;DR
 
-- Use `Button` to make parts of your terminal interface **interactive**.
-- Each button has a **label**, an **onClick callback**, and **customizable styles**.
-- Handle **keyboard input** manually (`Tab`, `Enter`) to manage focus and clicks.
-- Combine `Button` with `Text`, `List`, and `Flex` to build responsive **interactive layouts**.
+-   Use `Button` to make parts of your terminal interface **interactive**.
+-   Each button has a **label**, an **onClick callback**, and **customizable styles**.
+-   Handle **keyboard input** with abstract events (`KEY_ENTER`, `KEY_PRESS`) to manage focus and clicks.
+-   Combine `Button` with `Text`, `List`, and `Flex` to build responsive **interactive layouts**.

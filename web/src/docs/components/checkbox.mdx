@@ -2,7 +2,7 @@
 
 The `Checkbox` component provides a standard way for users to toggle boolean options on and off. It's a fundamental element for building settings pages, forms, or any interface that requires true/false inputs.
 
-The key design feature of Kontra's `Checkbox` is that it **directly manipulates** an existing boolean variable in your application, creating a seamless two-way data binding.
+The key design feature of Kontra's `Checkbox` is that it **directly manipulates** an existing boolean variable in your application via a pointer, creating a seamless two-way data binding.
 
 ---
 
@@ -32,19 +32,19 @@ Now, whenever the user interacts with this checkbox, the value of `show_advanced
 
 A `Checkbox` has two visual states: `normal` (not focused) and `active` (focused). You can style these states using the `CheckboxStyleBuilder`.
 
-Like the `Button`, this builder composes styles created with the `StyleBuilder`.
+Like the `Button`, this builder composes styles created with the `TextStyleBuilder`.
 
 <CodeBlock
   border
   lang="cpp"
   code={`
     // Define a style for when the checkbox is NOT focused
-    auto normal_style = StyleBuilder()
+    auto normal_style = TextStyleBuilder()
         .set_color(ansi::FG_WHITE)
         .build();
 
     // Define a style for when the checkbox IS focused
-    auto active_style = StyleBuilder()
+    auto active_style = TextStyleBuilder()
         .set_color(ansi::FG_YELLOW)
         .set_background_color(ansi::BG_BRIGHT_BLACK)
         .set_bold(true)
@@ -140,10 +140,10 @@ This example combines three checkboxes, a dynamic text display to show their sta
         // --- 2. Define a Reusable Style ---
         auto checkbox_style = CheckboxStyleBuilder()
             .set_normal_style(
-                StyleBuilder().set_color(ansi::FG_WHITE).build()
+                TextStyleBuilder().set_color(ansi::FG_WHITE).build()
             )
             .set_active_style(
-                StyleBuilder()
+                TextStyleBuilder()
                     .set_color(ansi::FG_YELLOW)
                     .set_background_color(ansi::BG_BRIGHT_BLACK)
                     .set_bold(true)
@@ -167,7 +167,11 @@ This example combines three checkboxes, a dynamic text display to show their sta
         int active_idx = 0;
         checkboxes[active_idx]->set_active(true);
 
-        auto layout = std::make_shared<List>({display, chk1, chk2, chk3});
+        auto layout = std::make_shared<List>();
+        layout->add(display);
+        layout->add(chk1);
+        layout->add(chk2);
+        layout->add(chk3);
         layout->set_gap(1).set_padding(1);
         
         auto screen = std::make_shared<Screen>(
@@ -179,7 +183,7 @@ This example combines three checkboxes, a dynamic text display to show their sta
         // --- 6. Event Loop ---
         kontra::run(screen, [&](const InputEvent& event) {
             if (event.type == EventType::KEY_PRESS) {
-                if (event.key == '\t') { // Tab to move focus
+                if (event.key == '\\t') { // Tab to move focus
                     checkboxes[active_idx]->set_active(false);
                     active_idx = (active_idx + 1) % checkboxes.size();
                     checkboxes[active_idx]->set_active(true);
@@ -219,4 +223,7 @@ This example combines three checkboxes, a dynamic text display to show their sta
 
 ## TL;DR
 
-- A simple checkbox to toggle a state!
+-   Create a `Checkbox` to directly control a boolean variable in your app.
+-   Pass a **pointer** to your boolean state using the `&` operator.
+-   Style the `normal` and `active` states using the `CheckboxStyleBuilder`.
+-   Handle `KEY_PRESS` (' ' and '\\t') and `MOUSE_PRESS` to manage focus and toggling.

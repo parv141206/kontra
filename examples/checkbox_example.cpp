@@ -93,6 +93,15 @@ int main() {
                 }
             }
         }
+        else if (event.type == EventType::KEY_DOWN) {
+            checkboxes[active_idx]->set_active(false);
+            active_idx = (active_idx + 1) % checkboxes.size();
+            checkboxes[active_idx]->set_active(true);
+        } else if (event.type == EventType::KEY_UP) {
+            checkboxes[active_idx]->set_active(false);
+            active_idx = (active_idx - 1) % checkboxes.size();
+            checkboxes[active_idx]->set_active(true);
+        }
     });
 
     return 0;

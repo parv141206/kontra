@@ -62,7 +62,7 @@ void showCursor()
     SetConsoleCursorInfo(hOut, &cursorInfo);
 }
 
-#else // Linux
+#else 
 #include <unistd.h>
 #include <termios.h>
 #include <sys/select.h>

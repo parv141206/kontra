@@ -147,40 +147,68 @@ int main()
 
     // --- 6. EVENT LOOP ---
     kontra::run(screen, [&](const InputEvent &event)
-                {
+    {
         if (current_mode == AppMode::Editing) {
-            if (event.type == EventType::KEY_PRESS) {
-                switch (event.key) {
-                case 13: add_task(); break;
-                case 27: current_mode = AppMode::Navigating; update_ui(); break;
-                default: input_box->handle_input(event.key); break;
-                }
+            switch (event.type) {
+                case EventType::KEY_ENTER: 
+                    add_task(); 
+                    break;
+                case EventType::KEY_ESCAPE: 
+                    current_mode = AppMode::Navigating; 
+                    update_ui(); 
+                    break;
+                default: 
+                    input_box->handle_input(event.key); 
+                    break;
             }
         }
         else {
             switch (event.type) {
-            case EventType::KEY_PRESS:
-                switch (event.key) {
-                case 'i': current_mode = AppMode::Editing; update_ui(); break;
-                case 'd': remove_task(); break;
-                case 'j': if (!tasks.empty() && selected_task < (int)tasks.size() - 1) { selected_task++; update_ui(); } break;
-                case 'k': if (selected_task > 0) { selected_task--; update_ui(); } break;
-                }
-                break;
-            case EventType::MOUSE_PRESS:
-                if (buttons[0]->contains(event.mouse_x, event.mouse_y)) add_task();
-                else if (buttons[1]->contains(event.mouse_x, event.mouse_y)) remove_task();
-                else if (buttons[2]->contains(event.mouse_x, event.mouse_y)) clear_tasks();
-                else {
-                    for (size_t i = 0; i < task_text_components.size(); ++i) { if (task_text_components[i]->contains(event.mouse_x, event.mouse_y)) { selected_task = i; update_ui(); return; } }
-                    if (input_box->contains(event.mouse_x, event.mouse_y)) { current_mode = AppMode::Editing; update_ui(); }
-                }
-                break;
-            case EventType::MOUSE_SCROLL_UP:   main_list->scroll_up();   break;
-            case EventType::MOUSE_SCROLL_DOWN: main_list->scroll_down(); break;
-            default: break;
+                case EventType::KEY_DOWN:
+                    if (!tasks.empty() && selected_task < (int)tasks.size() - 1) { 
+                        selected_task++; 
+                        update_ui(); 
+                    }
+                    break;
+                case EventType::KEY_UP:
+                    if (selected_task > 0) { 
+                        selected_task--; 
+                        update_ui(); 
+                    }
+                    break;
+                case EventType::KEY_PRESS:
+                    if (event.key == 'i') {
+                        current_mode = AppMode::Editing; 
+                        update_ui();
+                    } else if (event.key == 'd') {
+                        remove_task();
+                    } else if (event.key == 'j') {
+                        if (!tasks.empty() && selected_task < (int)tasks.size() - 1) { 
+                            selected_task++; 
+                            update_ui(); 
+                        }
+                    } else if (event.key == 'k') {
+                        if (selected_task > 0) { 
+                            selected_task--; 
+                            update_ui(); 
+                        }
+                    }
+                    break;
+                case EventType::MOUSE_PRESS:
+                    if (buttons[0]->contains(event.mouse_x, event.mouse_y)) add_task();
+                    else if (buttons[1]->contains(event.mouse_x, event.mouse_y)) remove_task();
+                    else if (buttons[2]->contains(event.mouse_x, event.mouse_y)) clear_tasks();
+                    else {
+                        for (size_t i = 0; i < task_text_components.size(); ++i) { if (task_text_components[i]->contains(event.mouse_x, event.mouse_y)) { selected_task = i; update_ui(); return; } }
+                        if (input_box->contains(event.mouse_x, event.mouse_y)) { current_mode = AppMode::Editing; update_ui(); }
+                    }
+                    break;
+                case EventType::MOUSE_SCROLL_UP:   main_list->scroll_up();   break;
+                case EventType::MOUSE_SCROLL_DOWN: main_list->scroll_down(); break;
+                default: break;
             }
-        } });
+        }
+    });
 
     return 0;
 }

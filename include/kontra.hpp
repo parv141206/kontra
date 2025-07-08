@@ -15,3 +15,5 @@
 #include "./core/terminal.hpp"
 #include "./core/box.hpp"
 #include "./core/checkbox.hpp"
+#include "./core/radio.hpp"
+#include "./core/radio-group.hpp"

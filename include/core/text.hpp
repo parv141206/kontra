@@ -19,7 +19,7 @@ struct TextStyle {
 
 	TextStyle(
 		const std::string& fg_color = "",
-		const std::string& bg_color = "",
+		const std::string& bg_color = ansi::BG_DEFAULT,
 		bool is_bold = false,
 		bool is_underline = false,
 		bool is_italic = false

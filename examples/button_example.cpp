@@ -71,31 +71,38 @@ int main() {
 
     // --- Event Loop ---
     kontra::run(screen, [&](const InputEvent& event) {
-        if (event.type == EventType::KEY_PRESS) {
-            if (event.key == '\t') { // Tab key to cycle focus
-                active_button->set_active(false);
-                if (active_button == button1) {
-                    active_button = button2;
-                } else {
-                    active_button = button1;
-                }
-                active_button->set_active(true);
-            } else if (event.key == '\n' || event.key == '\r') { // Enter key
-                active_button->click();
-            }
-        } else if (event.type == EventType::MOUSE_PRESS) {
-            for (const auto& btn : buttons) {
-                if (btn->contains(event.mouse_x, event.mouse_y)) {
-                    btn->click();
-                    // Update focus on click
+        switch (event.type) {
+            case EventType::KEY_PRESS:
+                if (event.key == '\t') {
                     active_button->set_active(false);
-                    btn->set_active(true);
-                    active_button = btn;
-                    break;
+                    if (active_button == button1) {
+                        active_button = button2;
+                    } else {
+                        active_button = button1;
+                    }
+                    active_button->set_active(true);
                 }
-            }
+                break;
+
+            case EventType::KEY_ENTER:
+                active_button->click();
+                break;
+
+            case EventType::MOUSE_PRESS:
+                for (const auto& btn : buttons) {
+                    if (btn->contains(event.mouse_x, event.mouse_y)) {
+                        btn->click();
+                        active_button->set_active(false);
+                        btn->set_active(true);
+                        active_button = btn;
+                        break;
+                    }
+                }
+                break;
+
+            default:
+                break;
         }
     });
-
     return 0;
 }

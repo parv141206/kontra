@@ -6,11 +6,9 @@
  * \date   July 2025
  *********************************************************************/
 #pragma once
-#include <iostream>
 #include "component.hpp"
 #include "text.hpp" 
 #include <functional>
-#include <memory>
 
 struct CheckboxStyle {
 	TextStyle normal;

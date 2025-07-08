@@ -8,7 +8,6 @@
  * \date   June 2025
  *********************************************************************/
 #pragma once
-#include <vector>
 #include <memory>
 #include <string>
 #include "component.hpp"

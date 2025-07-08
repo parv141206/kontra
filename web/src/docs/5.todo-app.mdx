@@ -5,7 +5,7 @@ This example showcases how to create a **dynamic, fully interactive Todo app** i
 You'll learn:
 
 - State-driven rendering
-- Keyboard and mouse interaction
+- Abstract keyboard and mouse event handling
 - Layouts with buttons, lists, and input
 - Managing component focus and updates
 
@@ -16,7 +16,7 @@ You'll learn:
 <img
   src="/images/todo_app.png"
   className="w-full"
-  alt="Border Example"
+  alt="Todo App Example"
   width="200"
 />
 
@@ -67,7 +67,7 @@ We’ll maintain a list of tasks and use `List`, `InputBox`, `Button`, etc., as 
 
 ## ⚙️ Step 3: Define Task Actions
 
-These are the actions triggered by buttons or keys.
+These are the actions triggered by buttons or keys. We declare them first so they can be passed into our UI update logic.
 
 <CodeBlock
   border
@@ -84,7 +84,7 @@ These are the actions triggered by buttons or keys.
 
 ## 🔁 Step 4: Render the UI Based on State
 
-We’ll define `update_ui()` that rebuilds the list every time the state changes.
+We’ll define `update_ui()` that rebuilds the component list every time the state changes.
 
 <CodeBlock border lang="cpp" 
     code={`
@@ -97,8 +97,8 @@ We’ll define `update_ui()` that rebuilds the list every time the state changes
 
         auto header_text = std::make_shared<Text>([&]() {
             return (current_mode == AppMode::Editing)
-                ? "EDITING | Enter: Add Task | Esc: Cancel"
-                : "NAVIGATION | i: Insert | j/k: Nav | d: Del | Mouse";
+                ? "EDITING | Enter: Add | Esc: Cancel"
+                : "NAVIGATION | i:Insert | Arrows:Nav | d:Del | Mouse";
         }, TextStyle(ansi::FG_WHITE, ansi::BG_DEFAULT, true));
 
         // --- REUSABLE BUTTON STYLES ---
@@ -147,7 +147,7 @@ We’ll define `update_ui()` that rebuilds the list every time the state changes
 
 ## 🧩 Step 5: Implement the Actions
 
-These update the actual task list and trigger UI redraws.
+These functions modify the application state and then trigger a UI redraw by calling `update_ui()`.
 
 <CodeBlock border lang="cpp" 
     code={`
@@ -179,7 +179,7 @@ These update the actual task list and trigger UI redraws.
     };
     `} />
 
-Call it once to draw initial state:
+Call it once to draw the initial state:
 
 <CodeBlock border lang="cpp" code={`update_ui();`} />
 
@@ -187,7 +187,7 @@ Call it once to draw initial state:
 
 ## 🖼️ Step 6: Setup Layout & Screen
 
-Wrap your layout with borders and spacing.
+Wrap your main layout component with borders and padding for a polished look.
 
 <CodeBlock border lang="cpp" 
     code={`
@@ -210,7 +210,7 @@ Wrap your layout with borders and spacing.
 
 ## 🧵 Step 7: Handle Input Events
 
-We use Kontra’s `InputEvent` to handle both keyboard and mouse events.
+This is the controller logic. It translates abstract `InputEvent`s into application actions based on the current `AppMode`.
 
 <CodeBlock
   border
@@ -218,50 +218,56 @@ We use Kontra’s `InputEvent` to handle both keyboard and mouse events.
   code={`
     kontra::run(screen, [&](const InputEvent& event) {
         if (current_mode == AppMode::Editing) {
-            if (event.type == EventType::KEY_PRESS) {
-                switch (event.key) {
-                    case 13: add_task(); break; // Enter
-                    case 27: current_mode = AppMode::Navigating; update_ui(); break; // Esc
-                    default: input_box->handle_input(event.key); break;
-                }
+            // Handle input while the user is typing in the input box
+            switch (event.type) {
+                case EventType::KEY_ENTER:
+                    add_task();
+                    break;
+                case EventType::KEY_ESCAPE:
+                    current_mode = AppMode::Navigating;
+                    update_ui();
+                    break;
+                default:
+                    // Pass all other events (KEY_PRESS, BACKSPACE, etc.) to the input box
+                    input_box->handle_event(event);
+                    break;
             }
         } else { // Navigation Mode
             switch (event.type) {
+                case EventType::KEY_DOWN:
+                    if (!tasks.empty() && selected_task < (int)tasks.size() - 1) {
+                        selected_task++;
+                        update_ui();
+                    }
+                    break;
+                case EventType::KEY_UP:
+                    if (selected_task > 0) {
+                        selected_task--;
+                        update_ui();
+                    }
+                    break;
                 case EventType::KEY_PRESS:
-                    switch (event.key) {
-                        case 'i': current_mode = AppMode::Editing; update_ui(); break;
-                        case 'd': remove_task(); break;
-                        case 'j': 
-                            if (!tasks.empty() && selected_task < (int)tasks.size() - 1) { 
-                                selected_task++; 
-                                update_ui(); 
-                            } 
-                            break;
-                        case 'k': 
-                            if (selected_task > 0) { 
-                                selected_task--; 
-                                update_ui(); 
-                            } 
-                            break;
+                    if (event.key == 'i') {
+                        current_mode = AppMode::Editing;
+                        update_ui();
+                    } else if (event.key == 'd') {
+                        remove_task();
                     }
                     break;
                 case EventType::MOUSE_PRESS:
-                    // Check if any of the buttons were clicked
-                    for(size_t i = 0; i < buttons.size(); ++i) {
-                        if (buttons[i]->contains(event.mouse_x, event.mouse_y)) {
-                            buttons[i]->click(); // This calls add_task, remove_task, etc.
-                            return; // Event handled
+                    for(const auto& btn : buttons) {
+                        if (btn->contains(event.mouse_x, event.mouse_y)) {
+                            btn->click();
+                            return;
                         }
                     }
-                    // Check if any of the task items were clicked
                     for (size_t i = 0; i < task_text_components.size(); ++i) {
                         if (task_text_components[i]->contains(event.mouse_x, event.mouse_y)) {
                             selected_task = i;
                             update_ui();
-                            return; // Event handled
+                            return;
                         }
                     }
-                    // Check if the input box was clicked to enter edit mode
                     if (input_box->contains(event.mouse_x, event.mouse_y)) {
                         current_mode = AppMode::Editing;
                         update_ui();
@@ -277,4 +283,12 @@ We use Kontra’s `InputEvent` to handle both keyboard and mouse events.
 
 ---
 
-Happy building with **Kontra TUI**! 🎉🧵
+## ✅ Features Summary
+
+- Uses `List`, `Text`, `InputBox`, `Button`, `Flex`, and `Border`.
+- Fully state-driven layout ensures UI is always in sync with data.
+- Abstracted event system supports mouse and keyboard (including arrows).
+- Manages `Navigating` and `Editing` modes for a clean user experience.
+- Works well with any terminal size.
+
+Happy building with **Kontra TUI**! 🎉
