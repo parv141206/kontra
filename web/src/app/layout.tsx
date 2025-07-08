@@ -58,6 +58,16 @@ export default function RootLayout({
           name="google-site-verification"
           content="Plv7-l-9fD_Sg9-FqpB2yaOhOaV5njShdmBquxUa4fU"
         />
+        <script type="application/ld+json">
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Kontra",
+              "url": "https://kontralib.vercel.app/"
+            }
+          `}
+        </script>
       </head>
       <body className="relative flex min-h-screen max-w-screen flex-col">
         <Navbar />
