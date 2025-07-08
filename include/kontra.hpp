@@ -14,3 +14,4 @@
 #include "./core/event.hpp"
 #include "./core/terminal.hpp"
 #include "./core/box.hpp"
+#include "./core/checkbox.hpp"

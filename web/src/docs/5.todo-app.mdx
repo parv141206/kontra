@@ -29,7 +29,6 @@ Let’s start with the structure.
     // KONTRA TUI: todo_app_showcase.cpp
 
     #include "../include/kontra.hpp"
-    #include "../include/core/box.hpp"
     #include "../include/core/utils.hpp"
     #include <vector>
     #include <string>
@@ -102,23 +101,31 @@ We’ll define `update_ui()` that rebuilds the list every time the state changes
                 : "NAVIGATION | i: Insert | j/k: Nav | d: Del | Mouse";
         }, TextStyle(ansi::FG_WHITE, ansi::BG_DEFAULT, true));
 
-        auto add_button = std::make_shared<Button>(" Add ", add_task,
-            ButtonStyleBuilder().set_background_color(ansi::BG_GREEN).set_color(ansi::FG_BLACK).set_bold(true).build());
+        // --- REUSABLE BUTTON STYLES ---
+        auto add_style = ButtonStyleBuilder()
+            .set_inactive_style(TextStyleBuilder().set_color(ansi::FG_BLACK).set_background_color(ansi::BG_GREEN).set_bold(true).build())
+            .set_active_style(TextStyleBuilder().set_color(ansi::FG_WHITE).set_background_color(ansi::BG_BRIGHT_GREEN).set_bold(true).build())
+            .build();
+        
+        auto remove_style = ButtonStyleBuilder()
+            .set_inactive_style(TextStyleBuilder().set_color(ansi::FG_WHITE).set_background_color(ansi::BG_RED).set_bold(true).build())
+            .set_active_style(TextStyleBuilder().set_color(ansi::FG_WHITE).set_background_color(ansi::BG_BRIGHT_RED).set_bold(true).build())
+            .build();
+            
+        auto clear_style = ButtonStyleBuilder()
+            .set_inactive_style(TextStyleBuilder().set_color(ansi::FG_WHITE).set_background_color(ansi::BG_BRIGHT_BLACK).set_bold(true).build())
+            .set_active_style(TextStyleBuilder().set_color(ansi::FG_BLACK).set_background_color(ansi::BG_WHITE).set_bold(true).build())
+            .build();
 
-        auto remove_button = std::make_shared<Button>(" Remove ", remove_task,
-            ButtonStyleBuilder().set_background_color(ansi::BG_RED).set_color(ansi::FG_WHITE).set_bold(true).build());
-
-        auto clear_button = std::make_shared<Button>(" Clear All ", clear_tasks,
-            ButtonStyleBuilder().set_background_color(ansi::BG_BRIGHT_BLACK).set_color(ansi::FG_WHITE).set_bold(true).build());
+        // --- Create buttons and apply the new styles ---
+        auto add_button = std::make_shared<Button>(" Add ", add_task, add_style);
+        auto remove_button = std::make_shared<Button>(" Remove ", remove_task, remove_style);
+        auto clear_button = std::make_shared<Button>(" Clear All ", clear_tasks, clear_style);
 
         buttons = { add_button, remove_button, clear_button };
 
-        auto button_bar = std::make_shared<Flex>(FlexDirection::Row, {
-            chain(std::make_shared<Box>(add_button),    [](Box& b) { b.set_width(9); }),
-            chain(std::make_shared<Box>(remove_button), [](Box& b) { b.set_width(12); }),
-            chain(std::make_shared<Box>(clear_button),  [](Box& b) { b.set_width(15); }),
-        });
-        chain(button_bar, [](Flex& f) { f.set_gap(1); });
+        auto button_bar = std::make_shared<Flex>(FlexDirection::Row, add_button, remove_button, clear_button);
+        button_bar->set_gap(1);
 
         main_list->add(header_text);
         main_list->add(input_box);
@@ -157,7 +164,7 @@ These update the actual task list and trigger UI redraws.
 
     // Remove Selected Task
     remove_task = [&]() {
-        if (selected_task >= 0 && selected_task < tasks.size()) {
+        if (selected_task >= 0 && selected_task < (int)tasks.size()) {
             tasks.erase(tasks.begin() + selected_task);
             selected_task = tasks.empty() ? -1 : std::min(selected_task, (int)tasks.size() - 1);
             update_ui();
@@ -185,7 +192,7 @@ Wrap your layout with borders and spacing.
 <CodeBlock border lang="cpp" 
     code={`
     // Layout and screen
-    chain(main_list, [](List& l) { l.set_gap(1); });
+    main_list->set_gap(1);
 
     auto screen = std::make_shared<Screen>(
         chain(std::make_shared<Border>(
@@ -197,7 +204,6 @@ Wrap your layout with borders and spacing.
                       .build()),
               [](Border &b)
               { b.set_padding(1); }));
-    );
     `} />
 
 ---
@@ -219,32 +225,46 @@ We use Kontra’s `InputEvent` to handle both keyboard and mouse events.
                     default: input_box->handle_input(event.key); break;
                 }
             }
-        } else {
+        } else { // Navigation Mode
             switch (event.type) {
                 case EventType::KEY_PRESS:
                     switch (event.key) {
                         case 'i': current_mode = AppMode::Editing; update_ui(); break;
                         case 'd': remove_task(); break;
-                        case 'j': if (!tasks.empty() && selected_task < (int)tasks.size() - 1) { selected_task++; update_ui(); } break;
-                        case 'k': if (selected_task > 0) { selected_task--; update_ui(); } break;
+                        case 'j': 
+                            if (!tasks.empty() && selected_task < (int)tasks.size() - 1) { 
+                                selected_task++; 
+                                update_ui(); 
+                            } 
+                            break;
+                        case 'k': 
+                            if (selected_task > 0) { 
+                                selected_task--; 
+                                update_ui(); 
+                            } 
+                            break;
                     }
                     break;
                 case EventType::MOUSE_PRESS:
-                    if (buttons[0]->contains(event.mouse_x, event.mouse_y)) add_task();
-                    else if (buttons[1]->contains(event.mouse_x, event.mouse_y)) remove_task();
-                    else if (buttons[2]->contains(event.mouse_x, event.mouse_y)) clear_tasks();
-                    else {
-                        for (size_t i = 0; i < task_text_components.size(); ++i) {
-                            if (task_text_components[i]->contains(event.mouse_x, event.mouse_y)) {
-                                selected_task = i;
-                                update_ui();
-                                return;
-                            }
+                    // Check if any of the buttons were clicked
+                    for(size_t i = 0; i < buttons.size(); ++i) {
+                        if (buttons[i]->contains(event.mouse_x, event.mouse_y)) {
+                            buttons[i]->click(); // This calls add_task, remove_task, etc.
+                            return; // Event handled
                         }
-                        if (input_box->contains(event.mouse_x, event.mouse_y)) {
-                            current_mode = AppMode::Editing;
+                    }
+                    // Check if any of the task items were clicked
+                    for (size_t i = 0; i < task_text_components.size(); ++i) {
+                        if (task_text_components[i]->contains(event.mouse_x, event.mouse_y)) {
+                            selected_task = i;
                             update_ui();
+                            return; // Event handled
                         }
+                    }
+                    // Check if the input box was clicked to enter edit mode
+                    if (input_box->contains(event.mouse_x, event.mouse_y)) {
+                        current_mode = AppMode::Editing;
+                        update_ui();
                     }
                     break;
                 case EventType::MOUSE_SCROLL_UP:   main_list->scroll_up(); break;
@@ -254,33 +274,6 @@ We use Kontra’s `InputEvent` to handle both keyboard and mouse events.
         }
     });`}
 />
-
----
-
-## ✅ Features Summary
-
-- Uses `List`, `Text`, `InputBox`, `Button`, `Flex`, `Box`, and `Border`
-- Fully state-driven layout
-- Mouse + Keyboard support
-- Navigating/editing modes
-- Works well with any terminal size
-
----
-
-## 📸 Example Output
-
-> _(You can add a screenshot here if you have one)_
-
----
-
-## 🧪 Next Steps
-
-Try adding features like:
-
-- Task editing
-- Saving to file
-- Task priority
-- Completion state (checkboxes)
 
 ---
 

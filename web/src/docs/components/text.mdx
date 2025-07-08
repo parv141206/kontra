@@ -19,14 +19,14 @@ This will display the text exactly as provided, with no styling or updates.
 
 ---
 
-## Styling with TextStyleBuilder
+## Styling with StyleBuilder
 
 You can style your text with color, background, bold, italic, and more:
 
 <CodeBlock border 
   lang="cpp"
   code={`
-    auto styled_text_style = TextStyleBuilder()
+    auto styled_text_style = StyleBuilder()
         .set_color(ansi::FG_CYAN)
         .set_background_color(ansi::BG_BRIGHT_BLACK)
         .set_bold(true)
@@ -34,7 +34,7 @@ You can style your text with color, background, bold, italic, and more:
         .build();
 
     auto styled_text = std::make_shared<Text>(
-        "This text is styled using the TextStyleBuilder.",
+        "This text is styled using the StyleBuilder.",
         styled_text_style
     );`}
 
@@ -46,7 +46,7 @@ You can style your text with color, background, bold, italic, and more:
 - `.set_italic(true)` - Makes the text **italicized**.
 - `.build()` - Finalizes the style and returns a `TextStyle` object.
 
-The `TextStyleBuilder` allows for chaining `.set_...()` methods and then calling `.build()`.
+The `StyleBuilder` allows for chaining `.set_...()` methods and then calling `.build()`.
 
 ---
 
@@ -147,7 +147,7 @@ Now simply adding it to the screen and rendering it!
 ## TL;DR;
 
 - Use `Text("...")` for **static** messages.
-- Use `Text(..., TextStyle(...))` or `TextStyleBuilder` for **styling**.
+- Use `Text(..., TextStyle(...))` or `StyleBuilder` for **styling**.
 - Use `Text([](){...})` for **dynamic, auto-updating content**.
 - Combine with `List`, `Border`, and state variables for beautiful layouts.
 

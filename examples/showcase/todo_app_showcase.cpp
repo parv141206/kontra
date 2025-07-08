@@ -27,7 +27,6 @@ int main()
 
     // --- 2. COMPONENT INITIALIZATION ---
     auto input_box = std::make_shared<InputBox>();
-
     input_box->set_label("Enter todo!");
 
     auto main_list = std::make_shared<List>();
@@ -52,28 +51,34 @@ int main()
         auto header_text = std::make_shared<Text>([&]()
                                                   { return (current_mode == AppMode::Editing)
                                                                ? "EDITING | Enter: Add Task | Esc: Cancel"
-                                                               : "NAVIGATION | i: Insert | j/k: Nav | d: Del | Mouse"; }, TextStyle(ansi::FG_WHITE, ansi::BG_DEFAULT, true));
+                                                               : "NAVIGATION | i: Insert | j/k: Nav | d: Del | Mouse"; }, 
+                                                  TextStyle(ansi::FG_WHITE, ansi::BG_DEFAULT, true));
 
-        // Create buttons and pass the action lambdas to their constructors
-        auto add_button = std::make_shared<Button>(" Add ", add_task,
-                                                   ButtonStyleBuilder().set_background_color(ansi::BG_GREEN).set_color(ansi::FG_BLACK).set_bold(true).build());
+        // --- REUSABLE BUTTON STYLES ---
+        auto add_style = ButtonStyleBuilder()
+            .set_inactive_style(StyleBuilder().set_color(ansi::FG_BLACK).set_background_color(ansi::BG_GREEN).set_bold(true).build())
+            .set_active_style(StyleBuilder().set_color(ansi::FG_WHITE).set_background_color(ansi::BG_BRIGHT_GREEN).set_bold(true).build())
+            .build();
+        
+        auto remove_style = ButtonStyleBuilder()
+            .set_inactive_style(StyleBuilder().set_color(ansi::FG_WHITE).set_background_color(ansi::BG_RED).set_bold(true).build())
+            .set_active_style(StyleBuilder().set_color(ansi::FG_WHITE).set_background_color(ansi::BG_BRIGHT_RED).set_bold(true).build())
+            .build();
+            
+        auto clear_style = ButtonStyleBuilder()
+            .set_inactive_style(StyleBuilder().set_color(ansi::FG_WHITE).set_background_color(ansi::BG_BRIGHT_BLACK).set_bold(true).build())
+            .set_active_style(StyleBuilder().set_color(ansi::FG_BLACK).set_background_color(ansi::BG_WHITE).set_bold(true).build())
+            .build();
 
-        auto remove_button = std::make_shared<Button>(" Remove ", remove_task,
-                                                      ButtonStyleBuilder().set_background_color(ansi::BG_RED).set_color(ansi::FG_WHITE).set_bold(true).build());
-
-        auto clear_button = std::make_shared<Button>(" Clear All ", clear_tasks,
-                                                     ButtonStyleBuilder().set_background_color(ansi::BG_BRIGHT_BLACK).set_color(ansi::FG_WHITE).set_bold(true).build());
+        // --- Create buttons and apply the new styles ---
+        auto add_button = std::make_shared<Button>(" Add ", add_task, add_style);
+        auto remove_button = std::make_shared<Button>(" Remove ", remove_task, remove_style);
+        auto clear_button = std::make_shared<Button>(" Clear All ", clear_tasks, clear_style);
 
         buttons = {add_button, remove_button, clear_button};
 
-        auto button_bar = std::shared_ptr<Flex>(new Flex(FlexDirection::Row, {chain(std::make_shared<Box>(add_button), [](Box &b)
-                                                                                    { b.set_width(9); }),
-                                                                              chain(std::make_shared<Box>(remove_button), [](Box &b)
-                                                                                    { b.set_width(12); }),
-                                                                              chain(std::make_shared<Box>(clear_button), [](Box &b)
-                                                                                    { b.set_width(15); })}));
-        chain(button_bar, [](Flex &f)
-              { f.set_gap(1); });
+        auto button_bar = std::make_shared<Flex>(FlexDirection::Row, add_button, remove_button, clear_button);
+        button_bar->set_gap(1);
 
         main_list->add(header_text);
         main_list->add(input_box);
@@ -83,7 +88,7 @@ int main()
         {
             auto style = (selected_task == static_cast<int>(i))
                              ? TextStyle(ansi::FG_BLACK, ansi::BG_BRIGHT_WHITE, true)
-                             : TextStyle(ansi::FG_WHITE, ansi::BG_DEFAULT, false);
+                             : TextStyle(ansi::FG_WHITE, "", false);
             auto txt = std::make_shared<Text>(tasks[i], style);
             main_list->add(txt);
             task_text_components.push_back(txt);
@@ -104,7 +109,7 @@ int main()
     };
     remove_task = [&]()
     {
-        if (selected_task >= 0 && selected_task < tasks.size())
+        if (selected_task >= 0 && selected_task < (int)tasks.size())
         {
             tasks.erase(tasks.begin() + selected_task);
             if (selected_task >= (int)tasks.size() && !tasks.empty())
@@ -128,8 +133,7 @@ int main()
     update_ui(); // Initial UI draw
 
     // --- 5. LAYOUT ---
-    chain(main_list, [](List &l)
-          { l.set_gap(1); });
+    main_list->set_gap(1);
     auto screen = std::make_shared<Screen>(
         chain(std::make_shared<Border>(
                   main_list,

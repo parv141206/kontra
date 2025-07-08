@@ -32,30 +32,30 @@ struct TextStyle {
 	}
 };
 
-struct TextStyleBuilder {
+struct StyleBuilder {
 	TextStyle style;
 
-	TextStyleBuilder& set_color(const std::string& color) {
+	StyleBuilder& set_color(const std::string& color) {
 		style.color = color;
 		return *this;
 	}
 
-	TextStyleBuilder& set_background_color(const std::string& background_color) {
+	StyleBuilder& set_background_color(const std::string& background_color) {
 		style.background_color = background_color;
 		return *this;
 	}
 
-	TextStyleBuilder& set_bold(bool bold) {
+	StyleBuilder& set_bold(bool bold) {
 		style.bold = bold;
 		return *this;
 	}
 
-	TextStyleBuilder& set_underline(bool underline) {
+	StyleBuilder& set_underline(bool underline) {
 		style.underline = underline;
 		return *this;
 	}
 
-	TextStyleBuilder& set_italic(bool italic) {
+	StyleBuilder& set_italic(bool italic) {
 		style.italic = italic;
 		return *this;
 	}

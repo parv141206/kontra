@@ -1,0 +1,133 @@
+# StyleBuilder
+
+The `StyleBuilder` is the foundational tool for creating all visual styles in Kontra TUI. It provides a clean, fluent interface to define the color, background, and text attributes for your components.
+
+Every style you create—whether for a simple `Text` component or a complex `Button`—starts with a `StyleBuilder`.
+
+---
+
+## Core Concept
+
+A `StyleBuilder` constructs a `TextStyle` object. This `TextStyle` object is a simple struct that holds all the styling information for a piece of text:
+
+-   Foreground Color
+-   Background Color
+-   Bold State
+-   Italic State
+-   Underline State
+
+You chain methods on the builder to configure these properties and then call `.build()` to get the final `TextStyle` object.
+
+---
+
+## Basic Usage: Styling Text
+
+The most direct use of `StyleBuilder` is for creating a style to pass to a `Text` component.
+
+<CodeBlock
+  border
+  lang="cpp"
+  code={`
+    // 1. Create a style using the builder
+    auto my_style = StyleBuilder()
+      .set_color(ansi::FG_CYAN)
+      .set_background_color(ansi::BG_BRIGHT_BLACK)
+      .set_bold(true)
+      .set_italic(true)
+      .build();
+
+    // 2. Apply the style to a Text component
+    auto styled_text = std::make_shared<Text>(
+        "This text is styled using the StyleBuilder.",
+        my_style
+    );`}
+/>
+
+### Available Methods
+
+-   `.set_color(ansi::...)`: Sets the foreground text color.
+-   `.set_background_color(ansi::...)`: Sets the cell background color.
+-   `.set_bold(true/false)`: Toggles bold text.
+-   `.set_underline(true/false)`: Toggles underlined text.
+-   `.set_italic(true/false)`: Toggles italicized text.
+-   `.build()`: Returns the final `TextStyle` object.
+
+All colors and basic styles are available in the [`ansi`](/docs/ansi) header.
+
+---
+
+## Advanced Usage: Styling Composite Components
+
+The real power of `StyleBuilder` comes from its role in styling more complex components like `Button` and `Checkbox`. These components use `StyleBuilder` to define the styles for their different states (e.g., active vs. inactive).
+
+### Styling a Button
+
+A `Button` has two states: `inactive` (not focused) and `active` (focused). You use `StyleBuilder` to create a `TextStyle` for each state, and then pass them to the `ButtonStyleBuilder`.
+
+<CodeBlock
+  border
+  lang="cpp"
+  code={`
+    // Style for when the button is NOT focused
+    auto inactive_button_style = StyleBuilder()
+        .set_color(ansi::FG_WHITE)
+        .set_background_color(ansi::BG_BLUE)
+        .build();
+
+    // Style for when the button IS focused
+    auto active_button_style = StyleBuilder()
+        .set_color(ansi::FG_BLUE)
+        .set_background_color(ansi::BG_BRIGHT_WHITE)
+        .set_bold(true)
+        .build();
+
+    // Combine them into a single ButtonStyle
+    auto complete_button_style = ButtonStyleBuilder()
+        .set_inactive_style(inactive_button_style)
+        .set_active_style(active_button_style)
+        .build();
+
+    // Apply the final style to the button
+    auto my_button = std::make_shared<Button>("Click Me", on_click_fn, complete_button_style);`}
+/>
+
+### Styling a Checkbox
+
+The pattern for a `Checkbox` is identical to a `Button`. It also has `inactive` and `active` states that are defined using `StyleBuilder`.
+
+<CodeBlock
+  border
+  lang="cpp"
+  code={`
+    // Style for a non-focused checkbox
+    auto inactive_check_style = StyleBuilder()
+        .set_color(ansi::FG_WHITE)
+        .build();
+
+    // Style for a focused checkbox (e.g., highlight it in yellow)
+    auto active_check_style = StyleBuilder()
+        .set_color(ansi::FG_YELLOW)
+        .set_bold(true)
+        .build();
+
+    // Combine them into a single CheckboxStyle
+    auto complete_check_style = CheckboxStyleBuilder()
+        .set_normal_style(inactive_check_style) // Note: set_normal_style is used for inactive
+        .set_active_style(active_check_style)
+        .build();
+
+    // Apply the final style to the checkbox
+    auto my_checkbox = std::make_shared<Checkbox>("Enable Setting", &my_bool, complete_check_style);`}
+/>
+
+---
+
+## Why Use a Builder?
+
+The builder pattern provides several key advantages:
+
+1.  **Readability:** Chaining methods makes the configuration clear and easy to read.
+2.  **Flexibility:** You can create a base style and then create variations of it easily without re-writing everything.
+3.  **Consistency:** It provides a single, unified way to create styles across your entire application, ensuring that all components are styled in a predictable manner.
+
+By mastering the `StyleBuilder`, you master the look and feel of your entire Kontra TUI application.

@@ -8,6 +8,9 @@ module.exports = {
   generateRobotsTxt: true,
 
   additionalPaths: async (config) => {
+    /**
+     * @type {(import("next-sitemap").ISitemapField | undefined)[] | PromiseLike<(import("next-sitemap").ISitemapField | undefined)[]> | { loc: string; lastmod: string; }[]}
+     */
     const paths = [];
 
     const guidesDir = path.join(process.cwd(), "src/docs");

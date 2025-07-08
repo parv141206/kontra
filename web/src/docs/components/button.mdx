@@ -30,22 +30,31 @@ Style your buttons with ease — including hover/focus state!
   border
   lang="cpp"
   code={`
-    auto style = ButtonStyleBuilder()
-      .set_color(ansi::FG_WHITE)
-      .set_background_color(ansi::BG_BLUE)
-      .set_color_active(ansi::FG_BLUE)
-      .set_background_color_active(ansi::BG_BRIGHT_WHITE)
-      .set_bold(true)
-      .build();`}
+    // 1. Create a style for the button when it's NOT focused (inactive)
+    auto inactive = StyleBuilder()
+        .set_color(ansi::FG_WHITE)
+        .set_background_color(ansi::BG_BLUE)
+        .set_bold(true)
+        .build();
+
+    // 2. Create a style for when it IS focused (active)
+    auto active = StyleBuilder()
+        .set_color(ansi::FG_BLUE)
+        .set_background_color(ansi::BG_BRIGHT_WHITE)
+        .set_bold(true)
+        .build();
+
+    // 3. Combine them using the ButtonStyleBuilder
+    auto button_style = ButtonStyleBuilder()
+        .set_inactive_style(inactive)
+        .set_active_style(active)
+        .build();`}
 />
 
-- `set_color(...)` - normal text color
-- `set_background_color(...)` - normal background
-- `set_color_active(...)` - focused/hover text color
-- `set_background_color_active(...)` - focused/hover background
-- `set_bold(...)` - bold text for extra spice
+- `set_inactive_style(...)` - sets the full style for the normal state.
+- `set_active_style(...)` - sets the full style for the focused/hover state.
 
-All these come from the [`ansi`](/docs/ansi) header — the ultimate color toolbox.
+Each method takes a complete style object created with `StyleBuilder` (from `text.hpp`).
 
 Now apply the style like this:
 
@@ -54,8 +63,8 @@ Now apply the style like this:
   lang="cpp"
   code={`
     auto button = std::make_shared<Button>("Styled", []() {
-      std::cout << "Clicked!";
-    }, style);`}
+      // ... click logic ...
+    }, button_style);`}
 />
 
 ---
@@ -71,9 +80,13 @@ Kontra gives _you_ full control over what's active and clickable.
   lang="cpp"
   code={`
     if (event.key == '\\t') {
-      button1->set_active(!button1->is_active());
-      button2->set_active(!button2->is_active());
-      active_button = button1->is_active() ? button1 : button2;
+      active_button->set_active(false); // Deactivate the old one
+      if (active_button == button1) {
+          active_button = button2;
+      } else {
+          active_button = button1;
+      }
+      active_button->set_active(true); // Activate the new one
     }`}
 />
 
@@ -102,9 +115,11 @@ You can even respond to mouse clicks:
       for (const auto& btn : buttons) {
           if (btn->contains(event.mouse_x, event.mouse_y)) {
               btn->click();
+              // Also update the focus to the clicked button
               active_button->set_active(false);
               btn->set_active(true);
               active_button = btn;
+              break; // Stop after handling one click
           }
       }
     }`}
@@ -117,20 +132,38 @@ You can even respond to mouse clicks:
 <CodeBlock border 
   lang="cpp" 
   code={`
+    // A Text component to show feedback
     auto display_text = std::make_shared<Text>("Click or Tab to test!");
 
-    auto button1 = std::make_shared<Button>("Set Message 1", [&]() {
-      display_text->set_text("Button 1 clicked!");
-    });
-    auto button2 = std::make_shared<Button>("Set Message 2", [&]() {
-      display_text->set_text("Button 2 clicked!");
-    });
+    // Define a shared style for the buttons
+    auto btn_inactive_style = StyleBuilder().set_bold(true).build();
+    auto btn_active_style = StyleBuilder().set_bold(true).set_background_color(ansi::BG_BRIGHT_BLACK).build();
+    auto button_style = ButtonStyleBuilder()
+        .set_inactive_style(btn_inactive_style)
+        .set_active_style(btn_active_style)
+        .build();
 
+    auto button1 = std::make_shared<Button>("Set Message 1", [&]() {
+      // The text component must be captured by reference to be modified
+    }, button_style);
+    
+    // We'll create a dynamic Text component for the message
+    auto message_display = std::make_shared<Text>([&](){ return "Waiting..."; });
+
+    // Now define the button actions
+    button1->set_on_click_callback([&](){ *message_display = Text("Button 1 Clicked!"); });
+
+    auto button2 = std::make_shared<Button>("Set Message 2", [&]() {
+      *message_display = Text("Button 2 Clicked!");
+    }, button_style);
+
+
+    // Manage focus state
     button1->set_active(true);
     std::shared_ptr<Button> active_button = button1;
     std::vector<std::shared_ptr<Button>> buttons = {button1, button2};
 
-    auto layout = std::make_shared<List>(display_text, button1, button2);
+    auto layout = std::make_shared<List>(message_display, button1, button2);
     layout->set_gap(1);
 
     auto screen = std::make_shared<Screen>(std::make_shared<Border>(layout));
@@ -138,16 +171,10 @@ You can even respond to mouse clicks:
     kontra::run(screen, [&](const InputEvent& event) {
       if (event.type == EventType::KEY_PRESS) {
         if (event.key == '\\t') {
-        // Swap focus
-          if (active_button == button1) {
-            button1->set_active(false);
-            button2->set_active(true);
-            active_button = button2;
-          } else {
-            button2->set_active(false);
-            button1->set_active(true);
-            active_button = button1;
-          }
+          // Swap focus
+          active_button->set_active(false);
+          active_button = (active_button == button1) ? button2 : button1;
+          active_button->set_active(true);
         } else if (event.key == '\\n' || event.key == '\\r') {
           active_button->click();
         }
@@ -158,12 +185,11 @@ You can even respond to mouse clicks:
               active_button->set_active(false);
               btn->set_active(true);
               active_button = btn;
-            break;
-          }
+              break;
+            }
         }
       }
     });
-
     `} />
 
 ---

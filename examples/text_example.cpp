@@ -7,7 +7,7 @@
 // It covers:
 // - Creating simple, static text.
 // - Creating dynamic, "reactive" text that updates automatically.
-// - Using the `TextStyleBuilder` to create complex visual styles.
+// - Using the `StyleBuilder` to create complex visual styles.
 // ===================================================================
 
 #include "../include/kontra.hpp"
@@ -21,10 +21,10 @@ int main() {
     // directly to its constructor. It will never change.
     auto static_text = std::make_shared<Text>("This is a static text component.");
 
-    // --- 2. Create Styled Static Text with TextStyleBuilder ---
-    // The `TextStyleBuilder` provides a clean, fluent interface for creating
+    // --- 2. Create Styled Static Text with StyleBuilder ---
+    // The `StyleBuilder` provides a clean, fluent interface for creating
     // custom styles. You chain `set_...()` methods and finish with `build()`.
-    auto styled_text_style = TextStyleBuilder()
+    auto styled_text_style = StyleBuilder()
         .set_color(ansi::FG_CYAN)
         .set_background_color(ansi::BG_BRIGHT_BLACK)
         .set_bold(true)
@@ -32,7 +32,7 @@ int main() {
         .build();
     
     auto styled_text = std::make_shared<Text>(
-        "This text is styled using the TextStyleBuilder.",
+        "This text is styled using the StyleBuilder.",
         styled_text_style
     );
 
