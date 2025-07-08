@@ -12,12 +12,40 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
   keywords: [
     "Kontra",
+    "kontra",
+    "kontralib",
+    "Kontralib",
     "terminal UI",
     "TUI library",
     "CLI UI",
     "C++ TUI",
     "C++",
     "TUI",
+    // --- General Category ---
+    "C++ TUI library",
+    "Terminal UI for C++",
+    "CLI UI framework C++",
+    "C++ command-line interface",
+    "Text-based user interface C++",
+
+    // --- Problem & Solution Focused ---
+    "Build terminal UI in C++",
+    "Create CLI apps with C++",
+    "Modern C++ TUI",
+    "Styled terminal output C++",
+    "Declarative TUI C++",
+
+    // --- Feature & Adjective Focused ---
+    "Lightweight C++ TUI",
+    "Cross-platform TUI library",
+    "C++ TUI components",
+    "Terminal graphics library C++",
+    "Easy to use TUI for C++",
+
+    // --- Comparison / Alternative Focused ---
+    "ncurses alternative C++",
+    "curses replacement C++",
+    "FTXUI alternative"
   ],
   authors: [{ name: "Parv", url: "https://github.com/parv141206" }],
   creator: "Parv",
