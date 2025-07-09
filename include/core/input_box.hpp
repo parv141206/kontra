@@ -11,6 +11,26 @@
 #include <string>
 #include <memory>
 
+/**
+ * @brief Basically a simple text box!
+ * 
+ * Example
+ * ```cpp
+ * auto input_box = std::make_shared<InputBox>();
+ * input_box->set_label("Type something: ");
+ * input_box->set_active(true);
+ * input_box->set_wrap_enabled(true);
+ * 
+ * ...
+ * 
+ * kontra::run(screen, [&](const InputEvent& event) {
+ *       if (event.type == EventType::KEY_PRESS) {
+ *           input_box->handle_input(event.key);
+ *       }
+ * });
+ * ```
+ * 
+ */
 class InputBox : public Component {
 private:
     std::string text;

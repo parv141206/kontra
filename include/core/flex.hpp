@@ -19,18 +19,22 @@ enum class FlexDirection {
 };
 
 /**
- *
- * WARNING
- *
- * The following code is enough to give you brain damage. This is some "modern C++" shit.
- *
- * Before scrolling, be mentally prepared.
- *
- * This was changed alot, and at this moment, if it works, god knows how. This file is heavily vibe coded (brings a shame but well, it is what it is)
- *
+ * @brief A Flex component that arranges its children in a row or column.
+ * 
+ * It acts as a container for other components, allowing them to be laid out.
+ * 
+ * Example
+ * ```cpp
+ * auto flex_column = std::make_shared<Flex>(
+ * 		FlexDirection::Column, 
+ * 		panel1, 
+ * 		panel2, 
+ * 		panel3
+ * );
+ * 
+ * flex_column->set_gap(1);
+ * ```
  */
-
-
 class Flex : public Component {
 	std::vector<std::shared_ptr<Component>> children;
 	FlexDirection direction;

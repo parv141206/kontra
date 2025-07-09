@@ -37,7 +37,21 @@ struct BorderStyle {
 	BorderChars characters = BorderPreset::SINGLE;
 };
 
-/// @brief A fluent builder for easily creating and configuring BorderStyle objects.
+/**
+ * @brief A fluent builder for easily creating and configuring BorderStyle objects.
+ * 
+ * Example
+ * 
+```cpp
+ auto border_style = BorderStyleBuilder()
+     .set_color(ansi::FG_GREEN)
+	 .set_background_color(ansi::BG_DEFAULT)
+	 .set_title("Success!")
+	 .set_title_alignment(TitleAlignment::Center)
+	 .set_characters(BorderPreset::DOUBLE)
+	 .build();
+```
+		*/
 struct BorderStyleBuilder {
 	BorderStyle style;
 	BorderStyleBuilder& set_color(const std::string& color) { style.color = color; return *this; }
@@ -58,6 +72,17 @@ struct BorderStyleBuilder {
  *
  * If it works, it works :3
  *
+ */
+
+/**
+ * @brief Surrounds a child component with a border. Only single child is allowed.
+ * 
+ * One can pass two arguments to the constructor, the child component and the border styles (BorderStyle)
+ * 
+ * Example usage: 
+ ```
+ auto bordered_component = std::make_shared<Border>(child , border_style);
+ ```
  */
 class Border : public Component {
 private:

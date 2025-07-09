@@ -11,6 +11,22 @@
 #include <vector>
 #include <memory>
 
+/**
+ * @brief A List component that stacks its children vertically,
+ * using each child's preferred height (not dividing space equally).
+ * 
+ * Example
+ * ```cpp
+ * auto main_list = std::make_shared<List>(
+ *       item1,
+ *       item2,
+ *       item3,
+ *       input_item
+ * );
+ * 
+ * main_list->set_gap(1);
+ * ```
+ */
 class List : public Component {
     std::vector<std::shared_ptr<Component>> children;
     int gap;

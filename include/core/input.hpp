@@ -13,6 +13,9 @@
 #include <vector>
 #include <memory>
 
+/**
+ * @brief An Input component that arranges one or more InputBox children vertically,
+ */
 class Input : public Component {
 	std::vector<std::shared_ptr<InputBox>> children;
 	int gap;

@@ -17,8 +17,16 @@ int main() {
     int selected_difficulty = 1;
 
     auto radio_style = RadioStyleBuilder()
-        .set_normal_style(StyleBuilder().set_color(ansi::FG_WHITE).build())
-        .set_active_style(StyleBuilder().set_color(ansi::FG_YELLOW).set_background_color(ansi::BG_BRIGHT_BLACK).set_bold(true).build())
+        .set_normal_style(
+            StyleBuilder()
+            .set_color(ansi::FG_WHITE)
+            .build())
+        .set_active_style(
+            StyleBuilder()
+            .set_color(ansi::FG_YELLOW)
+            .set_background_color(ansi::BG_BRIGHT_BLACK)
+            .set_bold(true)
+            .build())
         .build();
 
     auto radio_group = std::make_shared<RadioGroup>(difficulty_options, &selected_difficulty, radio_style);

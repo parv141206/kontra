@@ -1,48 +1,50 @@
 // ===================================================================
-// KONTRA TUI: border_example.cpp
+// KONTRA TUI Example: border_example.cpp
 //
-// This example demonstrates the basic usage of the `Border` component.
-// A Border acts as a simple container that draws a box around its
-// single child component. It's useful for visually grouping elements.
+// This example demonstrates how to use the `Border` component to visually
+// wrap and style a child component (in this case, a `Text` element).
+//
+// The `Border` draws a styled box around a single child, with options for
+// padding, border characters, color, title, and more. It's ideal for
+// visually grouping components like form sections, messages, or lists.
 // ===================================================================
 
 #include "../include/kontra.hpp"
 
 int main() {
-	// --- 1. Define the Component to be Wrapped ---
-	// We'll create a simple Text component that will go inside the border.
-	auto inner_text = std::make_shared<Text>(
-		"This text is inside a padded border.",
-		TextStyle(ansi::FG_CYAN)
-	);
+    // --- 1. Define the Component to be Wrapped ---
+    // We'll create a simple Text component that will go inside the border.
+    auto inner_text = std::make_shared<Text>(
+        "This text is inside a padded border.",
+        TextStyle(ansi::FG_CYAN)
+    );
 
-	// Might as well add some styles!
-	auto border_style = BorderStyleBuilder()
-		.set_color(ansi::FG_GREEN)
-		.set_background_color(ansi::BG_DEFAULT)
-		.set_title("Success!")
-		.set_title_alignment(TitleAlignment::Center)
-		.set_characters(BorderPreset::DOUBLE)
-		.build();
-	
-	// --- 2. Create the Border ---
-	// The Border is initialized with the component it should contain.
-	// We can then chain methods like `set_padding()` to configure it.
-	auto bordered_component = std::make_shared<Border>(inner_text , border_style);
+    // --- 2. Build the Border Style ---
+    // Here we configure the visual style for the border using BorderStyleBuilder.
+    auto border_style = BorderStyleBuilder()
+        .set_color(ansi::FG_GREEN)
+        .set_background_color(ansi::BG_DEFAULT)
+        .set_title("Success!")
+        .set_title_alignment(TitleAlignment::Center)
+        .set_characters(BorderPreset::DOUBLE)
+        .build();
 
-	// Padding adds empty cells between the border lines and the child's content.
-	bordered_component->set_padding(2);
+    // --- 3. Create the Border ---
+    // The Border wraps the inner component and uses the style defined above.
+    // Padding adds spacing between the content and the border box.
+    auto bordered_component = std::make_shared<Border>(inner_text, border_style);
+    bordered_component->set_padding(2);
 
-	// --- 3. Create the Screen ---
-	// The Screen is the root component that holds our final layout.
-	// For this simple example, the bordered component is the only thing on screen.
-	auto screen = std::make_shared<Screen>(bordered_component);
+    // --- 4. Create the Screen ---
+    // The Screen is the top-level component passed to `kontra::run`.
+    // It's the root of the UI tree. In this example, it just holds the border.
+    auto screen = std::make_shared<Screen>(bordered_component);
 
-	// --- 4. Run the Application ---
-	// The UI is static and doesn't require any input handling.
-	kontra::run(screen, [&](const InputEvent& event) {
-		// Static example, no input needed. Exit is handled by runtime.
-		});
+    // --- 5. Run the Application ---
+    // This is a static example. No input is handled here.
+    kontra::run(screen, [&](const InputEvent& event) {
+        // No interaction needed. Exit is handled internally (e.g., Ctrl+C).
+    });
 
-	return 0;
+    return 0;
 }

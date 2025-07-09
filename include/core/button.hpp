@@ -23,7 +23,27 @@ struct ButtonStyle {
 };
 
 /**
- * @brief A fluent builder for easily creating and configuring ButtonStyle objects.
+ * @brief Fluent builder for creating ButtonStyle objects.
+ *
+ * Example:
+ * ```cpp
+ * auto button_style = ButtonStyleBuilder()
+ *     .set_inactive_style(
+ *         StyleBuilder()
+ *             .set_color(ansi::FG_WHITE)
+ *             .set_background_color(ansi::BG_BLUE)
+ *             .set_bold(true)
+ *             .build()
+ *     )
+ *     .set_active_style(
+ *         StyleBuilder()
+ *             .set_color(ansi::FG_BLUE)
+ *             .set_background_color(ansi::BG_BRIGHT_WHITE)
+ *             .set_bold(true)
+ *             .build()
+ *     )
+ *     .build();
+ * ```
  */
 struct ButtonStyleBuilder {
 	ButtonStyle style;
@@ -51,7 +71,18 @@ struct ButtonStyleBuilder {
 	}
 };
 
-
+/**
+ * @brief A button to handle clicks!
+ * 
+ * Example:
+ * ```cpp
+ * auto button = std::make_shared<Button>(
+ *     "Set Message",
+ *     [&]() { message = "Button was clicked!"; },
+ *     button_style
+ * );
+ * ```
+ */
 class Button : public Component {
 private:
 	std::function<std::string()> label_provider;

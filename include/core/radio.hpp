@@ -16,7 +16,25 @@ struct RadioStyle{
 	TextStyle active;
 };
 
-/// @brief A fluent builder for easily creating and configuring RadioStyle objects.
+/**
+ * @brief A fluent builder for easily creating and configuring RadioStyle objects.
+ * 
+ * Example
+ * ```cpp
+ * auto radio_style = RadioStyleBuilder()
+ *       .set_normal_style(
+ *           StyleBuilder()
+ *           .set_color(ansi::FG_WHITE)
+ *           .build())
+ *       .set_active_style(
+ *           StyleBuilder()
+ *           .set_color(ansi::FG_YELLOW)
+ *           .set_background_color(ansi::BG_BRIGHT_BLACK)
+ *           .set_bold(true)
+ *           .build())
+ *       .build();
+ * ```
+ */
 struct RadioStyleBuilder {
 	RadioStyle style;
 	RadioStyleBuilder& set_normal_style(const TextStyle& ts) { style.normal = ts; return *this; }

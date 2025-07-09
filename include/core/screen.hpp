@@ -13,6 +13,11 @@
 #include <memory>
 #include "component.hpp"
 
+/**
+ * @brief All components are rendered on a screen.
+ * The screen simply calls the render function of each component recursively.
+ * Also clears the screen before rendering.
+ */
 class Screen : public Component {
 	std::vector<std::shared_ptr<Component>> children;
 

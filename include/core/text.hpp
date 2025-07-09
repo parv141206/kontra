@@ -32,36 +32,84 @@ struct TextStyle {
 	}
 };
 
+/**
+ * @brief A fluent builder for configuring `TextStyle` objects.
+ * 
+ * Although it sets text style properties (like color, bold, etc.), it can be used globally
+ * across the UI — since ```everything is technically text``` in Kontra.
+ * 
+ * Supports chaining methods for a clean, declarative style definition.
+ * 
+ * Example:
+ * ```cpp
+ * auto style = StyleBuilder()
+ *     .set_color(ansi::FG_CYAN)
+ *     .set_background_color(ansi::BG_BRIGHT_BLACK)
+ *     .set_bold(true)
+ *     .set_italic(true)
+ *     .build();
+ * ```
+ */
 struct StyleBuilder {
-	TextStyle style;
+    TextStyle style;
 
-	StyleBuilder& set_color(const std::string& color) {
-		style.color = color;
-		return *this;
-	}
+    /**
+     * @brief Sets the foreground (text) color.
+     * @param color The ANSI color code, e.g., `ansi::FG_CYAN`
+     * @return Reference to the builder
+     */
+    StyleBuilder& set_color(const std::string& color) {
+        style.color = color;
+        return *this;
+    }
 
-	StyleBuilder& set_background_color(const std::string& background_color) {
-		style.background_color = background_color;
-		return *this;
-	}
+    /**
+     * @brief Sets the background color.
+     * @param background_color The ANSI background color, e.g., `ansi::BG_BLACK`
+     * @return Reference to the builder
+     */
+    StyleBuilder& set_background_color(const std::string& background_color) {
+        style.background_color = background_color;
+        return *this;
+    }
 
-	StyleBuilder& set_bold(bool bold) {
-		style.bold = bold;
-		return *this;
-	}
+    /**
+     * @brief Enables or disables bold text.
+     * @param bold `true` to enable bold
+     * @return Reference to the builder
+     */
+    StyleBuilder& set_bold(bool bold) {
+        style.bold = bold;
+        return *this;
+    }
 
-	StyleBuilder& set_underline(bool underline) {
-		style.underline = underline;
-		return *this;
-	}
+    /**
+     * @brief Enables or disables underlined text.
+     * @param underline `true` to underline text
+     * @return Reference to the builder
+     */
+    StyleBuilder& set_underline(bool underline) {
+        style.underline = underline;
+        return *this;
+    }
 
-	StyleBuilder& set_italic(bool italic) {
-		style.italic = italic;
-		return *this;
-	}
-	TextStyle build() const {
-		return style;
-	}
+    /**
+     * @brief Enables or disables italic text.
+     * @param italic `true` to italicize
+     * @return Reference to the builder
+     */
+    StyleBuilder& set_italic(bool italic) {
+        style.italic = italic;
+        return *this;
+    }
+
+    /**
+     * @brief Finalizes the builder and returns the constructed `TextStyle` object.
+     * @return A configured `TextStyle` instance
+     */
+    TextStyle build() const {
+        return style;
+    }
 };
 
 class Text : public Component {

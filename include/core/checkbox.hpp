@@ -15,6 +15,30 @@ struct CheckboxStyle {
 	TextStyle active;
 };
 
+/**
+ * @brief Fluent builder for creating CheckboxStyle objects.
+ * 
+ * Example
+ * 
+ * ```cpp
+ * auto checkbox_style = CheckboxStyleBuilder()
+ *      .set_normal_style(
+ *           StyleBuilder()
+ *               .set_color(ansi::FG_WHITE)
+ *               .set_background_color(ansi::BG_DEFAULT)
+ *               .build()
+ *       )
+ *       .set_active_style(
+ *           StyleBuilder()
+ *               .set_color(ansi::FG_YELLOW)
+ *               .set_background_color(ansi::BG_BRIGHT_BLACK)
+ *               .set_bold(true)
+ *               .build()
+ *       )
+ *       .build();
+ * ```
+ * 
+ */
 struct CheckboxStyleBuilder {
 	CheckboxStyle style;
 	CheckboxStyleBuilder& set_normal_style(const TextStyle& ts) { style.normal = ts; return *this; }
@@ -22,6 +46,20 @@ struct CheckboxStyleBuilder {
 	CheckboxStyle build() const { return style; }
 };
 
+/**
+ * @brief A checkbox to toggle a variable true or false
+ * 
+ * Example 
+ * 
+ * ```cpp
+ * auto checkbox = std::make_shared<Checkbox>(
+ *       "Agree", 
+ *       &option_enabled,
+ *       checkbox_style 
+ *   );
+ * ```
+ * 
+ */
 class Checkbox : public Component {
 private:
 	std::function<std::string()> label_provider;

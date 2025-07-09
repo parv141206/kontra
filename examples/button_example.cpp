@@ -1,17 +1,23 @@
 // ===================================================================
-// KONTRA TUI: button_example.cpp
+// KONTRA TUI Example: button_example.cpp
 //
-// Demonstrates interactive `Button` components with keyboard and mouse.
+// This example demonstrates interactive `Button` components that respond
+// to both keyboard and mouse input. Buttons are styled using the
+// `ButtonStyleBuilder`, and the focused button can be toggled with Tab.
 // ===================================================================
+
 #include "../include/kontra.hpp"
 #include <vector>
 #include <memory>
 
 int main() {
+    // --- 1. State Variable ---
+    // This `message` is updated by button callbacks and shown on screen.
     std::string message = "Use Tab/Enter or Click a button!";
     auto display_text = std::make_shared<Text>([&]() { return message; });
 
-    // --- Create a style for the first button ---
+    // --- 2. First Button + Style ---
+    // A blue button with white text when inactive, inverts on focus.
     auto button1_style = ButtonStyleBuilder()
         .set_inactive_style(
             StyleBuilder()
@@ -35,7 +41,8 @@ int main() {
         button1_style
     );
 
-    // --- Create a style for the second button ---
+    // --- 3. Second Button + Style ---
+    // A red button with white text when inactive, inverts on focus.
     auto button2_style = ButtonStyleBuilder()
         .set_inactive_style(
             StyleBuilder()
@@ -59,36 +66,40 @@ int main() {
         button2_style
     );
 
-    // --- Focus Management ---
+    // --- 4. Focus Management ---
+    // By default, the first button is focused.
     button1->set_active(true);
     std::shared_ptr<Button> active_button = button1;
     std::vector<std::shared_ptr<Button>> buttons = { button1, button2 };
 
-    // --- Layout ---
+    // --- 5. Layout ---
+    // Stack the message + buttons vertically inside a bordered container.
     auto layout = std::make_shared<List>(display_text, button1, button2);
     layout->set_gap(1);
-    auto screen = std::make_shared<Screen>(std::make_shared<Border>(layout));
+    auto screen = std::make_shared<Screen>(
+        std::make_shared<Border>(layout)
+    );
 
-    // --- Event Loop ---
+    // --- 6. Event Loop ---
+    // Handle keyboard + mouse events to toggle focus and trigger clicks.
     kontra::run(screen, [&](const InputEvent& event) {
         switch (event.type) {
             case EventType::KEY_PRESS:
                 if (event.key == '\t') {
+                    // Tab switches active button
                     active_button->set_active(false);
-                    if (active_button == button1) {
-                        active_button = button2;
-                    } else {
-                        active_button = button1;
-                    }
+                    active_button = (active_button == button1) ? button2 : button1;
                     active_button->set_active(true);
                 }
                 break;
 
             case EventType::KEY_ENTER:
+                // Pressing Enter triggers click on active button
                 active_button->click();
                 break;
 
             case EventType::MOUSE_PRESS:
+                // Clicking a button makes it active and triggers click
                 for (const auto& btn : buttons) {
                     if (btn->contains(event.mouse_x, event.mouse_y)) {
                         btn->click();
@@ -104,5 +115,6 @@ int main() {
                 break;
         }
     });
+
     return 0;
 }

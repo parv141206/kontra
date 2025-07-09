@@ -15,9 +15,20 @@
 
 /**
  * @brief Manages a collection of Radio buttons to ensure only one can be selected.
- * @details This component takes a vector of string labels and a pointer to an integer
+ * 
+ * This component takes a vector of string labels and a pointer to an integer
  *          that it will manage. It internally creates and lays out the individual
  *          Radio components.
+ * 
+ * Example 
+ * ```cpp
+ * auto radio_group = std::make_shared<RadioGroup>(
+ *      difficulty_options, 
+ *      &selected_difficulty, 
+ *      radio_style
+ * );
+ * radio_group->set_gap(1);
+ * ```
  */
 class RadioGroup : public Component {
 private:

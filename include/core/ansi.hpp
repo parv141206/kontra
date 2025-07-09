@@ -15,6 +15,9 @@
 #include <unistd.h>
 #endif
 
+/**
+ * @brief Contains useful character codes and ANSI escape codes.
+ */
 namespace ansi {
 
 	constexpr bool useAsciiBox = false;

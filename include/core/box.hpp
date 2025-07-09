@@ -9,6 +9,30 @@
 #include "component.hpp"
 #include <memory>
 
+/**
+ * @brief A box to render a child in constrained dimensions (fixed height and width).
+ * 
+ * Width and height can be set using `set_width` and `set_height` methods.
+ * 
+ * Set width and height to -1 to make it unconstrained.
+ * 
+ * Example
+ * ```cpp
+ * auto boxed_layout = std::make_shared<Box>(child);
+ * boxed_layout->set_height(10);
+ * boxed_layout->set_width(10);
+ * 
+ * // or
+ * 
+ * chain(
+ *     std::make_shared<Box>(child),
+ *     [](Box& b) {
+ *         b.set_height(10);
+ *         b.set_width(5);
+ *     }
+ * );
+ * ```
+ */
 class Box : public Component {
     std::shared_ptr<Component> child;
     int fixed_width = -1;  // -1 means no constraint
