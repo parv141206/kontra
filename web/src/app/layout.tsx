@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   description:
     "Kontra is a terminal UI library for building text-based interfaces easily with styled components and layouts.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
+  verification: {
+    google: "Plv7-l-9fD_Sg9-FqpB2yaOhOaV5njShdmBquxUa4fU",
+  },
   keywords: [
     "Kontra",
     "kontra",
@@ -81,23 +84,18 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${lexend.variable} ${jetbrainsMono.variable} ${silkscreen.variable} ${pressStart.variable} max-w-screen overflow-x-hidden bg-black text-[#ededed]`}
     >
-      <head>
-        <meta
-          name="google-site-verification"
-          content="Plv7-l-9fD_Sg9-FqpB2yaOhOaV5njShdmBquxUa4fU"
-        />
-        <script type="application/ld+json">
-          {`
-            {
+      <body className="relative flex min-h-screen max-w-screen flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebSite",
               "name": "Kontra",
-              "url": "https://kontralib.vercel.app/"
-            }
-          `}
-        </script>
-      </head>
-      <body className="relative flex min-h-screen max-w-screen flex-col">
+              "url": "https://kontralib.vercel.app/",
+            }),
+          }}
+        />
         <Navbar />
         {children}
         <Footer />
