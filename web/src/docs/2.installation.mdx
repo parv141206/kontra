@@ -30,7 +30,7 @@ Download the latest `CPM.cmake` from [CPM Github](https://github.com/cpm-cmake/C
 
     # Tell CMake where CPM.cmake is
     list(APPEND CMAKE_MODULE_PATH "\${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-    include(CPM)
+    include(cmake/CPM.cmake)
 
     # ✨ Fetch Kontra from GitHub
     CPMAddPackage(

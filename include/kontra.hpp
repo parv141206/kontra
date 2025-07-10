@@ -17,3 +17,4 @@
 #include "./core/checkbox.hpp"
 #include "./core/radio.hpp"
 #include "./core/radio-group.hpp"
+#include "./core/tabs.hpp"

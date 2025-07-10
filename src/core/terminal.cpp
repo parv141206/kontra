@@ -13,6 +13,11 @@
 #include <termios.h>
 #endif
 
+static int last_mouse_btn = -1;
+static int last_mouse_x = -1;
+static int last_mouse_y = -1;
+static bool mouse_pressed_pending = false;
+
 namespace kontra::terminal
 {
     void handle_signal(int signal_num) {
@@ -78,10 +83,23 @@ namespace kontra::terminal
                                     buffer += next_char;
                                 }
                                 int btn, x, y;
-                                if (sscanf(buffer.c_str(), "%d;%d;%d", &btn, &x, &y) == 3) {
-                                     if (btn == 0)  events.push_back({EventType::MOUSE_PRESS, 0, x, y});
-                                     if (btn == 64) events.push_back({EventType::MOUSE_SCROLL_UP, 0, x, y});
-                                     if (btn == 65) events.push_back({EventType::MOUSE_SCROLL_DOWN, 0, x, y});
+                                if (sscanf(sequence.c_str(), "%d;%d;%d", &btn, &x, &y) == 3) {
+                                    char type = buffer[end_m]; 
+
+                                    if (btn == 64) { events.push_back({ EventType::MOUSE_SCROLL_UP, 0, x, y }); }
+                                    else if (btn == 65) { events.push_back({ EventType::MOUSE_SCROLL_DOWN, 0, x, y }); }
+
+                                    else if (type == 'M') {
+                                        last_mouse_btn = btn;
+                                        last_mouse_x = x;
+                                        last_mouse_y = y;
+                                        mouse_pressed_pending = true;
+                                    } else if (type == 'm' && mouse_pressed_pending) {
+                                        if (btn == last_mouse_btn && x == last_mouse_x && y == last_mouse_y) {
+                                            events.push_back({ EventType::MOUSE_PRESS, btn, x, y });
+                                        }
+                                        mouse_pressed_pending = false;
+                                    }
                                 }
                                 continue;
                             }
@@ -169,9 +187,22 @@ namespace kontra::terminal
                                 std::string sequence = buffer.substr(pos + 3, end_m - (pos + 3));
                                 int btn, x, y;
                                 if (sscanf(sequence.c_str(), "%d;%d;%d", &btn, &x, &y) == 3) {
-                                    if (btn == 0)  events.push_back({ EventType::MOUSE_PRESS, 0, x, y });
-                                    if (btn == 64) events.push_back({ EventType::MOUSE_SCROLL_UP, 0, x, y });
-                                    if (btn == 65) events.push_back({ EventType::MOUSE_SCROLL_DOWN, 0, x, y });
+                                    char type = buffer[end_m]; 
+
+                                    if (btn == 64) { events.push_back({ EventType::MOUSE_SCROLL_UP, 0, x, y }); }
+                                    else if (btn == 65) { events.push_back({ EventType::MOUSE_SCROLL_DOWN, 0, x, y }); }
+
+                                    else if (type == 'M') {
+                                        last_mouse_btn = btn;
+                                        last_mouse_x = x;
+                                        last_mouse_y = y;
+                                        mouse_pressed_pending = true;
+                                    } else if (type == 'm' && mouse_pressed_pending) {
+                                        if (btn == last_mouse_btn && x == last_mouse_x && y == last_mouse_y) {
+                                            events.push_back({ EventType::MOUSE_PRESS, btn, x, y });
+                                        }
+                                        mouse_pressed_pending = false;
+                                    }
                                 }
                                 pos = end_m + 1; 
                                 continue;

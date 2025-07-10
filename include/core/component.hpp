@@ -8,8 +8,8 @@
 
 class Component
 {
-    int last_x = -1, last_y = -1, last_w = -1, last_h = -1;
 public:
+    int last_x = -1, last_y = -1, last_w = -1, last_h = -1;
     virtual ~Component() = default;
 
     /**
