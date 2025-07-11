@@ -61,9 +61,19 @@ int main() {
     auto tab2 = std::make_shared<Tab>(std::make_shared<Border>(layout, BorderStyleBuilder().set_title("Settings (Tab to move, Space to toggle)").build()) , "Checkboxes");
 
     std::vector<std::shared_ptr<Tab>> tab_components = {tab1, tab2};
-    auto tabs = std::make_shared<Tabs>(tab_components , TabsStyleBuilder()
-        .set_default_fg(ansi::FG_WHITE)
-        .set_active_fg(ansi::FG_YELLOW)
+    auto tabs = std::make_shared<Tabs>(tab_components , 
+        TabsStyleBuilder()
+        .set_active_label_style(
+            StyleBuilder()
+            .set_color(ansi::FG_GREEN)
+            .set_bold(true)
+            .build())
+        .set_inactive_label_style(
+            StyleBuilder()
+            .set_color(ansi::FG_DEFAULT)
+            .set_bold(false)
+            .build()
+        )
         .set_border_chars(BorderPreset::SINGLE)
         .build());
 

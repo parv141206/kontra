@@ -1,0 +1,252 @@
+# Tabs
+
+The `Tabs` component is a powerful container for organizing a complex UI into multiple, switchable pages. It's ideal for applications with distinct sections, like a settings panel with "General," "Video," and "Audio" tabs.
+
+The design consists of two parts:
+1.  A simple **`Tab`** component that holds a `label` and a single child `Component`.
+2.  A smart **`Tabs`** container that manages a collection of `Tab` children, handles the switching logic, and renders the tab bar.
+
+---
+
+## Creating `Tabs`
+
+The process involves creating the content for each tab first, wrapping each piece of content in a `Tab` component, and finally passing a vector of those `Tab`s to the main `Tabs` container.
+
+### 1. Create the Content for Each Tab
+
+Each tab can hold any other component, from a simple `Text` block to a complex `List` of interactive elements.
+
+```cpp
+// Content for the first tab
+auto info_content = std::make_shared<Text>("This is the info page.");
+
+// Content for the second tab (e.g., a list of checkboxes)
+auto settings_content = std::make_shared<List>(...);
+```
+
+### 2. Create Individual `Tab` Components
+
+Wrap each content component in a `Tab`, giving it a label.
+
+<CodeBlock
+  border
+  lang="cpp"
+  code={`
+    auto tab1 = std::make_shared<Tab>(info_content, "Information");
+    auto tab2 = std::make_shared<Tab>(settings_content, "Settings");
+`}
+/>
+
+### 3. Create the Main `Tabs` Container
+
+Collect your `Tab` components into a `std::vector` and pass it to the `Tabs` constructor.
+
+<CodeBlock
+  border
+  lang="cpp"
+  code={`
+    std::vector<std::shared_ptr<Tab>> all_tabs = {tab1, tab2};
+
+    // The Tabs component takes the vector of tabs and an optional style
+    auto tabs_container = std::make_shared<Tabs>(all_tabs);
+`}
+/>
+
+---
+
+## Styling the Tabs
+
+You can customize the appearance of the tab bar using the `TabsStyleBuilder`. This lets you define distinct styles for the active (selected) and inactive tab labels, as well as the border style.
+
+<CodeBlock
+  border
+  lang="cpp"
+  code={`
+    auto tabs_style = TabsStyleBuilder()
+        .set_active_label_style(
+            TextStyleBuilder() // Use TextStyleBuilder for the label's style
+                .set_color(ansi::FG_GREEN)
+                .set_background_color(ansi::BG_BRIGHT_BLACK)
+                .set_bold(true)
+                .build()
+        )
+        .set_inactive_label_style(
+            TextStyleBuilder()
+                .set_color(ansi::FG_WHITE)
+                .set_background_color(ansi::BG_DEFAULT)
+                .build()
+        )
+        .set_border_chars(BorderPreset::DOUBLE) // Optional: change the border line
+        .build();
+
+    auto styled_tabs = std::make_shared<Tabs>(all_tabs, tabs_style);
+`}
+/>
+
+---
+
+## Handling Input
+
+The `Tabs` component provides methods to handle user input for switching between tabs. Your main event loop is responsible for calling these methods.
+
+### Keyboard Interaction
+
+The standard UX is to use **Left/Right arrow keys** to switch tabs. You can also implement custom hotkeys (like `1`, `2`, `3`) to jump to a specific tab.
+
+<CodeBlock
+  border
+  lang="cpp"
+  code={`
+    kontra::run(screen, [&](const InputEvent& event) {
+        switch (event.type) {
+            case EventType::KEY_LEFT:
+                tabs->previous_tab(); // Go to the previous tab
+                break;
+            case EventType::KEY_RIGHT:
+                tabs->next_tab();  // Go to the next tab
+                break;
+            case EventType::KEY_PRESS:
+                // Hotkey to jump to a specific tab
+                if (event.key >= '1' && event.key <= '9') {
+                    int tab_index = event.key - '1';
+                    tabs->change_tab(tab_index);
+                }
+                break;
+        }
+        // ... pass other events to the active tab's content ...
+    });`}
+/>
+
+-   `next_tab()`: Changes to the next tab, if one exists.
+-   `previous_tab()`: Changes to the previous tab, if one exists.
+-   `change_tab(index)`: Jumps directly to a specific tab index if it's valid.
+
+### Mouse Interaction
+
+The `Tabs` component can also handle mouse clicks on the tab bar directly.
+
+<CodeBlock
+  border
+  lang="cpp"
+  code={`
+    if (event.type == EventType::MOUSE_PRESS) {
+        // Let the Tabs component figure out if a tab label was clicked
+        tabs->handle_mouse_input(event.mouse_x, event.mouse_y);
+    }`}
+/>
+
+---
+
+## Complete Example
+
+This example creates a two-tab layout. The first tab shows static text, and the second tab contains the interactive checkbox form. This demonstrates how to manage events for both the `Tabs` container and the active tab's content.
+
+<CodeBlock border 
+  lang="cpp" 
+  code={`
+    #include "../include/kontra.hpp"
+    #include <vector>
+    #include <string>
+    #include <memory>
+
+    int main() {
+        // --- Tab 1 Content: A simple info page ---
+        auto info_content = std::make_shared<Text>(
+            "This is the Information tab.\\n\\nUse Left/Right Arrows or click to switch tabs.",
+            TextStyle(ansi::FG_CYAN)
+        );
+
+        // --- Tab 2 Content: A checkbox form ---
+        bool opt1 = false, opt2 = true;
+        auto chk_style = CheckboxStyleBuilder()
+            .set_normal_style(TextStyleBuilder().set_color(ansi::FG_WHITE).build())
+            .set_active_style(TextStyleBuilder().set_color(ansi::FG_YELLOW).set_bold(true).build())
+            .build();
+        auto chk1 = std::make_shared<Checkbox>("Enable telemetry", &opt1, chk_style);
+        auto chk2 = std::make_shared<Checkbox>("Check for updates", &opt2, chk_style);
+        std::vector<std::shared_ptr<Checkbox>> checkboxes = {chk1, chk2};
+        int active_checkbox = 0;
+        checkboxes[active_checkbox]->set_active(true);
+        auto settings_content = std::make_shared<List>({chk1, chk2});
+        settings_content->set_gap(1).set_padding(1);
+
+        // --- Create the Tabs ---
+        auto tab1 = std::make_shared<Tab>(info_content, "Info (1)");
+        auto tab2 = std::make_shared<Tab>(settings_content, "Settings (2)");
+        std::vector<std::shared_ptr<Tab>> all_tabs = {tab1, tab2};
+
+        auto tabs_style = TabsStyleBuilder()
+            .set_active_label_style(TextStyleBuilder().set_color(ansi::FG_GREEN).set_bold(true).build())
+            .set_inactive_label_style(TextStyleBuilder().set_color(ansi::FG_WHITE).build())
+            .build();
+        auto tabs_container = std::make_shared<Tabs>(all_tabs, tabs_style);
+        
+        auto screen = std::make_shared<Screen>(
+            std::make_shared<Border>(tabs_container)
+        );
+
+        // --- Event Loop ---
+        kontra::run(screen, [&](const InputEvent& event) {
+            // --- First, handle global tab navigation ---
+            switch(event.type) {
+                case EventType::KEY_LEFT: tabs_container->previous_tab(); return;
+                case EventType::KEY_RIGHT: tabs_container->next_tab(); return;
+                case EventType::KEY_PRESS:
+                    if (event.key >= '1' && event.key <= '9') {
+                        tabs_container->change_tab(event.key - '1');
+                        return; // Event handled
+                    }
+                    break; // Fall through if not a hotkey
+                case EventType::MOUSE_PRESS:
+                    // Let the Tabs component handle clicks on the tab bar
+                    tabs_container->handle_mouse_input(event.mouse_x, event.mouse_y);
+                    break; // Let the event fall through to the content
+            }
+
+            // --- If the active tab is "Settings", pass events to its content ---
+            if (tabs_container->get_active_tab_index() == 1) {
+                switch(event.type) {
+                    case EventType::KEY_UP:
+                    case EventType::KEY_DOWN: {
+                        checkboxes[active_checkbox]->set_active(false);
+                        if (event.type == EventType::KEY_UP) {
+                            active_checkbox = (active_checkbox - 1 + checkboxes.size()) % checkboxes.size();
+                        } else {
+                            active_checkbox = (active_checkbox + 1) % checkboxes.size();
+                        }
+                        checkboxes[active_checkbox]->set_active(true);
+                        break;
+                    }
+                    case EventType::KEY_PRESS:
+                        if (event.key == ' ') {
+                            checkboxes[active_checkbox]->toggle();
+                        }
+                        break;
+                    case EventType::MOUSE_PRESS:
+                        for(size_t i = 0; i < checkboxes.size(); ++i) {
+                            if (checkboxes[i]->contains(event.mouse_x, event.mouse_y)) {
+                                checkboxes[i]->toggle();
+                                checkboxes[active_checkbox]->set_active(false);
+                                active_checkbox = i;
+                                checkboxes[active_checkbox]->set_active(true);
+                                break;
+                            }
+                        }
+                        break;
+                }
+            }
+        });
+
+        return 0;
+    }
+    `} />
+
+---
+
+## TL;DR
+
+-   Create content for each page as a separate `Component`.
+-   Wrap each content `Component` in a `Tab` with a `label`.
+-   Collect `Tab`s into a `std::vector` and pass it to a `Tabs` container.
+-   Use `next_tab()`, `previous_tab()`, `change_tab()`, and `handle_mouse_input()` on the `Tabs` container to manage tab switching.
+-   In your main event loop, check which tab is active and pass other input events down to the active content.
